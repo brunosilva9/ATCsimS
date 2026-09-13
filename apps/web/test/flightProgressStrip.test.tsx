@@ -64,6 +64,33 @@ describe('FlightProgressStrip — el nivel va pegado a la entrada', () => {
   });
 });
 
+describe('FlightProgressStrip — como se llego a cada valor calculado', () => {
+  it('el nivel de entrada cita la restriccion publicada que lo fijo', () => {
+    const html = render(flight);
+    const levelsBox = html.slice(html.indexOf('_levels_'), html.indexOf('_levels_') + 300);
+    // UMKAL trae minAltFt = maxAltFt = 24000: la restriccion es un numero unico, no un rango.
+    expect(levelsBox).toContain('title="Restriccion publicada en UMKAL: 24000 ft."');
+  });
+
+  it('la hora de un fix calculado dice la distancia, la GS y de donde salio', () => {
+    const html = render(flight);
+    // LOSAN: legDistNm 23, sourceGsKt 360 (siete de 21 procedimientos traen GS de planilla).
+    const losanBox = html.slice(html.indexOf('LOSAN'), html.indexOf('LOSAN') + 400);
+    expect(losanBox).toContain('UMKAL');
+    expect(losanBox).toContain('23.0 NM ÷ 360 kt (GS de planilla)');
+    expect(losanBox).toContain('→ ' + formatHhmm(flight.legs.find((l) => l.fix === 'LOSAN')!.eto));
+  });
+
+  it('sin restriccion publicada, el nivel dice que se mantiene el crucero pedido', () => {
+    // EROLO7F entra sin minAlt/maxAlt en el primer tramo: no hay nada que citar.
+    const other = scenario.flights.find((f) => f.procedureIdent === 'EROLO7F');
+    expect(other).toBeDefined();
+    const html = render(other!);
+    const levelsBox = html.slice(html.indexOf('_levels_'), html.indexOf('_levels_') + 300);
+    expect(levelsBox).toContain('sin restriccion publicada en la base');
+  });
+});
+
 describe('FlightProgressStrip — estimada revisada', () => {
   const revised = {
     ...flight,
@@ -74,10 +101,12 @@ describe('FlightProgressStrip — estimada revisada', () => {
     const html = render(revised);
     const safel = revised.legs.find((l) => l.fix === 'SAFEL')!;
 
-    const box = html.slice(html.indexOf('SAFEL'), html.indexOf('SAFEL') + 500);
-    // Las dos horas concretas tienen que estar: la que ya se habia dado y la que la reemplaza.
+    const box = html.slice(html.indexOf('SAFEL'), html.indexOf('SAFEL') + 600);
+    // La tachada no tiene detalle inventado (sus campos quedaron pisados por el recalculo):
+    // solo repite la hora, como antes.
     expect(box).toContain(`title="${formatHhmm(safel.eto)}"`);
-    expect(box).toContain(`title="${formatHhmm(safel.revisedEto!)}"`);
+    // La vigente si trae como se llego a ella, y termina en la hora que se lee.
+    expect(box).toContain(`→ ${formatHhmm(safel.revisedEto!)}"`);
 
     // La original va tachada (struck): ese tono no se toca aunque se revise, es la evidencia
     // de que hubo un cambio.

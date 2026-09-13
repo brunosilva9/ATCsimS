@@ -26,6 +26,29 @@ import { formatHhmm, splitHhmm } from '@atcsims/core';
 
 import styles from './FlightProgressStrip.module.css';
 
+/** De donde salio la GS de un tramo, en el mismo orden de precedencia que el motor. */
+function gsProvenance(leg: FlightLeg): string {
+  if (leg.assignedSpeedKt !== null) return 'velocidad asignada';
+  if (leg.sourceGsKt !== null) return 'GS de planilla';
+  return 'GS de la tabla de performance';
+}
+
+/**
+ * Como se llego a la hora de un tramo, para el tooltip. Solo tiene sentido cuando los campos
+ * del tramo (legDistNm, gsKt, legTimeMin) todavia describen ese numero: tras una instruccion
+ * quedan pisados con los del recalculo (ver instructions.ts, recomputeFrom), asi que este
+ * detalle solo se pide para la hora VIGENTE, nunca para la tachada.
+ */
+function fixDetail(leg: FlightLeg, prevFix: string, prevEto: number, eto: number): string {
+  const distPart =
+    leg.legDistNm > 0
+      ? `${leg.legDistNm.toFixed(1)} NM ÷ ${leg.gsKt} kt (${gsProvenance(leg)}) = ` +
+        `${leg.legTimeMin.toFixed(1)} min`
+      : 'sin tramo que recorrer';
+  const delayPart = leg.delayMin > 0 ? ` + ${leg.delayMin} min de espera en ${leg.fix}` : '';
+  return `${prevFix} ${formatHhmm(prevEto)} + ${distPart}${delayPart} → ${formatHhmm(eto)}`;
+}
+
 /** Un nivel escrito en la casilla. Los superados van tachados, no borrados. */
 export interface StripLevel {
   readonly valueFt: number;
@@ -53,11 +76,22 @@ function levelLabel(valueFt: number): string {
   return String(Math.round(valueFt / 100)).padStart(3, '0');
 }
 
-/** La hora como la escribe el controlador: hora grande, minutos en exponente. */
-function Hhmm({ time, tone }: { time: number; tone: 'printed' | 'pen' | 'struck' }) {
+/**
+ * La hora como la escribe el controlador: hora grande, minutos en exponente. El tooltip explica
+ * como se calculo — la distancia, la GS y de donde salio, no solo repetir la hora que ya se lee.
+ */
+function Hhmm({
+  time,
+  tone,
+  detail,
+}: {
+  time: number;
+  tone: 'printed' | 'pen' | 'struck';
+  detail?: string | undefined;
+}) {
   const { hours, minutes } = splitHhmm(time);
   return (
-    <span className={`${styles.time} ${styles[tone]}`} title={formatHhmm(time)}>
+    <span className={`${styles.time} ${styles[tone]}`} title={detail ?? formatHhmm(time)}>
       <span className={styles.timeHours}>{hours}</span>
       <sup className={styles.timeMinutes}>{minutes}</sup>
     </span>
@@ -74,13 +108,30 @@ function Hhmm({ time, tone }: { time: number; tone: 'printed' | 'pen' | 'struck'
  * la nueva en azul debajo — nunca solo la nueva tachada, que borraria justo el dato que hay
  * que conservar a la vista (la estimada que se dio, para que se note que cambio).
  */
-function FixCell({ leg, className }: { leg: FlightLeg; className?: string | undefined }) {
+function FixCell({
+  leg,
+  prevFix,
+  prevEto,
+  className,
+}: {
+  leg: FlightLeg;
+  prevFix: string;
+  prevEto: number;
+  className?: string | undefined;
+}) {
+  const activeEto = leg.revisedEto ?? leg.eto;
   return (
     <div className={className}>
       <div className={styles.onwardFix}>{leg.fix}</div>
       <div className={styles.onwardTime}>
-        <Hhmm time={leg.eto} tone={leg.revisedEto === null ? 'pen' : 'struck'} />
-        {leg.revisedEto !== null ? <Hhmm time={leg.revisedEto} tone="pen" /> : null}
+        <Hhmm
+          time={leg.eto}
+          tone={leg.revisedEto === null ? 'pen' : 'struck'}
+          detail={leg.revisedEto === null ? fixDetail(leg, prevFix, prevEto, activeEto) : undefined}
+        />
+        {leg.revisedEto !== null ? (
+          <Hhmm time={leg.revisedEto} tone="pen" detail={fixDetail(leg, prevFix, prevEto, activeEto)} />
+        ) : null}
       </div>
     </div>
   );
@@ -100,8 +151,10 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
     start >= 0 && endExclusive > start ? all.slice(start, endExclusive) : all;
 
   const entry = legs[0];
-  const next = legs[1];
-  const onward = legs.slice(2);
+  // Cada fix de ahi en adelante necesita el anterior para explicar como se llego a su hora.
+  const chain = legs.slice(1).map((leg, i) => ({ leg, prev: legs[i]! }));
+  const next = chain[0];
+  const onward = chain.slice(1);
 
   /*
    * Sin `levels` explicito, el numero es el nivel YA CALCULADO en el fix de entrada — no
@@ -112,6 +165,16 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
    */
   const levels: readonly StripLevel[] =
     props.levels ?? [{ valueFt: entry?.levelFt ?? flight.cruiseLevelFt, superseded: false }];
+
+  // Igual que con la hora: el detalle solo se puede dar cuando el nivel es el que calcula el
+  // motor por defecto. Con `levels` explicito (historial de reasignaciones) no hay restriccion
+  // que citar, asi que no se inventa una.
+  const levelDetail =
+    props.levels === undefined && entry
+      ? entry.restriction !== null
+        ? `Restriccion publicada en ${entry.fix}: ${entry.restriction}.`
+        : `${entry.fix}: sin restriccion publicada en la base; se mantiene el nivel de crucero pedido.`
+      : undefined;
 
   const route = props.route ?? flight.procedureIdent ?? flight.airway ?? '';
 
@@ -146,7 +209,7 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
         </div>
       </div>
 
-      <div className={styles.levels}>
+      <div className={styles.levels} title={levelDetail}>
         {levels.map((level, i) => (
           <span
             key={`${level.valueFt}-${i}`}
@@ -158,14 +221,25 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
       </div>
 
       {next ? (
-        <FixCell leg={next} className={styles.nextTime} />
+        <FixCell
+          leg={next.leg}
+          prevFix={next.prev.fix}
+          prevEto={next.prev.revisedEto ?? next.prev.eto}
+          className={styles.nextTime}
+        />
       ) : (
         <div className={styles.nextTime} />
       )}
 
       <div className={styles.onward}>
-        {onward.map((leg) => (
-          <FixCell key={leg.seq} leg={leg} className={styles.onwardCell} />
+        {onward.map(({ leg, prev }) => (
+          <FixCell
+            key={leg.seq}
+            leg={leg}
+            prevFix={prev.fix}
+            prevEto={prev.revisedEto ?? prev.eto}
+            className={styles.onwardCell}
+          />
         ))}
       </div>
 

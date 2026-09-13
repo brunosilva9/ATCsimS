@@ -130,6 +130,8 @@
   font-family: var(--font-data);
   font-size: 15px;
   font-weight: 500;
+  /* Trae un tooltip con la restriccion que fijo el nivel: se nota que hay algo que leer. */
+  cursor: help;
 }
 
 .level {
@@ -213,9 +215,10 @@
   color: var(--ink);
 }
 
-/** Escrito a mano por el controlador. */
+/** Escrito a mano por el controlador. Su tooltip trae la cuenta: distancia, GS y de donde salio. */
 .pen {
   color: var(--pen);
+  cursor: help;
 }
 
 /** Estimada superada por una instruccion: se tacha y se escribe la nueva debajo. */
