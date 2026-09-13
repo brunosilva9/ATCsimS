@@ -21,10 +21,22 @@
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 28px;
   max-width: 1200px;
+  /* Sin esto, un footer con max-width en una pantalla mas ancha que 1200+padding queda pegado
+     a la izquierda con un vacio enorme a la derecha: exactamente lo que se veia. */
+  margin-inline: auto;
 }
 
+/*
+ * La regla va en la COLUMNA, no debajo del texto del titulo. Puesta como border-bottom de un
+ * inline-block del propio titulo, su largo dependia de cuanto medía cada uno: "ATCsimS" daba
+ * un trazo corto y "Colegio de Controladores de Transito Aereo de Chile" uno enorme, y la fila
+ * de las tres arriba salia despareja. Como border-top de la columna entera, las tres quedan del
+ * mismo largo pase lo que pase, sin importar cuanto texto lleve el titulo debajo.
+ */
 .column {
   min-width: 0;
+  padding-top: 14px;
+  border-top: 2px solid var(--brand);
 }
 
 .columnTitle {
@@ -34,10 +46,6 @@
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text);
-  /* El subrayado corto con el azul de marca marca el inicio de columna sin usar una caja. */
-  padding-bottom: 6px;
-  border-bottom: 2px solid var(--brand);
-  display: inline-block;
 }
 
 .body {
@@ -158,7 +166,7 @@
 
 .legal {
   max-width: 1200px;
-  margin: 24px 0 0;
+  margin: 24px auto 0;
   padding-top: 12px;
   border-top: 1px solid var(--border);
   font-size: 11.5px;
