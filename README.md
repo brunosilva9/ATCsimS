@@ -83,6 +83,14 @@ hash de la URL) o **por archivo `.json`**. La entrega del alumno no es un result
 es su lista de instrucciones con la hora de cada una, que el instructor vuelve a aplicar desde
 cero; en prueba, lo que escribió en cada casilla.
 
+Para probarlo uno mismo sin repartir nada, el editor tiene **«Probar aquí»**: abre el ejercicio
+en una pestaña nueva de la misma app, en el modo que tenga puesto, sin copiar ningún enlace.
+
+Y para comprobar un ejercicio antes de darlo —o corregirlo sin esperar ninguna entrega— el
+editor también tiene, al final, **«Clave»**: la solución que calcula el motor, en las mismas
+fichas de progreso de siempre. Es la única pantalla que la muestra sin haber recibido nada del
+alumno, y solo la ve el instructor.
+
 ## Estructura
 
 ```

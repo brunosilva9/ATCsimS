@@ -24,6 +24,7 @@ import {
 } from '@atcsims/navdata';
 
 import { ConflictList } from '../components/ConflictList.js';
+import { FlightProgressStrip } from '../components/FlightProgressStrip.js';
 import { TimeFixDiagram } from '../components/TimeFixDiagram.js';
 import { TrafficGenerator } from '../components/TrafficGenerator.js';
 import { deleteDraft, getDraft, newDraftId, saveDraft } from '../lib/storage.js';
@@ -228,6 +229,20 @@ export function ScenarioEditor() {
           <button type="button" className={styles.primary} onClick={save}>
             {saved ? 'Guardado' : 'Guardar'}
           </button>
+          {/*
+            Abre el ejercicio en una pestaña nueva de esta misma app, sin copiar ni pegar nada
+            a mano: es la manera de probarlo uno mismo, en el modo que sea, sin pasar por
+            "copiar enlace" y pegarlo en otra ventana. Pestaña nueva y no la misma, para no
+            perder lo que hay a medio editar aqui.
+          */}
+          <a
+            className={styles.secondary}
+            href={`#/exercise?e=${encodePayload(payload)}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Probar aquí
+          </a>
           <button
             type="button"
             className={styles.secondary}
@@ -608,6 +623,31 @@ export function ScenarioEditor() {
             durationMin={built.scenario.durationMin}
           />
         </section>
+      ) : null}
+
+      {built.scenario.flights.length > 0 ? (
+        /*
+         * La clave. Esta pantalla es solo del instructor, asi que no hay nada que ocultar: lo
+         * que el motor calcula para este ejercicio ya esta en `built.scenario` y solo hacia
+         * falta mostrarlo, con la misma strip de siempre. Sirve para comprobar un ejercicio
+         * antes de darlo, y para corregir en el momento sin esperar a que alguien entregue.
+         * Cerrada por defecto (<details> sin `open`): son varias strips anchas y no hace falta
+         * verlas cada vez que se toca el editor.
+         */
+        <details className={styles.solution}>
+          <summary className={shared.sectionTitle}>
+            Clave — la solución que calcula el motor
+          </summary>
+          <p className={shared.note}>
+            Para comprobar el ejercicio antes de darlo, o para corregirlo sin esperar una
+            entrega. {mode === 'exam' ? 'El alumno nunca ve esta pantalla.' : ''}
+          </p>
+          <div className={styles.strips}>
+            {built.scenario.flights.map((flight) => (
+              <FlightProgressStrip key={flight.id} flight={flight} variant="APP" />
+            ))}
+          </div>
+        </details>
       ) : null}
     </div>
   );

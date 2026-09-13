@@ -317,3 +317,64 @@
   line-height: 1.4;
   color: var(--text-muted);
 }
+
+/* --------------------------------------------------------------------------- la clave */
+
+.solution {
+  margin-top: 24px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/*
+ * El titulo de la seccion ES el <summary>: un <details> nativo no necesita boton propio ni
+ * estado en React para abrirse y cerrarse, y ya trae la flecha de abrir/cerrar del navegador.
+ */
+.solution summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.solution summary::-webkit-details-marker {
+  display: none;
+}
+
+.solution summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: 6px;
+  color: var(--accent);
+  transition: transform 0.15s ease;
+}
+
+.solution[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.solution summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+.solution > p {
+  margin-top: 10px;
+}
+
+/* Mismo patron que las strips de la sesion del alumno: se apilan y cada una fuerza su propio
+   ancho, asi que si una ficha es mas ancha que la pantalla, la que se desplaza es ella sola. */
+.strips {
+  overflow-x: auto;
+  margin-top: 12px;
+  padding-block: 6px 10px;
+}
+
+.strips > * {
+  min-width: 760px;
+}
+
+.strips > * + * {
+  margin-top: 10px;
+}
