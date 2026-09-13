@@ -101,6 +101,11 @@ Ahí mismo hay una casilla, apagada por defecto, **«Incluir la clave»**: si se
 trabajo de impresión agrega después la solución completa, en una hoja aparte con un aviso en
 rojo — para la copia del instructor, no para repartir junto con la ficha en blanco.
 
+También imprime el **diagrama tiempo × punto** (en práctica siempre; en prueba, solo dentro de
+la clave, porque el diagrama sale con las horas correctas y eso ya es la respuesta). El papel no
+tiene scroll, así que se corta en hojas de 45 minutos cada una — lo que entra en una A4 apaisada
+— y sigue en la hoja siguiente sin perder el hilo.
+
 Se llega a `/print` desde el editor de un ejercicio (**«Imprimir»**) o directo desde el banco
 (**Ejercicios → Imprimir**, sin abrir cada uno).
 

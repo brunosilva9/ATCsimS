@@ -6,6 +6,24 @@
   background: var(--surface);
 }
 
+/*
+ * Para imprimir: sin recorte ni scroll (el papel no tiene barra lateral) y sin `position:
+ * sticky` en los encabezados, que en pantalla los clava al desplazarse pero en una hoja
+ * impresa no significa nada y puede confundirse con un encabezado repetido a mano.
+ */
+.wrapperPrintable {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.wrapperPrintable .timeHead,
+.wrapperPrintable .flightHead,
+.wrapperPrintable .timeCell,
+.wrapperPrintable .caption {
+  position: static;
+}
+
 .table {
   border-collapse: collapse;
   width: max-content;

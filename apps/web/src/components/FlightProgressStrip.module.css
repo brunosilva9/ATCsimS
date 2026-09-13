@@ -83,24 +83,16 @@
 .entry {
   flex: 0 0 92px;
   display: grid;
-  grid-template-rows: 20px 1fr 20px;
+  grid-template-rows: 20px 1fr;
 }
 
-.entryFix,
-.entryNext {
+.entryFix {
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   letter-spacing: 0.05em;
-}
-
-.entryFix {
   border-bottom: 1.5px solid var(--rule);
-}
-
-.entryNext {
-  border-top: 1.5px solid var(--rule);
 }
 
 .entryTime {
@@ -111,7 +103,17 @@
 
 /* ------------------------------------------------------------------------- casillas */
 
-.nextTime,
+/*
+ * El segundo fix usa la MISMA casilla que los que le siguen (.onwardFix / .onwardTime): nombre
+ * arriba, hora abajo. Antes vivia partido —el nombre pegado al fix de entrada, la hora sola
+ * aca— y esa separacion no dejaba claro que las dos cosas eran del mismo punto.
+ */
+.nextTime {
+  flex: 0 0 66px;
+  display: grid;
+  grid-template-rows: 26px 1fr;
+}
+
 .levels,
 .route {
   flex: 0 0 74px;

@@ -25,6 +25,13 @@ export interface TimeFixDiagramProps {
    * resolver, y ahi el alumno tiene que verlo solo.
    */
   readonly showCoincidences?: boolean;
+  /**
+   * Para imprimir: sin el recorte a 70vh con scroll (`.wrapper` esta pensado para la pantalla,
+   * donde un diagrama largo no puede empujar el resto de la pagina). En papel no hay scroll:
+   * todas las filas tienen que quedar en el flujo normal para que se corten entre paginas donde
+   * corresponda, no adentro de una caja que en la hoja impresa se ve vacia salvo por 70vh.
+   */
+  readonly printable?: boolean;
 }
 
 interface Cell {
@@ -41,6 +48,7 @@ export function TimeFixDiagram({
   startTime,
   durationMin,
   showCoincidences = true,
+  printable = false,
 }: TimeFixDiagramProps) {
   const { cells, active, coincident } = useMemo(() => {
     const cells = new Map<string, Cell>();
@@ -82,7 +90,7 @@ export function TimeFixDiagram({
   const minutes = Array.from({ length: durationMin + 1 }, (_, i) => normalize(startTime + i));
 
   return (
-    <div className={styles.wrapper}>
+    <div className={printable ? styles.wrapperPrintable : styles.wrapper}>
       <table className={styles.table}>
         <caption className={styles.caption}>
           Diagrama tiempo × punto — {formatHhmm(startTime)} a{' '}

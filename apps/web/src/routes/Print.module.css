@@ -84,6 +84,21 @@
   min-width: 760px;
 }
 
+/*
+ * El diagrama entero arranca hoja aparte de las strips: es una vista distinta (tiempo x punto,
+ * no ficha por vuelo) y mezclarla en la misma pagina que la ultima strip corta mal.
+ */
+.diagramSection {
+  break-before: page;
+}
+
+/* Cada tanda de 45 minutos es su propia hoja — ver DIAGRAM_ROWS_PER_PAGE en Print.tsx. La
+   primera no rompe pagina (ya la rompio .diagramSection); de la segunda en adelante, si. */
+.diagramPage + .diagramPage {
+  break-before: page;
+  padding-top: 20px;
+}
+
 @page {
   size: A4 landscape;
   margin: 10mm;

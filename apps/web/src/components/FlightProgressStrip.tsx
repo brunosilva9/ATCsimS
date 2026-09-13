@@ -4,11 +4,16 @@
  * Reproduce la tira de papel de basedatos/referencia.jpeg. La reticula es la misma:
  *
  *   +--------------+---------+-------+-------+-------+-------+--------+
- *   | CALLSIGN     | fix ant |       |       | fix   | fix   |        |
- *   | A: SSR       |     mm  | hora  | nivel +-------+-------+ ruta   |
- *   | TIPO  N0450  |  hh     | sig.  |       | hora  | hora  |        |
- *   | ADEP  ADES   | fix sig |       |       |       |       |        |
+ *   | CALLSIGN     | fix ant |  fix  |       |  fix  |  fix  |        |
+ *   | A: SSR       |    hora | sig.  | nivel +-------+-------+ ruta   |
+ *   | TIPO  N0450  |         | hora  |       | hora  | hora  |        |
+ *   | ADEP  ADES   |         |       |       |       |       |        |
  *   +--------------+---------+-------+-------+-------+-------+--------+
+ *
+ * Cada casilla despues de la entrada es igual: el nombre del fix arriba, su hora abajo. La
+ * planilla original mezclaba el nombre del segundo fix con la casilla de entrada y dejaba su
+ * hora sola al lado, que es dificil de leer porque no queda claro que las dos cosas son del
+ * mismo punto; aca todas las casillas de fix, de la segunda en adelante, se tratan igual.
  *
  * Lo impreso es lo que genera el sistema; lo que en la hoja va a mano (las estimadas de los
  * fixes siguientes, las reasignaciones de nivel) se dibuja en azul, como el lapiz del
@@ -55,6 +60,28 @@ function Hhmm({ time, tone }: { time: number; tone: 'printed' | 'pen' | 'struck'
       <span className={styles.timeHours}>{hours}</span>
       <sup className={styles.timeMinutes}>{minutes}</sup>
     </span>
+  );
+}
+
+/**
+ * Una casilla de fix: el nombre arriba, la hora abajo. Es el mismo trato para el segundo fix
+ * y para todos los que le siguen — antes el segundo vivia partido en dos cajas (el nombre
+ * pegado al fix de entrada, la hora sola en la caja de al lado), que es dificil de leer porque
+ * no queda claro que las dos cosas son del mismo punto.
+ *
+ * Cuando una instruccion revisa la estimada, se muestran las DOS: la original tachada arriba,
+ * la nueva en azul debajo — nunca solo la nueva tachada, que borraria justo el dato que hay
+ * que conservar a la vista (la estimada que se dio, para que se note que cambio).
+ */
+function FixCell({ leg, className }: { leg: FlightLeg; className?: string | undefined }) {
+  return (
+    <div className={className}>
+      <div className={styles.onwardFix}>{leg.fix}</div>
+      <div className={styles.onwardTime}>
+        <Hhmm time={leg.eto} tone={leg.revisedEto === null ? 'pen' : 'struck'} />
+        {leg.revisedEto !== null ? <Hhmm time={leg.revisedEto} tone="pen" /> : null}
+      </div>
+    </div>
   );
 }
 
@@ -109,17 +136,13 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
         <div className={styles.entryTime}>
           {entry ? <Hhmm time={entry.eto} tone="printed" /> : null}
         </div>
-        <div className={styles.entryNext}>{next?.fix ?? ''}</div>
       </div>
 
-      <div className={styles.nextTime}>
-        {next ? (
-          <>
-            <Hhmm time={next.eto} tone={next.revisedEto === null ? 'pen' : 'struck'} />
-            {next.revisedEto !== null ? <Hhmm time={next.revisedEto} tone="pen" /> : null}
-          </>
-        ) : null}
-      </div>
+      {next ? (
+        <FixCell leg={next} className={styles.nextTime} />
+      ) : (
+        <div className={styles.nextTime} />
+      )}
 
       <div className={styles.levels}>
         {levels.map((level, i) => (
@@ -134,15 +157,7 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
 
       <div className={styles.onward}>
         {onward.map((leg) => (
-          <div key={leg.seq} className={styles.onwardCell}>
-            <div className={styles.onwardFix}>{leg.fix}</div>
-            <div className={styles.onwardTime}>
-              <Hhmm
-                time={leg.revisedEto ?? leg.eto}
-                tone={leg.revisedEto === null ? 'pen' : 'struck'}
-              />
-            </div>
-          </div>
+          <FixCell key={leg.seq} leg={leg} className={styles.onwardCell} />
         ))}
       </div>
 

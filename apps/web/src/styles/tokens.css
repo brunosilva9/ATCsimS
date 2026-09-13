@@ -124,3 +124,36 @@ a { color: var(--accent); }
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/*
+ * Al imprimir, el chrome siempre en claro, pase lo que pase con el tema del sistema u override
+ * explicito. Las strips ya son "papel" siempre (--paper/--ink no cambian con el tema), pero el
+ * diagrama tiempo x punto usa los tokens de chrome, y esos SI cambian con el tema: sin esto, una
+ * hoja impresa desde un equipo en modo oscuro saldria con fondos oscuros y texto claro,
+ * ilegible o carisima de tinta en papel.
+ *
+ * Repite los mismos selectores que los bloques oscuros (no solo `:root` a secas): tanto
+ * `:root[data-theme='dark']` como `:root:not([data-theme='light'])` pesan mas que un `:root`
+ * simple, y sin igualar esa especificidad este bloque pierde contra un tema oscuro explicito
+ * sin importar el orden en el archivo.
+ */
+@media print {
+  :root,
+  :root:not([data-theme='light']),
+  :root[data-theme='dark'] {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-sunken: #edf1f3;
+    --border: #c3d0d6;
+    --border-strong: #8a9aa2;
+    --text: #142025;
+    --text-muted: #566a73;
+    --accent: #2f6d7d;
+    --accent-soft: #dceef3;
+    --warn: #9a5b00;
+    --warn-soft: #fdeccd;
+    --danger: #a32020;
+    --danger-soft: #f7dcdc;
+    --ok: #1f6b45;
+  }
+}
