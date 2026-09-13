@@ -4,16 +4,17 @@
  * Reproduce la tira de papel de basedatos/referencia.jpeg. La reticula es la misma:
  *
  *   +--------------+---------+-------+-------+-------+-------+--------+
- *   | CALLSIGN     | fix ant |  fix  |       |  fix  |  fix  |        |
- *   | A: SSR       |    hora | sig.  | nivel +-------+-------+ ruta   |
- *   | TIPO  N0450  |         | hora  |       | hora  | hora  |        |
+ *   | CALLSIGN     | fix ant | nivel |  fix  |  fix  |  fix  |        |
+ *   | A: SSR       |    hora |  de   | sig.  |       |       | ruta   |
+ *   | TIPO  N0450  |         |entrada| hora  | hora  | hora  |        |
  *   | ADEP  ADES   |         |       |       |       |       |        |
  *   +--------------+---------+-------+-------+-------+-------+--------+
  *
- * Cada casilla despues de la entrada es igual: el nombre del fix arriba, su hora abajo. La
- * planilla original mezclaba el nombre del segundo fix con la casilla de entrada y dejaba su
- * hora sola al lado, que es dificil de leer porque no queda claro que las dos cosas son del
- * mismo punto; aca todas las casillas de fix, de la segunda en adelante, se tratan igual.
+ * El nivel va pegado al fix de entrada, a su derecha: es el nivel AL QUE SE ENTRA (o al que
+ * sale, en una salida), no un numero suelto en medio de la fila. Recien despues vienen los
+ * fixes siguientes, que se leen de izquierda a derecha en el orden en que se cruzan.
+ *
+ * Cada casilla de fix, de la segunda en adelante, es igual: el nombre arriba, la hora abajo.
  *
  * Lo impreso es lo que genera el sistema; lo que en la hoja va a mano (las estimadas de los
  * fixes siguientes, las reasignaciones de nivel) se dibuja en azul, como el lapiz del
@@ -39,7 +40,7 @@ export interface FlightProgressStripProps {
   readonly fromFix?: string;
   /** Ultimo fix de este sector, el de transferencia. Por defecto, el ultimo del plan. */
   readonly toFix?: string;
-  /** Historial de niveles. Si no se pasa, se muestra el nivel de crucero del plan. */
+  /** Historial de niveles. Si no se pasa, se muestra el nivel calculado en el fix de entrada. */
   readonly levels?: readonly StripLevel[];
   /** Lo que va en la casilla final: aerovia, procedimiento o los fixes fuera del sector. */
   readonly route?: string;
@@ -102,8 +103,15 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
   const next = legs[1];
   const onward = legs.slice(2);
 
+  /*
+   * Sin `levels` explicito, el numero es el nivel YA CALCULADO en el fix de entrada — no
+   * `flight.cruiseLevelFt` a secas. Un procedimiento puede forzar la entrada a un nivel
+   * distinto del pedido (UMKAL7C exige 24000 sobre UMKAL sea cual sea el nivel de crucero que
+   * se haya puesto al armar el vuelo); mostrar el pedido en vez del real diria un numero que
+   * el propio motor ya sabe que no es el que rige ahi.
+   */
   const levels: readonly StripLevel[] =
-    props.levels ?? [{ valueFt: flight.cruiseLevelFt, superseded: false }];
+    props.levels ?? [{ valueFt: entry?.levelFt ?? flight.cruiseLevelFt, superseded: false }];
 
   const route = props.route ?? flight.procedureIdent ?? flight.airway ?? '';
 
@@ -138,12 +146,6 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
         </div>
       </div>
 
-      {next ? (
-        <FixCell leg={next} className={styles.nextTime} />
-      ) : (
-        <div className={styles.nextTime} />
-      )}
-
       <div className={styles.levels}>
         {levels.map((level, i) => (
           <span
@@ -154,6 +156,12 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
           </span>
         ))}
       </div>
+
+      {next ? (
+        <FixCell leg={next} className={styles.nextTime} />
+      ) : (
+        <div className={styles.nextTime} />
+      )}
 
       <div className={styles.onward}>
         {onward.map((leg) => (

@@ -39,6 +39,31 @@ describe('FlightProgressStrip — el segundo fix', () => {
   });
 });
 
+describe('FlightProgressStrip — el nivel va pegado a la entrada', () => {
+  it('el orden es: fix de entrada, su nivel, y recien despues el fix siguiente', () => {
+    const html = render(flight);
+    const iEntry = html.indexOf('UMKAL');
+    const iLevel = html.indexOf('_level_');
+    const iNext = html.indexOf('LOSAN');
+    expect(iEntry).toBeGreaterThan(-1);
+    expect(iEntry).toBeLessThan(iLevel);
+    expect(iLevel).toBeLessThan(iNext);
+  });
+
+  it('sin `levels` explicito, muestra el nivel YA CALCULADO en la entrada, no el crucero pedido', () => {
+    // UMKAL7C exige 24000 ft sobre UMKAL sea cual sea el crucero con que se armo el vuelo: si
+    // alguien lo arma a FL320, la entrada real sigue siendo FL240, y es eso lo que tiene que
+    // decir la casilla — no el 320 que se pidio y que el procedimiento no deja usar ahi.
+    const withMismatchedCruise = { ...flight, cruiseLevelFt: 32000 };
+    const html = render(withMismatchedCruise);
+    expect(flight.legs[0]!.fix).toBe('UMKAL');
+    expect(flight.legs[0]!.levelFt).toBe(24000); // el nivel real que calculo el motor
+    const level = html.match(/_level_[^"]*">(\d+)</)?.[1];
+    expect(level).toBe('240');
+    expect(level).not.toBe('320');
+  });
+});
+
 describe('FlightProgressStrip — estimada revisada', () => {
   const revised = {
     ...flight,
