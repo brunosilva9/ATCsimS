@@ -1,0 +1,97 @@
+{
+  "_meta": {
+    "source": "TABLAS...05 AGO 2026 EVAL.xlsx!ESPACIAM",
+    "method": "transcribed",
+    "limitation": "Son minimas de ESPACIAMIENTO EN APROXIMACION. Las minimas de separacion en ruta (vertical, longitudinal, radar) NO estan en las fuentes."
+  },
+  "separation": [
+    {
+      "runway": "17L",
+      "sivigats": false,
+      "withDepartures": true,
+      "lvp": false,
+      "value": 5,
+      "unit": "MIN"
+    },
+    {
+      "runway": "17L",
+      "sivigats": false,
+      "withDepartures": false,
+      "lvp": false,
+      "value": 5,
+      "unit": "MIN"
+    },
+    {
+      "runway": "35R",
+      "sivigats": false,
+      "withDepartures": true,
+      "lvp": false,
+      "value": 5,
+      "unit": "MIN"
+    },
+    {
+      "runway": "35R",
+      "sivigats": false,
+      "withDepartures": false,
+      "lvp": false,
+      "value": 5,
+      "unit": "MIN"
+    },
+    {
+      "runway": "17L",
+      "sivigats": true,
+      "withDepartures": true,
+      "lvp": false,
+      "value": 9,
+      "unit": "NM"
+    },
+    {
+      "runway": "17L",
+      "sivigats": true,
+      "withDepartures": false,
+      "lvp": false,
+      "value": 5,
+      "unit": "NM"
+    },
+    {
+      "runway": "35R",
+      "sivigats": true,
+      "withDepartures": true,
+      "lvp": false,
+      "value": 9,
+      "unit": "NM"
+    },
+    {
+      "runway": "35R",
+      "sivigats": true,
+      "withDepartures": false,
+      "lvp": false,
+      "value": 5,
+      "unit": "NM"
+    },
+    {
+      "runway": "17L",
+      "sivigats": true,
+      "withDepartures": true,
+      "lvp": true,
+      "value": 20,
+      "unit": "NM"
+    },
+    {
+      "runway": "17L",
+      "sivigats": true,
+      "withDepartures": false,
+      "lvp": true,
+      "value": 15,
+      "unit": "NM"
+    },
+    {
+      "runway": "17L",
+      "sivigats": false,
+      "withDepartures": null,
+      "lvp": true,
+      "value": 8,
+      "unit": "MIN"
+    }
+  ]
+}

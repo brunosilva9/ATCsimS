@@ -1,0 +1,82 @@
+{
+  "_meta": {
+    "source": "varias hojas de postacion y cabeceras de ejercicios",
+    "method": "transcribed"
+  },
+  "units": [
+    {
+      "id": "SCEL_TWR",
+      "name": "Santiago Torre",
+      "frequencies": [
+        118.1
+      ]
+    },
+    {
+      "id": "SCEL_APP",
+      "name": "Santiago Aproximacion",
+      "frequencies": [
+        129.7
+      ]
+    },
+    {
+      "id": "SCEL_ACC_N",
+      "name": "Santiago ACC Norte",
+      "frequencies": [
+        129.1,
+        126.3
+      ],
+      "_review": "dos frecuencias distintas segun la hoja"
+    },
+    {
+      "id": "SCEL_ACC_S",
+      "name": "Santiago ACC Sur",
+      "frequencies": [
+        126.3,
+        128.1
+      ],
+      "_review": "dos frecuencias distintas segun la hoja"
+    },
+    {
+      "id": "SCDA_ACC",
+      "name": "Antofagasta ACC",
+      "frequencies": [
+        128.3
+      ]
+    },
+    {
+      "id": "SCSE_APP",
+      "name": "La Serena Aproximacion",
+      "frequencies": [
+        135.35
+      ]
+    },
+    {
+      "id": "SCIE_APP",
+      "name": "Concepcion Aproximacion",
+      "frequencies": [
+        125.8
+      ]
+    },
+    {
+      "id": "SCTE_ACC",
+      "name": "Puerto Montt ACC",
+      "frequencies": [
+        128.5
+      ]
+    },
+    {
+      "id": "ACCO",
+      "name": "ACC Oceanico",
+      "frequencies": [
+        124.9
+      ]
+    },
+    {
+      "id": "SAME_ACC",
+      "name": "Mendoza ACC",
+      "frequencies": [
+        126.6
+      ]
+    }
+  ]
+}

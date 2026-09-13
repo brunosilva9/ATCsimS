@@ -1,0 +1,89 @@
+{
+  "_meta": {
+    "source": "TABLAS...05 AGO 2026 EVAL.xlsx!IACs-1, IACs-2 + 06_IAC",
+    "method": "transcribed"
+  },
+  "approaches": [
+    {
+      "code": "IAC 01",
+      "type": "ILS-Z",
+      "runway": "17L",
+      "requiresSivigats": false,
+      "iaf": "TEGEB",
+      "daMdaFt": 2000,
+      "note": "Operaciones ILS CAT II/III"
+    },
+    {
+      "code": "IAC 03",
+      "type": "ILS-Y",
+      "runway": "17L",
+      "requiresSivigats": false,
+      "iaf": "TEGEB",
+      "daMdaFt": 2000,
+      "note": null
+    },
+    {
+      "code": "IAC 04",
+      "type": "ILS-T",
+      "runway": "17L",
+      "requiresSivigats": true,
+      "iaf": "TEGEB",
+      "daMdaFt": 2000,
+      "note": null
+    },
+    {
+      "code": "IAC 06",
+      "type": "ILS-X",
+      "runway": "17L",
+      "requiresSivigats": true,
+      "iaf": "TEGEB",
+      "daMdaFt": 2000,
+      "note": null
+    },
+    {
+      "code": "IAC 07",
+      "type": "VOR",
+      "runway": "17L",
+      "requiresSivigats": true,
+      "iaf": "PADOP",
+      "daMdaFt": 2000,
+      "note": null
+    },
+    {
+      "code": "IAC 09",
+      "type": "VOR",
+      "runway": "35R",
+      "requiresSivigats": false,
+      "iaf": null,
+      "daMdaFt": null,
+      "note": null
+    },
+    {
+      "code": "IAC 11",
+      "type": "RNP-Y",
+      "runway": "17L",
+      "requiresSivigats": true,
+      "iaf": "TEGEB",
+      "daMdaFt": 2000,
+      "note": null
+    },
+    {
+      "code": "IAC 14",
+      "type": "RNP",
+      "runway": "35R",
+      "requiresSivigats": false,
+      "iaf": null,
+      "daMdaFt": null,
+      "note": null
+    },
+    {
+      "code": "IAC 16",
+      "type": "RNP-X",
+      "runway": "17L",
+      "requiresSivigats": true,
+      "iaf": "TEGEB",
+      "daMdaFt": 2000,
+      "note": null
+    }
+  ]
+}

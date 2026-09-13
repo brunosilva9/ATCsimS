@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "source": "APP_SCEL_Training_System_v1.0.xlsx!02_PISTAS",
+    "method": "extracted"
+  },
+  "runways": [
+    {
+      "aerodrome": "SCEL",
+      "ident": "17L",
+      "magCourse": 175,
+      "lengthM": 3750,
+      "ils": true,
+      "rnav": true,
+      "inUse": true,
+      "configuration": "SUR",
+      "_source": "APP_SCEL_Training_System_v1.0.xlsx!02_PISTAS"
+    },
+    {
+      "aerodrome": "SCEL",
+      "ident": "17R",
+      "magCourse": 175,
+      "lengthM": 3750,
+      "ils": true,
+      "rnav": true,
+      "inUse": false,
+      "configuration": "SUR",
+      "_source": "APP_SCEL_Training_System_v1.0.xlsx!02_PISTAS"
+    },
+    {
+      "aerodrome": "SCEL",
+      "ident": "35R",
+      "magCourse": 355,
+      "lengthM": 3750,
+      "ils": false,
+      "rnav": true,
+      "inUse": false,
+      "configuration": "NORTE",
+      "_source": "APP_SCEL_Training_System_v1.0.xlsx!02_PISTAS"
+    },
+    {
+      "aerodrome": "SCEL",
+      "ident": "35L",
+      "magCourse": 355,
+      "lengthM": 3750,
+      "ils": false,
+      "rnav": true,
+      "inUse": false,
+      "configuration": "NORTE",
+      "_source": "APP_SCEL_Training_System_v1.0.xlsx!02_PISTAS"
+    }
+  ]
+}

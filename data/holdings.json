@@ -1,0 +1,71 @@
+{
+  "_meta": {
+    "source": "TABLAS...05 AGO 2026 EVAL.xlsx!HLDNG",
+    "method": "transcribed"
+  },
+  "holdings": [
+    {
+      "fix": "DABIT",
+      "lowerLevelFt": 17000,
+      "upperLevelFt": 24000,
+      "mclFt": 16000,
+      "note": "en STAR"
+    },
+    {
+      "fix": "KADAK",
+      "lowerLevelFt": 14000,
+      "upperLevelFt": 16000,
+      "mclFt": null,
+      "note": null
+    },
+    {
+      "fix": "TBN",
+      "lowerLevelFt": 9000,
+      "upperLevelFt": 12000,
+      "mclFt": 8000,
+      "note": null
+    },
+    {
+      "fix": "UGOLA",
+      "lowerLevelFt": 9000,
+      "upperLevelFt": 12000,
+      "mclFt": 8000,
+      "note": "comparte con TBN"
+    },
+    {
+      "fix": "TEGEB",
+      "lowerLevelFt": 5000,
+      "upperLevelFt": 8000,
+      "mclFt": 5000,
+      "note": null
+    },
+    {
+      "fix": "PADOP",
+      "lowerLevelFt": 5000,
+      "upperLevelFt": 8000,
+      "mclFt": null,
+      "note": "comparte con TEGEB"
+    },
+    {
+      "fix": "PEFOR",
+      "lowerLevelFt": 5000,
+      "upperLevelFt": 8000,
+      "mclFt": null,
+      "note": null
+    },
+    {
+      "fix": "AMB",
+      "lowerLevelFt": null,
+      "upperLevelFt": null,
+      "mclFt": 10000,
+      "note": "en STAR, solo MCL"
+    },
+    {
+      "fix": "LINER",
+      "lowerLevelFt": null,
+      "upperLevelFt": null,
+      "mclFt": 11000,
+      "note": "solo MCL"
+    }
+  ]
+}

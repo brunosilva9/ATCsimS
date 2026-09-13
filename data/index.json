@@ -1,0 +1,25 @@
+{
+  "project": "ATCsimS",
+  "description": "Base de datos de navegacion del TMA Santiago (SCEL) para simulacion ATC",
+  "generated": "2026-09-13",
+  "generator": "tools/build-db.js",
+  "scope": "TMA Santiago - APP y ACC - configuracion SUR (RWY 17L) unicamente",
+  "files": [
+    "aircraft-types.json",
+    "airways.json",
+    "approaches.json",
+    "fixes.json",
+    "fleet.json",
+    "holdings.json",
+    "operators.json",
+    "performance.json",
+    "procedures.json",
+    "radars.json",
+    "runways.json",
+    "sample-flights.json",
+    "separation.json",
+    "ssr.json",
+    "tma.json",
+    "units.json"
+  ]
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.local
+.DS_Store
+
+# Planillas fuente. Son la materia prima del importador, no del repo: pesan, son
+# propiedad de ATC y lo que importa de ellas ya esta volcado en data/*.json.
+basedatos/*
+# Salvo dos: el inventario es documentacion nuestra, y la foto de la hoja es la referencia
+# visual del componente de strip. Los dos los citan docs/ y el codigo.
+!basedatos/INVENTARIO.md
+!basedatos/referencia.jpeg

@@ -1,0 +1,135 @@
+.wrapper {
+  overflow: auto;
+  max-height: 70vh;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 100%;
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.caption {
+  caption-side: top;
+  text-align: left;
+  padding: 10px 12px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface);
+  position: sticky;
+  left: 0;
+}
+
+.timeHead,
+.flightHead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border-strong);
+  padding: 6px 8px;
+  font-family: var(--font-ui);
+}
+
+.timeHead {
+  left: 0;
+  z-index: 3;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.flightHead {
+  display: table-cell;
+  min-width: 84px;
+  text-align: center;
+}
+
+.flightCallsign {
+  display: block;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.flightType {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.timeCell {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  border-right: 1px solid var(--border-strong);
+  padding: 0 8px;
+  font-weight: 400;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.markRow .timeCell {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.markRow .cell {
+  border-top: 1px solid var(--border);
+}
+
+.cell {
+  height: 19px;
+  min-width: 84px;
+  padding: 0 4px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* El vuelo esta en el sector pero entre fixes: una linea vertical, como en la planilla. */
+.enRoute {
+  background-image: linear-gradient(
+    to right,
+    transparent calc(50% - 0.5px),
+    var(--border) calc(50% - 0.5px),
+    var(--border) calc(50% + 0.5px),
+    transparent calc(50% + 0.5px)
+  );
+}
+
+.atFix {
+  background-image: none;
+  background: var(--accent-soft);
+  border-radius: 2px;
+}
+
+/* Dos vuelos sobre el mismo fix en el mismo minuto. No dice si hay perdida: dice donde mirar. */
+.coincident {
+  background: var(--warn-soft);
+  box-shadow: inset 0 0 0 1.5px var(--warn);
+}
+
+.fix {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.fixRevised {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+}
+
+.level {
+  margin-left: 5px;
+  color: var(--text-muted);
+}

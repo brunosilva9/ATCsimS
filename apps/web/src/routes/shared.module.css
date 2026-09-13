@@ -1,0 +1,100 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+.pageHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+.lead {
+  margin: 6px 0 0;
+  max-width: 66ch;
+  color: var(--text-muted);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.note {
+  margin: 0;
+  max-width: 78ch;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.note code,
+.notice code {
+  font-family: var(--font-data);
+  font-size: 12px;
+  background: var(--surface-sunken);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* Aviso de dato ausente o dudoso. Ambar, no rojo: no es un fallo de la app. */
+.notice {
+  padding: 12px 14px;
+  border-left: 3px solid var(--warn);
+  background: var(--warn-soft);
+  color: var(--text);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 13px;
+}
+
+.notice ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.notice li + li {
+  margin-top: 4px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}

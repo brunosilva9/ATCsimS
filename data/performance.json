@@ -1,0 +1,210 @@
+{
+  "_meta": {
+    "source": "TABLAS...05 AGO 2026 EVAL.xlsx!PERFORMANCES (bloque vertical, filas 12-42)",
+    "method": "transcribed",
+    "note": "Modelo de vuelo del sistema: velocidad por NIVEL, no por tipo de aeronave. fixes = punto donde ese nivel debe estar alcanzado.",
+    "limitation": "El archivo trae tres tablas de performance que no coinciden (ver _review por nivel). Pendiente P-01 con ATC."
+  },
+  "performance": [
+    {
+      "level": "FL240",
+      "altFt": 24000,
+      "iasKt": 300,
+      "gsKt": 360,
+      "nmPerMin": 6,
+      "ftPerMin": 2000,
+      "note": "o superior",
+      "fixes": [
+        "UMKAL",
+        "GUVOL"
+      ]
+    },
+    {
+      "level": "FL230",
+      "altFt": 23000,
+      "iasKt": null,
+      "gsKt": null,
+      "nmPerMin": null,
+      "ftPerMin": null,
+      "note": null,
+      "fixes": [
+        "NEBEG"
+      ]
+    },
+    {
+      "level": "FL210",
+      "altFt": 21000,
+      "iasKt": null,
+      "gsKt": null,
+      "nmPerMin": null,
+      "ftPerMin": null,
+      "note": null,
+      "fixes": [
+        "ALBAL",
+        "YESOS"
+      ]
+    },
+    {
+      "level": "FL190",
+      "altFt": 19000,
+      "iasKt": 280,
+      "gsKt": 330,
+      "nmPerMin": 5.5,
+      "ftPerMin": 2000,
+      "note": "aplica hasta FL180",
+      "fixes": [],
+      "_alternatives": {
+        "PERF2": {
+          "gsKt": 300,
+          "nmPerMin": 5,
+          "ftPerMin": 1800
+        }
+      }
+    },
+    {
+      "level": "FL170",
+      "altFt": 17000,
+      "iasKt": 260,
+      "gsKt": 300,
+      "nmPerMin": 5,
+      "ftPerMin": 1800,
+      "note": "aplica hasta FL160",
+      "fixes": [
+        "VULBI",
+        "DABIT"
+      ],
+      "_alternatives": {
+        "PERF2": {
+          "gsKt": 280,
+          "nmPerMin": 4.7,
+          "ftPerMin": 1600
+        }
+      }
+    },
+    {
+      "level": "FL150",
+      "altFt": 15000,
+      "iasKt": 290,
+      "gsKt": null,
+      "nmPerMin": 4.6,
+      "ftPerMin": 1500,
+      "note": "aplica hasta FL140",
+      "fixes": [
+        "MOLPU"
+      ],
+      "_review": "PERFORMANCES!D25:J26 no trae GS ni Nm/Min para FL150-FL140; el 4.6 viene de la tabla horizontal (PERFORMANCES!X5)."
+    },
+    {
+      "level": "FL130",
+      "altFt": 13000,
+      "iasKt": 250,
+      "gsKt": 270,
+      "nmPerMin": 4.5,
+      "ftPerMin": 1500,
+      "note": null,
+      "fixes": [],
+      "_alternatives": {
+        "PERFORMANCES_horizontal": {
+          "gsKt": 250,
+          "nmPerMin": 4.167
+        }
+      },
+      "_review": "Contradiccion: PERFORMANCES!Y4-Y5 dice 250 kt / 4.167; PERFORMANCES!F28-I28 y PERF2!R28-S28 dicen 270 kt / 4.5."
+    },
+    {
+      "level": "FL120",
+      "altFt": 12000,
+      "iasKt": 250,
+      "gsKt": 240,
+      "nmPerMin": 4,
+      "ftPerMin": 1300,
+      "note": "aplica hasta FL110",
+      "fixes": [
+        "MORPA",
+        "SAFEL",
+        "LINER",
+        "ANGOD",
+        "GELUS"
+      ]
+    },
+    {
+      "level": "10000",
+      "altFt": 10000,
+      "iasKt": 230,
+      "gsKt": 230,
+      "nmPerMin": 3.8,
+      "ftPerMin": 1000,
+      "note": "altitud de transicion",
+      "fixes": [
+        "UGANO",
+        "VUDOG",
+        "MAPOC",
+        "AMB",
+        "ETEMI",
+        "OLMUE"
+      ],
+      "_alternatives": {
+        "PERFORMANCES_horizontal": {
+          "nmPerMin": 3.833
+        }
+      },
+      "_review": "230 kt son 3.833 NM/min. PERFORMANCES!I33 y PERF2!S33 dicen 3.8; PERFORMANCES!AB5 dice 3.833."
+    },
+    {
+      "level": "9000",
+      "altFt": 9000,
+      "iasKt": 220,
+      "gsKt": 220,
+      "nmPerMin": 3.6,
+      "ftPerMin": 1000,
+      "note": null,
+      "fixes": [
+        "SEKSU",
+        "KIDUG",
+        "DONTI"
+      ],
+      "_alternatives": {
+        "PERFORMANCES_horizontal": {
+          "nmPerMin": 3.667
+        }
+      },
+      "_review": "220 kt son 3.667 NM/min. PERFORMANCES!I35 y PERF2!S35 dicen 3.6; PERFORMANCES!AC5 dice 3.667."
+    },
+    {
+      "level": "8000",
+      "altFt": 8000,
+      "iasKt": 210,
+      "gsKt": 210,
+      "nmPerMin": 3.5,
+      "ftPerMin": 800,
+      "note": null,
+      "fixes": [
+        "TABON",
+        "UGOLA",
+        "PULKI"
+      ]
+    },
+    {
+      "level": "7000",
+      "altFt": 7000,
+      "iasKt": 180,
+      "gsKt": 180,
+      "nmPerMin": 3,
+      "ftPerMin": 700,
+      "note": null,
+      "fixes": [
+        "PUMAR"
+      ]
+    },
+    {
+      "level": "6000",
+      "altFt": 6000,
+      "iasKt": 150,
+      "gsKt": 150,
+      "nmPerMin": 2.5,
+      "ftPerMin": 500,
+      "note": "aplica hasta 5000",
+      "fixes": []
+    }
+  ]
+}

@@ -1,0 +1,233 @@
+/*
+ * La strip es papel: fondo blanco y linea negra fina en cualquier tema, porque asi se imprime
+ * y asi se compara contra la hoja real. El unico color es el del lapiz.
+ */
+
+.strip {
+  display: flex;
+  align-items: stretch;
+  min-height: 78px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-strip);
+  font-size: 13px;
+  line-height: 1.15;
+  border: 1.5px solid var(--rule);
+  /* Las strips se apilan compartiendo el borde, como las filas de la hoja. */
+  margin-bottom: -1.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.strip > * + * {
+  border-left: 1.5px solid var(--rule);
+}
+
+.highlighted .callsign {
+  background: var(--marker);
+}
+
+/* ------------------------------------------------------------------ identificacion */
+
+.ident {
+  flex: 0 0 152px;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  padding: 2px 6px;
+}
+
+.callsign {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+
+.sector {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0 3px;
+  border: 1px solid var(--rule-thin);
+  color: var(--rule-thin);
+}
+
+.identRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.identKey {
+  color: var(--rule-thin);
+}
+
+.ssr {
+  font-family: var(--font-data);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  margin-right: auto;
+  padding-left: 14px;
+}
+
+.tas {
+  font-family: var(--font-data);
+  font-size: 12px;
+}
+
+/* -------------------------------------------------------------------- fix de entrada */
+
+.entry {
+  flex: 0 0 92px;
+  display: grid;
+  grid-template-rows: 20px 1fr 20px;
+}
+
+.entryFix,
+.entryNext {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.entryFix {
+  border-bottom: 1.5px solid var(--rule);
+}
+
+.entryNext {
+  border-top: 1.5px solid var(--rule);
+}
+
+.entryTime {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ------------------------------------------------------------------------- casillas */
+
+.nextTime,
+.levels,
+.route {
+  flex: 0 0 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px;
+}
+
+.levels {
+  flex-basis: 62px;
+  font-family: var(--font-data);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.level {
+  color: var(--ink);
+}
+
+.levelStruck {
+  color: var(--rule-thin);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.route {
+  flex: 1 1 96px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 3px 5px;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------- fixes siguientes (dos bandas) */
+
+.onward {
+  display: flex;
+  align-items: stretch;
+}
+
+.onwardCell {
+  flex: 0 0 66px;
+  display: grid;
+  grid-template-rows: 26px 1fr;
+}
+
+.onwardCell + .onwardCell {
+  border-left: 1.5px solid var(--rule);
+}
+
+.onwardFix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1.5px solid var(--rule);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.onwardTime {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ----------------------------------------------------------------------------- horas */
+
+.time {
+  display: inline-flex;
+  align-items: flex-start;
+  font-family: var(--font-data);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.timeHours {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.timeMinutes {
+  font-size: 12px;
+  line-height: 1;
+  top: -0.35em;
+  margin-left: 1px;
+}
+
+/** Impreso por el sistema: tinta negra, como el formulario. */
+.printed {
+  color: var(--ink);
+}
+
+/** Escrito a mano por el controlador. */
+.pen {
+  color: var(--pen);
+}
+
+/** Estimada superada por una instruccion: se tacha y se escribe la nueva debajo. */
+.struck {
+  color: var(--rule-thin);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+@media (max-width: 900px) {
+  .strip {
+    font-size: 12px;
+  }
+  .ident {
+    flex-basis: 130px;
+  }
+}

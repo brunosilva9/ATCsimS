@@ -1,0 +1,129 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.clean,
+.loss,
+.marginal {
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.clean {
+  color: var(--ok);
+  background: var(--surface);
+  border: 1px solid var(--ok);
+}
+
+.loss {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.marginal {
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.item,
+.itemLoss {
+  padding: 9px 13px;
+  background: var(--surface);
+}
+
+/* La franja de severidad sustituye a un icono: se lee de reojo. */
+.itemLoss {
+  box-shadow: inset 3px 0 0 var(--danger);
+}
+
+.item {
+  box-shadow: inset 3px 0 0 var(--warn);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.time,
+.fix,
+.pair {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+
+.time {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.fix {
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.kind {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1px 7px;
+  color: var(--text-muted);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+}
+
+.pair {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.detail {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.source {
+  margin-top: 2px;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.note {
+  margin: 0;
+  padding: 10px 13px;
+  font-size: 12px;
+  color: var(--text);
+  background: var(--warn-soft);
+  border-left: 3px solid var(--warn);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}

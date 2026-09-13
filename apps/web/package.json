@@ -1,0 +1,30 @@
+{
+  "name": "@atcsims/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Prototipo web del simulador: explorador de navegacion, strips y diagrama tiempo x punto.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@atcsims/core": "0.1.0",
+    "@atcsims/navdata": "0.1.0",
+    "lz-string": "^1.5.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.1",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.5"
+  }
+}

@@ -1,0 +1,146 @@
+.search {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.searchLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.search input {
+  font: inherit;
+  font-family: var(--font-data);
+  min-width: 240px;
+  padding: 7px 10px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tab,
+.tabOn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  cursor: pointer;
+}
+
+.tab {
+  background: var(--surface);
+  color: var(--text-muted);
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tabOn {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--surface);
+}
+
+.tabCount {
+  font-family: var(--font-data);
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  max-height: 68vh;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  white-space: nowrap;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.table td {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.table tbody tr:hover td {
+  background: var(--accent-soft);
+}
+
+.ident {
+  font-family: var(--font-data);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.num {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.route {
+  font-family: var(--font-data);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  min-width: 280px;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* Marca de dato que hay que mirar antes de usar. */
+.flag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-radius: 999px;
+}

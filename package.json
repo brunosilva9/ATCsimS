@@ -1,0 +1,24 @@
+{
+  "name": "atcsims",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Simulador didactico de ejercicios ATC para el TMA Santiago (SCEL)",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "data:build": "node tools/build-db.js",
+    "data:validate": "node tools/validate.js",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4",
+    "vite": "^6.4.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

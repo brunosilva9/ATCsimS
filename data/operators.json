@@ -1,0 +1,134 @@
+{
+  "_meta": {
+    "source": "01modelo FPV.xlsx!ACFT",
+    "method": "extracted",
+    "note": "country no esta en las fuentes"
+  },
+  "operators": [
+    {
+      "icaoPrefix": "AAL",
+      "name": "American",
+      "country": null
+    },
+    {
+      "icaoPrefix": "ACA",
+      "name": "Air Canada",
+      "country": null
+    },
+    {
+      "icaoPrefix": "AFR",
+      "name": "Air France",
+      "country": null
+    },
+    {
+      "icaoPrefix": "ARG",
+      "name": "Aerolíneas",
+      "country": null
+    },
+    {
+      "icaoPrefix": "AVA",
+      "name": "Avianca",
+      "country": null
+    },
+    {
+      "icaoPrefix": "AZU",
+      "name": "Azul",
+      "country": null
+    },
+    {
+      "icaoPrefix": "BAW",
+      "name": "British",
+      "country": null
+    },
+    {
+      "icaoPrefix": "CMP",
+      "name": "Copa",
+      "country": null
+    },
+    {
+      "icaoPrefix": "DAL",
+      "name": "Delta",
+      "country": null
+    },
+    {
+      "icaoPrefix": "DHC",
+      "name": "160–180 kt",
+      "country": null
+    },
+    {
+      "icaoPrefix": "DLH",
+      "name": "Lufthansa",
+      "country": null
+    },
+    {
+      "icaoPrefix": "GOL",
+      "name": "GOL",
+      "country": null
+    },
+    {
+      "icaoPrefix": "IBE",
+      "name": "Iberia",
+      "country": null
+    },
+    {
+      "icaoPrefix": "JAT",
+      "name": "JetSMART",
+      "country": null
+    },
+    {
+      "icaoPrefix": "JBU",
+      "name": "JetBlue",
+      "country": null
+    },
+    {
+      "icaoPrefix": "KLM",
+      "name": "KLM",
+      "country": null
+    },
+    {
+      "icaoPrefix": "LAN",
+      "name": "LATAM",
+      "country": null
+    },
+    {
+      "icaoPrefix": "LPE",
+      "name": "LATAM Perú",
+      "country": null
+    },
+    {
+      "icaoPrefix": "QFA",
+      "name": "Qantas",
+      "country": null
+    },
+    {
+      "icaoPrefix": "SKU",
+      "name": "SKY",
+      "country": null
+    },
+    {
+      "icaoPrefix": "SKY",
+      "name": "SKY",
+      "country": null
+    },
+    {
+      "icaoPrefix": "TAM",
+      "name": "LATAM",
+      "country": null
+    },
+    {
+      "icaoPrefix": "UAE",
+      "name": "Emirates",
+      "country": null
+    },
+    {
+      "icaoPrefix": "UAL",
+      "name": "United",
+      "country": null
+    },
+    {
+      "icaoPrefix": "VOI",
+      "name": "Volaris",
+      "country": null
+    }
+  ]
+}

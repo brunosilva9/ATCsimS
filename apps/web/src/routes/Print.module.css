@@ -1,0 +1,89 @@
+.sheet {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-block: 20px 40px;
+  padding-inline: 16px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.print {
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 20px;
+  color: var(--surface);
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.title,
+.subtitle {
+  font-family: var(--font-strip);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.title {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.subtitle {
+  margin: 26px 0 10px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.strips {
+  overflow-x: auto;
+}
+
+.strips > * {
+  min-width: 760px;
+}
+
+@page {
+  size: A4 landscape;
+  margin: 10mm;
+}
+
+@media print {
+  /* Fuera todo lo que no sea la hoja: cabecera de la app, pie, y el propio boton. */
+  :global(header),
+  :global(footer),
+  .toolbar {
+    display: none !important;
+  }
+
+  .sheet {
+    max-width: none;
+    padding: 0;
+  }
+
+  .title,
+  .subtitle {
+    color: #000;
+  }
+
+  .strips {
+    overflow: visible;
+  }
+
+  .strips > * {
+    min-width: 0;
+    /* Una tira no se parte entre dos paginas. */
+    break-inside: avoid;
+  }
+}

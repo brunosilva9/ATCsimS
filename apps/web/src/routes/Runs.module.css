@@ -1,0 +1,120 @@
+.upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-weight: 600;
+  color: var(--surface);
+  background: var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.upload input {
+  display: none;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.facts > div {
+  background: var(--surface);
+  padding: 10px 14px;
+}
+
+.facts dt {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.facts dd {
+  margin: 3px 0 0;
+}
+
+/* Tres cifras que se leen de un vistazo: es lo primero que mira quien corrige. */
+.scoreboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.scoreOk,
+.scoreOpen,
+.scoreBad {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.scoreOk {
+  box-shadow: inset 4px 0 0 var(--ok);
+}
+
+.scoreOpen {
+  box-shadow: inset 4px 0 0 var(--warn);
+}
+
+.scoreBad {
+  box-shadow: inset 4px 0 0 var(--danger);
+}
+
+.scoreNumber {
+  font-family: var(--font-data);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.subhead {
+  margin: 12px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.conflictLines,
+.log {
+  margin: 6px 0 0;
+  padding-left: 20px;
+  font-size: 13px;
+}
+
+.conflictLines li,
+.log li {
+  margin-bottom: 4px;
+}
+
+.time {
+  display: inline-block;
+  min-width: 46px;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text-muted);
+}

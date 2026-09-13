@@ -1,0 +1,143 @@
+# `data/` — base de navegación en JSON
+
+Generada desde [`basedatos/`](../basedatos/INVENTARIO.md). **No editar a mano:** se regenera con
+
+```bash
+node tools/build-db.js     # importa las planillas -> data/*.json
+node tools/validate.js     # comprueba integridad; sale con codigo 1 si hay errores
+```
+
+Si un dato está mal, se corrige **en el Excel** y se vuelve a importar. Así la planilla sigue
+siendo la fuente de verdad y el instructor no tiene que aprender JSON.
+
+## Convención
+
+Todo archivo trae un bloque `_meta` con:
+
+| Campo | Significado |
+|---|---|
+| `source` | Archivo y hoja de origen |
+| `method` | `extracted` = leído por el script (reproducible) · `transcribed` = copiado a mano porque el layout depende de celdas combinadas |
+| `note` / `limitation` | Lo que hay que saber antes de usar el archivo |
+
+Y dentro de los registros:
+
+| Campo | Significado |
+|---|---|
+| `_source` | De dónde salió ese registro concreto |
+| `_inferred: true` | El registro no estaba en la base: se creó porque otro lo citaba |
+| `_review` | Dato contradictorio o incompleto en la planilla. **No usar sin verificar** |
+
+Unidades: NM, pies, nudos, minutos, grados decimales (negativo S/W).
+
+## Archivos
+
+| Archivo | Registros | Método | Contenido |
+|---|---|---|---|
+| `fixes.json` | 107 | extraído | Puntos de notificación. 46 con coordenada, 61 sin |
+| `procedures.json` | 21 | extraído | 8 STAR + 13 SID con secuencia de fixes y distancias |
+| `airways.json` | 15 | extraído | Aerovías con su secuencia de fixes |
+| `runways.json` | 4 | extraído | 17L/17R/35L/35R de SCEL |
+| `approaches.json` | 9 | transcrito | IAC por pista y requisito SIVIGATS |
+| `holdings.json` | 9 | transcrito | Esperas con nivel inferior/superior y MCL |
+| `performance.json` | 13 | transcrito | **Velocidad por nivel: el modelo de vuelo del sistema** |
+| `separation.json` | 11 | transcrito | Mínimas de espaciamiento en aproximación |
+| `radars.json` | 3 | transcrito | Vigilancia ATS (AIP Chile ENR 1.6-7) |
+| `units.json` | 10 | transcrito | Posiciones de control y frecuencias |
+| `tma.json` | — | transcrito | Altitud/nivel de transición, configuraciones |
+| `aircraft-types.json` | 18 | extraído | Rango de velocidad por tipo OACI |
+| `fleet.json` | 91 | extraído | Matrículas CC-XXX e indicativos especiales |
+| `operators.json` | 25 | extraído | Prefijos de indicativo |
+| `sample-flights.json` | 90 | extraído | Catálogo de vuelos comerciales para armar ejercicios |
+| `ssr.json` | 45 bloques | extraído | Pool de 360 códigos transpondedor, en bloques de 8 |
+| `index.json` | — | — | Manifiesto |
+
+## Cómo leer un procedimiento
+
+```jsonc
+{
+  "ident": "UMKAL7C",
+  "type": "STAR",
+  "totalDistNm": 70,
+  "sourceTotalTimeMin": 14.035,
+  "legs": [
+    { "seq": 1, "fix": "UMKAL", "distToEndNm": 70, "legDistNm": null },
+    { "seq": 2, "fix": "LOSAN", "distToEndNm": 47, "legDistNm": 23,
+      "sourceTimeMin": 3.833, "sourceGsKt": 360 },
+    // ...
+    { "seq": 7, "fix": "TEGEB", "distToEndNm": 0,  "legDistNm": 9,
+      "sourceTimeMin": 2.571, "sourceGsKt": 210 }
+  ]
+}
+```
+
+- **`distToEndNm`** es el dato que usa la fórmula del instructor. El primer tramo no tiene
+  `legDistNm` porque es el punto de entrada.
+- **`minAltFt` / `maxAltFt` / `maxSpeedKt` van en el tramo, no en el procedimiento.** La hoja
+  `05_STAR` pone esas tres columnas junto a un FIX concreto (columna D), así que son la ventana
+  *en ese punto*: UMKAL7C dice 24000/24000 sobre UMKAL porque ese es el nivel al que se entra a
+  la llegada, no un piso de descenso para toda la STAR.
+- **`sourceGsKt`** está *derivado*: `legDistNm / sourceTimeMin × 60`. Revela la
+  velocidad que el instructor asume en cada tramo, o sea **el perfil de descenso del procedimiento**.
+  UMKAL7C baja 360 → 330 → 300 → 280 → 230 → 210 kt, que es exactamente la escalera de
+  `performance.json`.
+- Solo **7 de 21** procedimientos traen este perfil: en los otros la planilla omite el tiempo de
+  algún tramo y no se puede saber cuál. Ver "Defectos" abajo.
+
+En las SID el primer tramo va del aeródromo al primer fix, por eso llevan además
+`distFromOriginNm`.
+
+## Defectos encontrados en las planillas
+
+Están marcados en el JSON, no corregidos en silencio.
+
+1. **`ASIMO7D` tiene 8 fijos y solo 7 distancias.** Falta un valor y no se puede deducir a cuál
+   corresponde. Comparando con las otras STAR que comparten cola (`UGOLA 19 → EL220 14 → PUMAR 9
+   → TEGEB 0`), lo que falta es probablemente `PUMAR = 9`, pero eso hay que confirmarlo, no
+   asumirlo. El procedimiento se emite con todas las distancias en `null`: **el motor no puede
+   calcularlo hasta que se arregle el Excel**. Mismo defecto en `BUSES_horario_ver5.xlsx`.
+
+2. **14 de 21 procedimientos omiten el tiempo de algún tramo** (normalmente el primero). No afecta
+   al cálculo — el motor calcula el tiempo desde la distancia y la performance — pero impide
+   reconstruir el perfil de velocidad que el instructor tenía en mente.
+
+3. **`EROLO6E`: 55 NM en la hoja `05_STAR` desde KADAK, 47 NM en `STARs-SIDs-2`.** Marcado con
+   `_reviewDist`.
+
+4. **`ALBAL7A`: 80 NM sumando tramos, 78 NM en la tabla resumen de la misma hoja.**
+
+5. **Hay tres tablas de performance en el mismo archivo fuente y no coinciden.** Para FL130 una
+   dice 250 kt y las otras dos 270 kt. `performance.json` usa la tabla vertical de la hoja
+   `PERFORMANCES` y anota las discrepancias en `_alternatives` y `_review` de cada nivel.
+   Es el punto P-01 del informe a ATC, y hasta que se resuelva el motor recibe la tabla como
+   parámetro para poder cambiarla sin tocar código.
+
+6. **61 fixes sin coordenada.** Son de tres clases: puntos DME (`D25AMB`, `EL220`), fijos en ruta
+   fuera del TMA (`TOY`, `OPTAN`, `CHI`) y un punto definido por altitud (`4000FT`, en DONTI5B:
+   el viraje ocurre al alcanzar esa altitud, no sobre una posición). No impiden calcular tiempos
+   —que salen de las distancias tabuladas— pero sí cualquier representación gráfica.
+
+## Dos datos que no están en ninguna planilla
+
+No son defectos: simplemente no aparecen. El motor los suple y **declara el supuesto** en cada
+cálculo, para que la interfaz pueda decirlo en vez de callarlo.
+
+1. **La elevación del aeródromo.** Una salida tiene que arrancar de algún sitio. A falta del
+   dato, arranca a 6000 ft, que es el nivel más bajo de `performance.json`.
+2. **El nivel al que termina una llegada.** Sale del MCL del último fix en `holdings.json`
+   (TEGEB = 5000 ft), que es dato real. `EROLO8A` termina en `ISILO`, que no tiene MCL
+   publicado: ese procedimiento se calcula con el último nivel conocido y lo avisa.
+
+## Limitaciones de alcance
+
+- **Solo configuración SUR (RWY 17L).** Las fuentes no traen procedimientos detallados para NORTE,
+  aunque 15 de los 20 escenarios previstos son NORTE.
+- **Solo mínimas de espaciamiento en aproximación.** Las de separación en ruta (vertical,
+  longitudinal, radar) no están en las planillas.
+- **Sin viento.** El modelo asume GS = valor de tabla.
+- **Sin categoría de estela** ni velocidad de aproximación por tipo.
+- **Los conflictos y los eventos no existen todavía**: las hojas correspondientes del esquema
+  maestro están vacías.
+
+Detalle en [`docs/MODELO_DATOS.md`](../docs/MODELO_DATOS.md) §6 y
+[`docs/REQUISITOS.md`](../docs/REQUISITOS.md) §10.

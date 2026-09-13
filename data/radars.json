@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "source": "TABLAS...05 AGO 2026 EVAL.xlsx!RDRs (cita AIP Chile ENR 1.6-7)",
+    "method": "transcribed"
+  },
+  "radars": [
+    {
+      "equipment": "PSR Santiago - Cerro Colorado",
+      "type": "PSR",
+      "rangeNm": 80,
+      "rpn": 15,
+      "unit": "Santiago APP/ACC"
+    },
+    {
+      "equipment": "MSSR Santiago - Cerro Colorado",
+      "type": "MSSR",
+      "rangeNm": 250,
+      "rpn": 15,
+      "unit": "Santiago APP/ACC"
+    },
+    {
+      "equipment": "MSSR Santiago - Yerbas Buenas",
+      "type": "MSSR",
+      "rangeNm": 250,
+      "rpn": 12,
+      "unit": "Santiago APP/ACC"
+    }
+  ]
+}

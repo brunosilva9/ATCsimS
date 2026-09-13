@@ -1,0 +1,464 @@
+{
+  "_meta": {
+    "source": "TABLAS...05 AGO 2026 EVAL.xlsx!ACFT1 (2)",
+    "method": "extracted",
+    "note": "Matriculas CC-XXX e indicativos especiales (militares y de ejercicio)."
+  },
+  "fleet": [
+    {
+      "registration": "CCAIL",
+      "icaoType": "C172",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPGM",
+      "icaoType": "C172",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPKQ",
+      "icaoType": "C172",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPLK",
+      "icaoType": "C172",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCSTF",
+      "icaoType": "C172",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCCP",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCDLA",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCDLB",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCKID",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCKIE",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCKIF",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCKIH",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCLTD",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPAL",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPCK",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPDC",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPGV",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPKN",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPKS",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPPQ",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPTL",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPVR",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPZK",
+      "icaoType": "PA28",
+      "isCallsign": false
+    },
+    {
+      "registration": "ARGON",
+      "icaoType": "DHC6",
+      "isCallsign": true
+    },
+    {
+      "registration": "COYOTE",
+      "icaoType": "DHC6",
+      "isCallsign": true
+    },
+    {
+      "registration": "TORO",
+      "icaoType": "DHC6",
+      "isCallsign": true
+    },
+    {
+      "registration": "MAMUT",
+      "icaoType": "DHC6",
+      "isCallsign": true
+    },
+    {
+      "registration": "CCCFN",
+      "icaoType": "DHC6",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCHV",
+      "icaoType": "DHC6",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCDMC",
+      "icaoType": "DHC6",
+      "isCallsign": false
+    },
+    {
+      "registration": "SATANAS",
+      "icaoType": "DHC6",
+      "isCallsign": true
+    },
+    {
+      "registration": "GARRA",
+      "icaoType": "DHC6",
+      "isCallsign": true
+    },
+    {
+      "registration": "FACH",
+      "icaoType": "C212",
+      "isCallsign": true
+    },
+    {
+      "registration": "EJERCITO",
+      "icaoType": "C212",
+      "isCallsign": true
+    },
+    {
+      "registration": "NAVAL",
+      "icaoType": "C212",
+      "isCallsign": true
+    },
+    {
+      "registration": "CCCLT",
+      "icaoType": "C212",
+      "isCallsign": false
+    },
+    {
+      "registration": "EJERCITO",
+      "icaoType": "C208",
+      "isCallsign": true
+    },
+    {
+      "registration": "E-TAROT",
+      "icaoType": "C208",
+      "isCallsign": true
+    },
+    {
+      "registration": "CCAOL",
+      "icaoType": "C208",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCDR",
+      "icaoType": "C208",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCTS",
+      "icaoType": "C208",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCDBB",
+      "icaoType": "C208",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCDDU",
+      "icaoType": "C208",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCABG",
+      "icaoType": "SR22",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCADS",
+      "icaoType": "SR22",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCAGO",
+      "icaoType": "SR22",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCKF",
+      "icaoType": "SR22",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCWQ",
+      "icaoType": "SR22",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPRB",
+      "icaoType": "SR22",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCDD",
+      "icaoType": "PA31",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCEZ",
+      "icaoType": "PA31",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCDAP",
+      "icaoType": "PA31",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCKIU",
+      "icaoType": "PA31",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPKV",
+      "icaoType": "PA31",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPLB",
+      "icaoType": "PA31",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPSI",
+      "icaoType": "PA31",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCAAI",
+      "icaoType": "D228",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCAAQ",
+      "icaoType": "D228",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCARG",
+      "icaoType": "D228",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCNW",
+      "icaoType": "D228",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCWC",
+      "icaoType": "D228",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCWX",
+      "icaoType": "D228",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCAEV",
+      "icaoType": "PAY2",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCPR",
+      "icaoType": "PAY2",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCWD",
+      "icaoType": "PAY2",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCZC",
+      "icaoType": "PAY2",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPHM",
+      "icaoType": "PAY2",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCPVE",
+      "icaoType": "PAY2",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCAAP",
+      "icaoType": "BE20",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCABC",
+      "icaoType": "BE20",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCAFO",
+      "icaoType": "BE20",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCALO",
+      "icaoType": "BE20",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCEK",
+      "icaoType": "BE20",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCFG",
+      "icaoType": "BE20",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCDAG",
+      "icaoType": "BE20",
+      "isCallsign": false
+    },
+    {
+      "registration": "LVKBS",
+      "icaoType": "BE20",
+      "isCallsign": true
+    },
+    {
+      "registration": "CCANY",
+      "icaoType": "PC12",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCAWZ",
+      "icaoType": "PC12",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCAZX",
+      "icaoType": "PC12",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCBGR",
+      "icaoType": "PC12",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCDAW",
+      "icaoType": "PC12",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCDHI",
+      "icaoType": "B350",
+      "isCallsign": false
+    },
+    {
+      "registration": "HK-5354",
+      "icaoType": "AT46",
+      "isCallsign": true
+    },
+    {
+      "registration": "CENTAURO",
+      "icaoType": "C130",
+      "isCallsign": true
+    },
+    {
+      "registration": "MAGNO",
+      "icaoType": "C130",
+      "isCallsign": true
+    },
+    {
+      "registration": "TORTUGA",
+      "icaoType": "C130",
+      "isCallsign": true
+    },
+    {
+      "registration": "PLUTO",
+      "icaoType": "C130",
+      "isCallsign": true
+    },
+    {
+      "registration": "CCDCU",
+      "icaoType": "RJ1H",
+      "isCallsign": false
+    },
+    {
+      "registration": "CC-DHT",
+      "icaoType": "DH8D",
+      "isCallsign": false
+    },
+    {
+      "registration": "CCCPS",
+      "icaoType": "C750",
+      "isCallsign": false
+    },
+    {
+      "registration": "ARMADA",
+      "icaoType": "C295",
+      "isCallsign": true
+    }
+  ]
+}

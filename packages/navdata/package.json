@@ -1,0 +1,18 @@
+{
+  "name": "@atcsims/navdata",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Carga, tipa y sanea los JSON de data/.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@atcsims/core": "0.1.0"
+  }
+}

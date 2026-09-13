@@ -1,0 +1,1453 @@
+{
+  "_meta": {
+    "source": [
+      "TABLAS...05 AGO 2026 EVAL.xlsx!STARs-SIDs-2",
+      "APP_SCEL_Training_System_v1.0.xlsx!05_STAR"
+    ],
+    "method": "extracted",
+    "note": "STAR: distToEndNm es el dato de la planilla; legDistNm se deriva. SID: legDistNm es el dato; el primer tramo va del aerodromo al primer fix.",
+    "limitation": "Solo configuracion SUR / RWY 17L. No hay procedimientos detallados para NORTE en las fuentes."
+  },
+  "procedures": [
+    {
+      "ident": "ALBAL7A",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "ALBAL",
+      "totalDistNm": 80,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 79,
+          "sourceTimeMin": 0.286,
+          "sourceGsKt": 210
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 71,
+          "sourceTimeMin": 1.92,
+          "sourceGsKt": 250
+        },
+        {
+          "seq": 3,
+          "fix": "ESKUL",
+          "legDistNm": 3,
+          "distFromOriginNm": 12,
+          "distToEndNm": 68,
+          "sourceTimeMin": 0.643,
+          "sourceGsKt": 280
+        },
+        {
+          "seq": 4,
+          "fix": "LINER",
+          "legDistNm": 19,
+          "distFromOriginNm": 31,
+          "distToEndNm": 49,
+          "sourceTimeMin": 3.8,
+          "sourceGsKt": 300
+        },
+        {
+          "seq": 5,
+          "fix": "SUPRA",
+          "legDistNm": 13,
+          "distFromOriginNm": 44,
+          "distToEndNm": 36,
+          "sourceTimeMin": 2.167,
+          "sourceGsKt": 360
+        },
+        {
+          "seq": 6,
+          "fix": "ALBAL",
+          "legDistNm": 36,
+          "distFromOriginNm": 80,
+          "distToEndNm": 0,
+          "sourceTimeMin": 6,
+          "sourceGsKt": 360
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        0.643,
+        3.8,
+        2.167,
+        6,
+        14.815
+      ],
+      "sourceTotalTimeMin": 14.815
+    },
+    {
+      "ident": "ALBAL7C",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "ALBAL",
+      "totalDistNm": 79,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 78
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 70
+        },
+        {
+          "seq": 3,
+          "fix": "EL250",
+          "legDistNm": 18,
+          "distFromOriginNm": 27,
+          "distToEndNm": 52
+        },
+        {
+          "seq": 4,
+          "fix": "EL401",
+          "legDistNm": 15,
+          "distFromOriginNm": 42,
+          "distToEndNm": 37
+        },
+        {
+          "seq": 5,
+          "fix": "ALBAL",
+          "legDistNm": 37,
+          "distFromOriginNm": 79,
+          "distToEndNm": 0
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        4,
+        13.167,
+        19.372
+      ],
+      "_timesNote": "La planilla trae 4 tiempos por tramo y el procedimiento tiene 5. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin."
+    },
+    {
+      "ident": "ANGOD6C",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "ANGOD",
+      "totalDistNm": 39,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 38
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 30
+        },
+        {
+          "seq": 3,
+          "fix": "GENPO",
+          "legDistNm": 4,
+          "distFromOriginNm": 13,
+          "distToEndNm": 26
+        },
+        {
+          "seq": 4,
+          "fix": "ANGOD",
+          "legDistNm": 26,
+          "distFromOriginNm": 39,
+          "distToEndNm": 0
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        0.96,
+        3.166
+      ],
+      "_timesNote": "La planilla trae 3 tiempos por tramo y el procedimiento tiene 4. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin."
+    },
+    {
+      "ident": "ANGOD8B",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "ANGOD",
+      "totalDistNm": 39,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 38,
+          "sourceTimeMin": 0.286,
+          "sourceGsKt": 210
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 30,
+          "sourceTimeMin": 1.92,
+          "sourceGsKt": 250
+        },
+        {
+          "seq": 3,
+          "fix": "ESKUL",
+          "legDistNm": 3,
+          "distFromOriginNm": 12,
+          "distToEndNm": 27,
+          "sourceTimeMin": 0.643,
+          "sourceGsKt": 280
+        },
+        {
+          "seq": 4,
+          "fix": "ETEMI",
+          "legDistNm": 19,
+          "distFromOriginNm": 31,
+          "distToEndNm": 8,
+          "sourceTimeMin": 3.8,
+          "sourceGsKt": 300
+        },
+        {
+          "seq": 5,
+          "fix": "ANGOD",
+          "legDistNm": 8,
+          "distFromOriginNm": 39,
+          "distToEndNm": 0,
+          "sourceTimeMin": 1.6,
+          "sourceGsKt": 300
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        0.643,
+        3.8,
+        1.6,
+        8.249
+      ],
+      "sourceTotalTimeMin": 8.249
+    },
+    {
+      "ident": "DOMINGO6",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "DGO",
+      "totalDistNm": 58,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 57,
+          "sourceTimeMin": 0.286,
+          "sourceGsKt": 210
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 49,
+          "sourceTimeMin": 1.92,
+          "sourceGsKt": 250
+        },
+        {
+          "seq": 3,
+          "fix": "D32DGO",
+          "legDistNm": 17,
+          "distFromOriginNm": 26,
+          "distToEndNm": 32,
+          "sourceTimeMin": 4.08,
+          "sourceGsKt": 250
+        },
+        {
+          "seq": 4,
+          "fix": "KIDUG",
+          "legDistNm": 5,
+          "distFromOriginNm": 31,
+          "distToEndNm": 27,
+          "sourceTimeMin": 1.111,
+          "sourceGsKt": 270
+        },
+        {
+          "seq": 5,
+          "fix": "DGO",
+          "legDistNm": 27,
+          "distFromOriginNm": 58,
+          "distToEndNm": 0,
+          "sourceTimeMin": 4.5,
+          "sourceGsKt": 360
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        4.08,
+        1.111,
+        4.5,
+        11.897
+      ],
+      "sourceTotalTimeMin": 11.897
+    },
+    {
+      "ident": "DONTI5B",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "DONTI",
+      "totalDistNm": 53,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 52
+        },
+        {
+          "seq": 2,
+          "fix": "4000FT",
+          "legDistNm": 6,
+          "distFromOriginNm": 7,
+          "distToEndNm": 46
+        },
+        {
+          "seq": 3,
+          "fix": "SEKSU",
+          "legDistNm": 13,
+          "distFromOriginNm": 20,
+          "distToEndNm": 33
+        },
+        {
+          "seq": 4,
+          "fix": "EL370",
+          "legDistNm": 17,
+          "distFromOriginNm": 37,
+          "distToEndNm": 16
+        },
+        {
+          "seq": 5,
+          "fix": "DONTI",
+          "legDistNm": 16,
+          "distFromOriginNm": 53,
+          "distToEndNm": 0
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "altitudePoints": [
+        "4000FT"
+      ],
+      "_sourceTimesMin": [
+        0.286,
+        1.44,
+        2.889,
+        8.833,
+        13.448
+      ],
+      "_timesNote": "La planilla trae 4 tiempos por tramo y el procedimiento tiene 5. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin."
+    },
+    {
+      "ident": "DONTI6A",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "DONTI",
+      "totalDistNm": 102,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 101
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 93
+        },
+        {
+          "seq": 3,
+          "fix": "D32DGO",
+          "legDistNm": 17,
+          "distFromOriginNm": 26,
+          "distToEndNm": 76
+        },
+        {
+          "seq": 4,
+          "fix": "KIDUG",
+          "legDistNm": 54,
+          "distFromOriginNm": 80,
+          "distToEndNm": 22
+        },
+        {
+          "seq": 5,
+          "fix": "D26VTN",
+          "legDistNm": 13,
+          "distFromOriginNm": 93,
+          "distToEndNm": 9
+        },
+        {
+          "seq": 6,
+          "fix": "DONTI",
+          "legDistNm": 9,
+          "distFromOriginNm": 102,
+          "distToEndNm": 0
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        3.778,
+        15.5,
+        21.483
+      ],
+      "_timesNote": "La planilla trae 4 tiempos por tramo y el procedimiento tiene 6. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin."
+    },
+    {
+      "ident": "GELUS6A",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "GELUS",
+      "totalDistNm": 52,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 51,
+          "sourceTimeMin": 0.286,
+          "sourceGsKt": 210
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 43,
+          "sourceTimeMin": 1.92,
+          "sourceGsKt": 250
+        },
+        {
+          "seq": 3,
+          "fix": "D32DGO",
+          "legDistNm": 17,
+          "distFromOriginNm": 26,
+          "distToEndNm": 26,
+          "sourceTimeMin": 4.08,
+          "sourceGsKt": 250
+        },
+        {
+          "seq": 4,
+          "fix": "KIDUG",
+          "legDistNm": 5,
+          "distFromOriginNm": 31,
+          "distToEndNm": 21,
+          "sourceTimeMin": 1.111,
+          "sourceGsKt": 270
+        },
+        {
+          "seq": 5,
+          "fix": "GELUS",
+          "legDistNm": 21,
+          "distFromOriginNm": 52,
+          "distToEndNm": 0,
+          "sourceTimeMin": 3.818,
+          "sourceGsKt": 330
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        4.08,
+        1.111,
+        3.818,
+        11.215
+      ],
+      "sourceTotalTimeMin": 11.215
+    },
+    {
+      "ident": "LINER5A",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "VANEK",
+      "totalDistNm": 31,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 30,
+          "sourceTimeMin": 0.286,
+          "sourceGsKt": 210
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 22,
+          "sourceTimeMin": 1.92,
+          "sourceGsKt": 250
+        },
+        {
+          "seq": 3,
+          "fix": "LINER",
+          "legDistNm": 3,
+          "distFromOriginNm": 12,
+          "distToEndNm": 19,
+          "sourceTimeMin": 0.643,
+          "sourceGsKt": 280
+        },
+        {
+          "seq": 4,
+          "fix": "VANEK",
+          "legDistNm": 19,
+          "distFromOriginNm": 31,
+          "distToEndNm": 0,
+          "sourceTimeMin": 4.222,
+          "sourceGsKt": 270
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        0.643,
+        4.222,
+        7.071
+      ],
+      "sourceTotalTimeMin": 7.071
+    },
+    {
+      "ident": "LINER6C",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "VANEK",
+      "totalDistNm": 42,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 41
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 33
+        },
+        {
+          "seq": 3,
+          "fix": "LINER",
+          "legDistNm": 24,
+          "distFromOriginNm": 33,
+          "distToEndNm": 9
+        },
+        {
+          "seq": 4,
+          "fix": "VANEK",
+          "legDistNm": 9,
+          "distFromOriginNm": 42,
+          "distToEndNm": 0
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        5.333,
+        7.539
+      ],
+      "_timesNote": "La planilla trae 3 tiempos por tramo y el procedimiento tiene 4. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin."
+    },
+    {
+      "ident": "SABLA8",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "DGO",
+      "totalDistNm": 53,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 52
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 44
+        },
+        {
+          "seq": 3,
+          "fix": "D32DGO",
+          "legDistNm": 17,
+          "distFromOriginNm": 26,
+          "distToEndNm": 27
+        },
+        {
+          "seq": 4,
+          "fix": "KIDUG",
+          "legDistNm": 5,
+          "distFromOriginNm": 31,
+          "distToEndNm": 22
+        },
+        {
+          "seq": 5,
+          "fix": "ARSEV",
+          "legDistNm": 13,
+          "distFromOriginNm": 44,
+          "distToEndNm": 9
+        },
+        {
+          "seq": 6,
+          "fix": "DGO",
+          "legDistNm": 9,
+          "distFromOriginNm": 53,
+          "distToEndNm": 0
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        4.08,
+        1.111,
+        2.364,
+        9.76
+      ],
+      "_timesNote": "La planilla trae 5 tiempos por tramo y el procedimiento tiene 6. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin."
+    },
+    {
+      "ident": "TABON6A",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "TBN",
+      "totalDistNm": 80,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 79
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 71
+        },
+        {
+          "seq": 3,
+          "fix": "D32DGO",
+          "legDistNm": 17,
+          "distFromOriginNm": 26,
+          "distToEndNm": 54
+        },
+        {
+          "seq": 4,
+          "fix": "KIDUG",
+          "legDistNm": 9,
+          "distFromOriginNm": 35,
+          "distToEndNm": 45
+        },
+        {
+          "seq": 5,
+          "fix": "D36TBN",
+          "legDistNm": 36,
+          "distFromOriginNm": 71,
+          "distToEndNm": 9
+        },
+        {
+          "seq": 6,
+          "fix": "TBN",
+          "legDistNm": 9,
+          "distFromOriginNm": 80,
+          "distToEndNm": 0
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        3.778,
+        11.833,
+        17.817
+      ],
+      "_timesNote": "La planilla trae 4 tiempos por tramo y el procedimiento tiene 6. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin."
+    },
+    {
+      "ident": "VENTANAS6",
+      "type": "SID",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": null,
+      "exitFix": "VTN",
+      "totalDistNm": 115,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "AMB",
+          "legDistNm": 1,
+          "distFromOriginNm": 1,
+          "distToEndNm": 114
+        },
+        {
+          "seq": 2,
+          "fix": "DESIT",
+          "legDistNm": 8,
+          "distFromOriginNm": 9,
+          "distToEndNm": 106
+        },
+        {
+          "seq": 3,
+          "fix": "D32DGO",
+          "legDistNm": 17,
+          "distFromOriginNm": 26,
+          "distToEndNm": 89
+        },
+        {
+          "seq": 4,
+          "fix": "KIDUG",
+          "legDistNm": 54,
+          "distFromOriginNm": 80,
+          "distToEndNm": 35
+        },
+        {
+          "seq": 5,
+          "fix": "D26VTN",
+          "legDistNm": 26,
+          "distFromOriginNm": 106,
+          "distToEndNm": 9
+        },
+        {
+          "seq": 6,
+          "fix": "VTN",
+          "legDistNm": 9,
+          "distFromOriginNm": 115,
+          "distToEndNm": 0
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        0.286,
+        1.92,
+        4.08,
+        9.818,
+        4.333,
+        20.437
+      ],
+      "_timesNote": "La planilla trae 5 tiempos por tramo y el procedimiento tiene 6. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin."
+    },
+    {
+      "ident": "ANDES1",
+      "type": "STAR",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": "SIMOK",
+      "exitFix": "TEGEB",
+      "totalDistNm": 90,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "SIMOK",
+          "distToEndNm": 90,
+          "legDistNm": null
+        },
+        {
+          "seq": 2,
+          "fix": "MOLPU",
+          "distToEndNm": 60,
+          "legDistNm": 30,
+          "minAltFt": 16000,
+          "maxAltFt": 24000,
+          "maxSpeedKt": 280,
+          "navaid": "TBN",
+          "_source": "05_STAR: Alt Min / Alt Max / Vel Max"
+        },
+        {
+          "seq": 3,
+          "fix": "UGANO",
+          "distToEndNm": 27,
+          "legDistNm": 33
+        },
+        {
+          "seq": 4,
+          "fix": "TBN",
+          "distToEndNm": 19,
+          "legDistNm": 8
+        },
+        {
+          "seq": 5,
+          "fix": "D25AMB",
+          "distToEndNm": 14,
+          "legDistNm": 5
+        },
+        {
+          "seq": 6,
+          "fix": "PUMAR",
+          "distToEndNm": 9,
+          "legDistNm": 5
+        },
+        {
+          "seq": 7,
+          "fix": "TEGEB",
+          "distToEndNm": 0,
+          "legDistNm": 9
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        5.5,
+        1.714,
+        1.2,
+        1.304,
+        2.571,
+        12.29
+      ],
+      "_timesNote": "La planilla trae 5 tiempos por tramo y el procedimiento tiene 6. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "_dist05Star": {
+        "fix": "MOLPU",
+        "distNm": 60
+      }
+    },
+    {
+      "ident": "ASIMO7D",
+      "type": "STAR",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": "ASIMO",
+      "exitFix": "TEGEB",
+      "totalDistNm": null,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "ASIMO",
+          "distToEndNm": null,
+          "legDistNm": null
+        },
+        {
+          "seq": 2,
+          "fix": "VULBI",
+          "distToEndNm": null,
+          "legDistNm": null,
+          "minAltFt": 21000,
+          "maxAltFt": 24000,
+          "maxSpeedKt": 300,
+          "navaid": "TBN",
+          "_source": "05_STAR: Alt Min / Alt Max / Vel Max"
+        },
+        {
+          "seq": 3,
+          "fix": "MORPA",
+          "distToEndNm": null,
+          "legDistNm": null
+        },
+        {
+          "seq": 4,
+          "fix": "VUDOG",
+          "distToEndNm": null,
+          "legDistNm": null
+        },
+        {
+          "seq": 5,
+          "fix": "UGOLA",
+          "distToEndNm": null,
+          "legDistNm": null
+        },
+        {
+          "seq": 6,
+          "fix": "EL220",
+          "distToEndNm": null,
+          "legDistNm": null
+        },
+        {
+          "seq": 7,
+          "fix": "PUMAR",
+          "distToEndNm": null,
+          "legDistNm": null
+        },
+        {
+          "seq": 8,
+          "fix": "TEGEB",
+          "distToEndNm": null,
+          "legDistNm": null
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        3.5,
+        1.714,
+        2,
+        1.304,
+        3.818,
+        12.337
+      ],
+      "_timesNote": "La planilla trae 5 tiempos por tramo y el procedimiento tiene 7. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "_review": "La planilla lista 8 fixes pero solo 7 distancias (90, 60, 39, 29, 19, 14, 0). Falta un valor y no se puede deducir a que fix corresponde cada uno. Corregir en el Excel y volver a ejecutar tools/build-db.js.",
+      "_sourceDistances": [
+        90,
+        60,
+        39,
+        29,
+        19,
+        14,
+        0
+      ],
+      "_dist05Star": {
+        "fix": "VULBI",
+        "distNm": 60
+      }
+    },
+    {
+      "ident": "EROLO6E",
+      "type": "STAR",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": "EROLO",
+      "exitFix": "TEGEB",
+      "totalDistNm": 91,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "EROLO",
+          "distToEndNm": 91,
+          "legDistNm": null
+        },
+        {
+          "seq": 2,
+          "fix": "KADAK",
+          "distToEndNm": 47,
+          "legDistNm": 44,
+          "minAltFt": 10000,
+          "maxAltFt": 24000,
+          "maxSpeedKt": 300,
+          "navaid": "AMB",
+          "_source": "05_STAR: Alt Min / Alt Max / Vel Max"
+        },
+        {
+          "seq": 3,
+          "fix": "MAPOC",
+          "distToEndNm": 21,
+          "legDistNm": 26
+        },
+        {
+          "seq": 4,
+          "fix": "AMB",
+          "distToEndNm": 11,
+          "legDistNm": 10
+        },
+        {
+          "seq": 5,
+          "fix": "TEGEB",
+          "distToEndNm": 0,
+          "legDistNm": 11
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        4.333,
+        2,
+        2.87,
+        9.203
+      ],
+      "_timesNote": "La planilla trae 3 tiempos por tramo y el procedimiento tiene 4. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "_dist05Star": {
+        "fix": "KADAK",
+        "distNm": 55
+      },
+      "_reviewDist": "La hoja 05_STAR da 55 NM desde KADAK, pero STARs-SIDs-2 da 47 NM de distancia restante en ese mismo fix. Aclarar cual rige."
+    },
+    {
+      "ident": "EROLO7F",
+      "type": "STAR",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": "EROLO",
+      "exitFix": "TEGEB",
+      "totalDistNm": 140,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "EROLO",
+          "distToEndNm": 140,
+          "legDistNm": null
+        },
+        {
+          "seq": 2,
+          "fix": "KADAK",
+          "distToEndNm": 96,
+          "legDistNm": 44,
+          "minAltFt": 10000,
+          "maxAltFt": 24000,
+          "maxSpeedKt": 300,
+          "navaid": "TBN",
+          "_source": "05_STAR: Alt Min / Alt Max / Vel Max"
+        },
+        {
+          "seq": 3,
+          "fix": "EL370",
+          "distToEndNm": 50,
+          "legDistNm": 46
+        },
+        {
+          "seq": 4,
+          "fix": "OLMUE",
+          "distToEndNm": 29,
+          "legDistNm": 21
+        },
+        {
+          "seq": 5,
+          "fix": "UGOLA",
+          "distToEndNm": 19,
+          "legDistNm": 10
+        },
+        {
+          "seq": 6,
+          "fix": "EL220",
+          "distToEndNm": 14,
+          "legDistNm": 5
+        },
+        {
+          "seq": 7,
+          "fix": "PUMAR",
+          "distToEndNm": 9,
+          "legDistNm": 5
+        },
+        {
+          "seq": 8,
+          "fix": "TEGEB",
+          "distToEndNm": 0,
+          "legDistNm": 9
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        7.667,
+        4.2,
+        2.4,
+        1.25,
+        1.304,
+        2.571,
+        19.392
+      ],
+      "_timesNote": "La planilla trae 6 tiempos por tramo y el procedimiento tiene 7. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "_dist05Star": {
+        "fix": "KADAK",
+        "distNm": 96
+      }
+    },
+    {
+      "ident": "EROLO8A",
+      "type": "STAR",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": true,
+      "entryFix": "EROLO",
+      "exitFix": "ISILO",
+      "totalDistNm": 102,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "EROLO",
+          "distToEndNm": 102,
+          "legDistNm": null
+        },
+        {
+          "seq": 2,
+          "fix": "KADAK",
+          "distToEndNm": 58,
+          "legDistNm": 44,
+          "minAltFt": 10000,
+          "maxAltFt": 24000,
+          "maxSpeedKt": 300,
+          "navaid": "AMB",
+          "_source": "05_STAR: Alt Min / Alt Max / Vel Max"
+        },
+        {
+          "seq": 3,
+          "fix": "MAPOC",
+          "distToEndNm": 29,
+          "legDistNm": 29
+        },
+        {
+          "seq": 4,
+          "fix": "VOVPO",
+          "distToEndNm": 19,
+          "legDistNm": 10
+        },
+        {
+          "seq": 5,
+          "fix": "PULKI",
+          "distToEndNm": 9,
+          "legDistNm": 10
+        },
+        {
+          "seq": 6,
+          "fix": "ISILO",
+          "distToEndNm": 0,
+          "legDistNm": 9
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        4.833,
+        2,
+        2.4,
+        2.348,
+        11.581
+      ],
+      "_timesNote": "La planilla trae 4 tiempos por tramo y el procedimiento tiene 5. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "_dist05Star": {
+        "fix": "KADAK",
+        "distNm": 58
+      }
+    },
+    {
+      "ident": "SIMOK7B",
+      "type": "STAR",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": "SIMOK",
+      "exitFix": "TEGEB",
+      "totalDistNm": 90,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "SIMOK",
+          "distToEndNm": 90,
+          "legDistNm": null
+        },
+        {
+          "seq": 2,
+          "fix": "DABIT",
+          "distToEndNm": 60,
+          "legDistNm": 30,
+          "minAltFt": 16000,
+          "maxAltFt": 24000,
+          "maxSpeedKt": 280,
+          "navaid": "TBN",
+          "_source": "05_STAR: Alt Min / Alt Max / Vel Max"
+        },
+        {
+          "seq": 3,
+          "fix": "MORPA",
+          "distToEndNm": 40,
+          "legDistNm": 20
+        },
+        {
+          "seq": 4,
+          "fix": "VUDOG",
+          "distToEndNm": 30,
+          "legDistNm": 10
+        },
+        {
+          "seq": 5,
+          "fix": "UGOLA",
+          "distToEndNm": 19,
+          "legDistNm": 11
+        },
+        {
+          "seq": 6,
+          "fix": "EL220",
+          "distToEndNm": 14,
+          "legDistNm": 5
+        },
+        {
+          "seq": 7,
+          "fix": "PUMAR",
+          "distToEndNm": 9,
+          "legDistNm": 5
+        },
+        {
+          "seq": 8,
+          "fix": "TEGEB",
+          "distToEndNm": 0,
+          "legDistNm": 9
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        3.333,
+        1.667,
+        2.2,
+        1.304,
+        3.652,
+        12.157
+      ],
+      "_timesNote": "La planilla trae 5 tiempos por tramo y el procedimiento tiene 7. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "_dist05Star": {
+        "fix": "DABIT",
+        "distNm": 60
+      }
+    },
+    {
+      "ident": "UMKAL7C",
+      "type": "STAR",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": "UMKAL",
+      "exitFix": "TEGEB",
+      "totalDistNm": 70,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "UMKAL",
+          "distToEndNm": 70,
+          "legDistNm": null,
+          "minAltFt": 24000,
+          "maxAltFt": 24000,
+          "maxSpeedKt": 280,
+          "navaid": "TBN",
+          "_source": "05_STAR: Alt Min / Alt Max / Vel Max"
+        },
+        {
+          "seq": 2,
+          "fix": "LOSAN",
+          "distToEndNm": 47,
+          "legDistNm": 23,
+          "sourceTimeMin": 3.833,
+          "sourceGsKt": 360
+        },
+        {
+          "seq": 3,
+          "fix": "SAFEL",
+          "distToEndNm": 28,
+          "legDistNm": 19,
+          "sourceTimeMin": 3.455,
+          "sourceGsKt": 330
+        },
+        {
+          "seq": 4,
+          "fix": "UGOLA",
+          "distToEndNm": 19,
+          "legDistNm": 9,
+          "sourceTimeMin": 1.8,
+          "sourceGsKt": 300
+        },
+        {
+          "seq": 5,
+          "fix": "EL220",
+          "distToEndNm": 14,
+          "legDistNm": 5,
+          "sourceTimeMin": 1.071,
+          "sourceGsKt": 280
+        },
+        {
+          "seq": 6,
+          "fix": "PUMAR",
+          "distToEndNm": 9,
+          "legDistNm": 5,
+          "sourceTimeMin": 1.304,
+          "sourceGsKt": 230
+        },
+        {
+          "seq": 7,
+          "fix": "TEGEB",
+          "distToEndNm": 0,
+          "legDistNm": 9,
+          "sourceTimeMin": 2.571,
+          "sourceGsKt": 210
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        3.833,
+        3.455,
+        1.8,
+        1.071,
+        1.304,
+        2.571,
+        14.035
+      ],
+      "sourceTotalTimeMin": 14.035,
+      "_dist05Star": {
+        "fix": "UMKAL",
+        "distNm": 70
+      }
+    },
+    {
+      "ident": "VENTANAS1D",
+      "type": "STAR",
+      "runway": "17L",
+      "configuration": "SUR",
+      "rnav": null,
+      "requiresSivigats": false,
+      "entryFix": "VTN",
+      "exitFix": "TEGEB",
+      "totalDistNm": 55,
+      "legs": [
+        {
+          "seq": 1,
+          "fix": "VTN",
+          "distToEndNm": 55,
+          "legDistNm": null,
+          "minAltFt": 10000,
+          "maxAltFt": 24000,
+          "maxSpeedKt": 300,
+          "navaid": "TBN",
+          "_source": "05_STAR: Alt Min / Alt Max / Vel Max"
+        },
+        {
+          "seq": 2,
+          "fix": "TENUT",
+          "distToEndNm": 39,
+          "legDistNm": 16,
+          "sourceTimeMin": 2.667,
+          "sourceGsKt": 360
+        },
+        {
+          "seq": 3,
+          "fix": "OLMUE",
+          "distToEndNm": 29,
+          "legDistNm": 10,
+          "sourceTimeMin": 1.667,
+          "sourceGsKt": 360
+        },
+        {
+          "seq": 4,
+          "fix": "UGOLA",
+          "distToEndNm": 19,
+          "legDistNm": 10,
+          "sourceTimeMin": 1.818,
+          "sourceGsKt": 330
+        },
+        {
+          "seq": 5,
+          "fix": "EL220",
+          "distToEndNm": 14,
+          "legDistNm": 5,
+          "sourceTimeMin": 1.304,
+          "sourceGsKt": 230
+        },
+        {
+          "seq": 6,
+          "fix": "PUMAR",
+          "distToEndNm": 9,
+          "legDistNm": 5,
+          "sourceTimeMin": 1.304,
+          "sourceGsKt": 230
+        },
+        {
+          "seq": 7,
+          "fix": "TEGEB",
+          "distToEndNm": 0,
+          "legDistNm": 9,
+          "sourceTimeMin": 2.571,
+          "sourceGsKt": 210
+        }
+      ],
+      "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
+      "_sourceTimesMin": [
+        2.667,
+        1.667,
+        1.818,
+        1.304,
+        1.304,
+        2.571,
+        11.332
+      ],
+      "sourceTotalTimeMin": 11.332,
+      "_dist05Star": {
+        "fix": "VTN",
+        "distNm": 55
+      }
+    }
+  ]
+}

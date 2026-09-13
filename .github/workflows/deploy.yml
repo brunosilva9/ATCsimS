@@ -1,0 +1,67 @@
+# Publica la app en GitHub Pages.
+#
+# No se despliega nada que no pase antes las pruebas: el motor tiene que reproducir los tiempos
+# de las planillas (RNF-1), asi que un fallo ahi significa que los ejercicios publicados darian
+# horas distintas de las que calcula ATC.
+name: Deploy
+
+on:
+  push:
+    branches: [main, master]
+  # Permite republicar a mano desde la pestana Actions sin tener que tocar el codigo.
+  workflow_dispatch:
+
+# Solo lectura por defecto; el job de publicacion pide lo que necesita y nada mas.
+permissions:
+  contents: read
+
+# Una publicacion a la vez. No se cancela la que este en curso: cortar un deploy a medias puede
+# dejar Pages sirviendo una version incompleta. La siguiente espera su turno.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar
+        run: npm ci
+
+      - name: Comprobar la base de navegacion
+        run: node tools/validate.js
+
+      - name: Tipos
+        run: npm run typecheck
+
+      - name: Pruebas
+        run: npm test
+
+      - name: Construir
+        run: npm run build -w @atcsims/web
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,171 @@
+{
+  "_meta": {
+    "source": "TABLAS...05 AGO 2026 EVAL.xlsx!ACFT1 (2)",
+    "method": "extracted",
+    "note": "minSpeedKt/maxSpeedKt son las dos velocidades tipicas de uso de la planilla, no envolvente de performance. wake y vapp no estan en las fuentes."
+  },
+  "aircraftTypes": [
+    {
+      "icao": "C172",
+      "name": "Cessna 172",
+      "minSpeedKt": 120,
+      "maxSpeedKt": 130,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "PA28",
+      "name": "Piper PA-28",
+      "minSpeedKt": 130,
+      "maxSpeedKt": 140,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "DHC6",
+      "name": "Twin Otter",
+      "minSpeedKt": 150,
+      "maxSpeedKt": 180,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "C212",
+      "name": "CASA C-212 Aviocar",
+      "minSpeedKt": 170,
+      "maxSpeedKt": 190,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "C208",
+      "name": "Cessna 208",
+      "minSpeedKt": 180,
+      "maxSpeedKt": 200,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "SR22",
+      "name": "Cirrus",
+      "minSpeedKt": 180,
+      "maxSpeedKt": 200,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "PA31",
+      "name": "Piper Navajo",
+      "minSpeedKt": 200,
+      "maxSpeedKt": 220,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "D228",
+      "name": "Dornier 228",
+      "minSpeedKt": 220,
+      "maxSpeedKt": 240,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "PAY2",
+      "name": "Piper Cheyenne II",
+      "minSpeedKt": 230,
+      "maxSpeedKt": 250,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "BE20",
+      "name": "Super King Air",
+      "minSpeedKt": 240,
+      "maxSpeedKt": 270,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "PC12",
+      "name": "Pilatus",
+      "minSpeedKt": 250,
+      "maxSpeedKt": 290,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "B350",
+      "name": "B300 King Air 350i",
+      "minSpeedKt": 270,
+      "maxSpeedKt": 300,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "AT46",
+      "name": "ATR 42-600",
+      "minSpeedKt": 270,
+      "maxSpeedKt": 290,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "C130",
+      "name": "Lockheed C-130",
+      "minSpeedKt": 290,
+      "maxSpeedKt": 330,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "RJ1H",
+      "name": "Avro RJ100",
+      "minSpeedKt": 290,
+      "maxSpeedKt": 330,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "DH8D",
+      "name": "Dash 8-400",
+      "minSpeedKt": 330,
+      "maxSpeedKt": 360,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "C750",
+      "name": "Citation X",
+      "minSpeedKt": 450,
+      "maxSpeedKt": 480,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    },
+    {
+      "icao": "C295",
+      "name": "FL250",
+      "minSpeedKt": 250,
+      "maxSpeedKt": 260,
+      "wake": null,
+      "vappKt": null,
+      "_source": "TABLAS...05 AGO 2026!ACFT1 (2)"
+    }
+  ]
+}

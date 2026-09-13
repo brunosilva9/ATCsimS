@@ -1,0 +1,819 @@
+{
+  "_meta": {
+    "source": "01modelo FPV.xlsx!ACFT",
+    "method": "extracted",
+    "note": "Catalogo de vuelos comerciales usado para armar ejercicios. tasKt es el N0xxx del campo 15 del plan de vuelo."
+  },
+  "sampleFlights": [
+    {
+      "callsign": "LAN123",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCFA",
+      "ssr": "2341"
+    },
+    {
+      "callsign": "LAN800",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCFA",
+      "ades": "SCEL",
+      "ssr": "1023"
+    },
+    {
+      "callsign": "SKY456",
+      "operator": "SKY",
+      "icaoType": "A321",
+      "tasKt": 455,
+      "adep": "SCEL",
+      "ades": "SCCF",
+      "ssr": "4523"
+    },
+    {
+      "callsign": "SKY901",
+      "operator": "SKY",
+      "icaoType": "A321",
+      "tasKt": 455,
+      "adep": "SCCF",
+      "ades": "SCEL",
+      "ssr": "1134"
+    },
+    {
+      "callsign": "JAT789",
+      "operator": "JAT",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCIE",
+      "ssr": "3612"
+    },
+    {
+      "callsign": "JAT550",
+      "operator": "JAT",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCIE",
+      "ades": "SCEL",
+      "ssr": "1245"
+    },
+    {
+      "callsign": "LAN234",
+      "operator": "LAN",
+      "icaoType": "B787",
+      "tasKt": 480,
+      "adep": "SCEL",
+      "ades": "SAEZ",
+      "ssr": "5234"
+    },
+    {
+      "callsign": "DAL220",
+      "operator": "DAL",
+      "icaoType": "B767",
+      "tasKt": 460,
+      "adep": "KATL",
+      "ades": "SCEL",
+      "ssr": "1357"
+    },
+    {
+      "callsign": "DAL112",
+      "operator": "DAL",
+      "icaoType": "B767",
+      "tasKt": 460,
+      "adep": "SCEL",
+      "ades": "KATL",
+      "ssr": "1452"
+    },
+    {
+      "callsign": "AAL300",
+      "operator": "AAL",
+      "icaoType": "B777",
+      "tasKt": 480,
+      "adep": "KMIA",
+      "ades": "SCEL",
+      "ssr": "1462"
+    },
+    {
+      "callsign": "AAL778",
+      "operator": "AAL",
+      "icaoType": "B737",
+      "tasKt": 445,
+      "adep": "SCEL",
+      "ades": "KMIA",
+      "ssr": "2671"
+    },
+    {
+      "callsign": "UAL401",
+      "operator": "UAL",
+      "icaoType": "B737",
+      "tasKt": 445,
+      "adep": "KIAH",
+      "ades": "SCEL",
+      "ssr": "1573"
+    },
+    {
+      "callsign": "UAL990",
+      "operator": "UAL",
+      "icaoType": "B777",
+      "tasKt": 480,
+      "adep": "SCEL",
+      "ades": "KIAH",
+      "ssr": "3745"
+    },
+    {
+      "callsign": "IBE700",
+      "operator": "IBE",
+      "icaoType": "A350",
+      "tasKt": 485,
+      "adep": "LEMD",
+      "ades": "SCEL",
+      "ssr": "1684"
+    },
+    {
+      "callsign": "IBE640",
+      "operator": "IBE",
+      "icaoType": "A350",
+      "tasKt": 485,
+      "adep": "SCEL",
+      "ades": "LEMD",
+      "ssr": "4123"
+    },
+    {
+      "callsign": "AFR222",
+      "operator": "AFR",
+      "icaoType": "B777",
+      "tasKt": 480,
+      "adep": "LFPG",
+      "ades": "SCEL",
+      "ssr": "1795"
+    },
+    {
+      "callsign": "AFR401",
+      "operator": "AFR",
+      "icaoType": "B777",
+      "tasKt": 480,
+      "adep": "SCEL",
+      "ades": "LFPG",
+      "ssr": "2234"
+    },
+    {
+      "callsign": "KLM800",
+      "operator": "KLM",
+      "icaoType": "B737",
+      "tasKt": 445,
+      "adep": "EHAM",
+      "ades": "SCEL",
+      "ssr": "1806"
+    },
+    {
+      "callsign": "KLM702",
+      "operator": "KLM",
+      "icaoType": "B737",
+      "tasKt": 445,
+      "adep": "SCEL",
+      "ades": "EHAM",
+      "ssr": "3345"
+    },
+    {
+      "callsign": "ARG990",
+      "operator": "ARG",
+      "icaoType": "B737",
+      "tasKt": 445,
+      "adep": "SAEZ",
+      "ades": "SCEL",
+      "ssr": "1917"
+    },
+    {
+      "callsign": "LPE301",
+      "operator": "LPE",
+      "icaoType": "A319",
+      "tasKt": 440,
+      "adep": "SCEL",
+      "ades": "SPJC",
+      "ssr": "5562"
+    },
+    {
+      "callsign": "AZU101",
+      "operator": "AZU",
+      "icaoType": "E190",
+      "tasKt": 430,
+      "adep": "SBGR",
+      "ades": "SCEL",
+      "ssr": "2021"
+    },
+    {
+      "callsign": "ARG1351",
+      "operator": "ARG",
+      "icaoType": "B737",
+      "tasKt": 445,
+      "adep": "SCEL",
+      "ades": "SAEZ",
+      "ssr": "6621"
+    },
+    {
+      "callsign": "GOL202",
+      "operator": "GOL",
+      "icaoType": "B737",
+      "tasKt": 445,
+      "adep": "SBSP",
+      "ades": "SCEL",
+      "ssr": "2132"
+    },
+    {
+      "callsign": "AZU221",
+      "operator": "AZU",
+      "icaoType": "E195",
+      "tasKt": 430,
+      "adep": "SCEL",
+      "ades": "SBGR",
+      "ssr": "2745"
+    },
+    {
+      "callsign": "ACA303",
+      "operator": "ACA",
+      "icaoType": "A321",
+      "tasKt": 455,
+      "adep": "CYYZ",
+      "ades": "SCEL",
+      "ssr": "2243"
+    },
+    {
+      "callsign": "GOL889",
+      "operator": "GOL",
+      "icaoType": "B737",
+      "tasKt": 445,
+      "adep": "SCEL",
+      "ades": "SBSP",
+      "ssr": "7123"
+    },
+    {
+      "callsign": "BAW404",
+      "operator": "BAW",
+      "icaoType": "B787",
+      "tasKt": 480,
+      "adep": "EGLL",
+      "ades": "SCEL",
+      "ssr": "2354"
+    },
+    {
+      "callsign": "ACA910",
+      "operator": "ACA",
+      "icaoType": "A321",
+      "tasKt": 455,
+      "adep": "SCEL",
+      "ades": "CYYZ",
+      "ssr": "2314"
+    },
+    {
+      "callsign": "DLH505",
+      "operator": "DLH",
+      "icaoType": "A350",
+      "tasKt": 485,
+      "adep": "EDDF",
+      "ades": "SCEL",
+      "ssr": "2465"
+    },
+    {
+      "callsign": "QFA12",
+      "operator": "QFA",
+      "icaoType": "A330",
+      "tasKt": 470,
+      "adep": "SCEL",
+      "ades": "YSSY",
+      "ssr": "3452"
+    },
+    {
+      "callsign": "UAE606",
+      "operator": "UAE",
+      "icaoType": "B777",
+      "tasKt": 480,
+      "adep": "OMDB",
+      "ades": "SCEL",
+      "ssr": "2576"
+    },
+    {
+      "callsign": "BAW251",
+      "operator": "BAW",
+      "icaoType": "B787",
+      "tasKt": 480,
+      "adep": "SCEL",
+      "ades": "EGLL",
+      "ssr": "4561"
+    },
+    {
+      "callsign": "CMP707",
+      "operator": "CMP",
+      "icaoType": "B737",
+      "tasKt": 445,
+      "adep": "MPTO",
+      "ades": "SCEL",
+      "ssr": "2687"
+    },
+    {
+      "callsign": "AVA808",
+      "operator": "AVA",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SKBO",
+      "ades": "SCEL",
+      "ssr": "2791"
+    },
+    {
+      "callsign": "UAE247",
+      "operator": "UAE",
+      "icaoType": "B777",
+      "tasKt": 480,
+      "adep": "SCEL",
+      "ades": "OMDB",
+      "ssr": "6732"
+    },
+    {
+      "callsign": "JBU909",
+      "operator": "JBU",
+      "icaoType": "A321",
+      "tasKt": 455,
+      "adep": "KJFK",
+      "ades": "SCEL",
+      "ssr": "2802"
+    },
+    {
+      "callsign": "TAM654",
+      "operator": "TAM",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SBGL",
+      "ssr": "7214"
+    },
+    {
+      "callsign": "VOI010",
+      "operator": "VOI",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "MMMX",
+      "ades": "SCEL",
+      "ssr": "2913"
+    },
+    {
+      "callsign": "LAN140",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCAR",
+      "ssr": "4120"
+    },
+    {
+      "callsign": "LAN141",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCAR",
+      "ades": "SCEL",
+      "ssr": "4220"
+    },
+    {
+      "callsign": "LAN242",
+      "operator": "LAN",
+      "icaoType": "A321",
+      "tasKt": 455,
+      "adep": "SCEL",
+      "ades": "SCDA",
+      "ssr": "4121"
+    },
+    {
+      "callsign": "LAN243",
+      "operator": "LAN",
+      "icaoType": "A321",
+      "tasKt": 450,
+      "adep": "SCDA",
+      "ades": "SCEL",
+      "ssr": "4221"
+    },
+    {
+      "callsign": "LAN312",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCFA",
+      "ssr": "4122"
+    },
+    {
+      "callsign": "LAN313",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCFA",
+      "ades": "SCEL",
+      "ssr": "4222"
+    },
+    {
+      "callsign": "LAN346",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCCF",
+      "ssr": "4123"
+    },
+    {
+      "callsign": "LAN347",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCCF",
+      "ades": "SCEL",
+      "ssr": "4223"
+    },
+    {
+      "callsign": "LAN502",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCSE",
+      "ssr": "4124"
+    },
+    {
+      "callsign": "LAN503",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCSE",
+      "ades": "SCEL",
+      "ssr": "4224"
+    },
+    {
+      "callsign": "LAN600",
+      "operator": "LAN",
+      "icaoType": "A321",
+      "tasKt": 455,
+      "adep": "SCEL",
+      "ades": "SCIE",
+      "ssr": "4125"
+    },
+    {
+      "callsign": "LAN601",
+      "operator": "LAN",
+      "icaoType": "A321",
+      "tasKt": 450,
+      "adep": "SCIE",
+      "ades": "SCEL",
+      "ssr": "4225"
+    },
+    {
+      "callsign": "LAN678",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCQP",
+      "ssr": "4126"
+    },
+    {
+      "callsign": "LAN679",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCQP",
+      "ades": "SCEL",
+      "ssr": "4226"
+    },
+    {
+      "callsign": "LAN710",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCVD",
+      "ssr": "4127"
+    },
+    {
+      "callsign": "LAN711",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCVD",
+      "ades": "SCEL",
+      "ssr": "4227"
+    },
+    {
+      "callsign": "LAN756",
+      "operator": "LAN",
+      "icaoType": "A321",
+      "tasKt": 455,
+      "adep": "SCEL",
+      "ades": "SCTE",
+      "ssr": "4128"
+    },
+    {
+      "callsign": "LAN757",
+      "operator": "LAN",
+      "icaoType": "A321",
+      "tasKt": 450,
+      "adep": "SCTE",
+      "ades": "SCEL",
+      "ssr": "4228"
+    },
+    {
+      "callsign": "LAN890",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCBA",
+      "ssr": "4129"
+    },
+    {
+      "callsign": "LAN891",
+      "operator": "LAN",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCBA",
+      "ades": "SCEL",
+      "ssr": "4229"
+    },
+    {
+      "callsign": "LAN898",
+      "operator": "LAN",
+      "icaoType": "A321",
+      "tasKt": 455,
+      "adep": "SCEL",
+      "ades": "SCCI",
+      "ssr": "4130"
+    },
+    {
+      "callsign": "LAN899",
+      "operator": "LAN",
+      "icaoType": "A321",
+      "tasKt": 450,
+      "adep": "SCCI",
+      "ades": "SCEL",
+      "ssr": "4230"
+    },
+    {
+      "callsign": "SKU200",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCAR",
+      "ssr": "5200"
+    },
+    {
+      "callsign": "SKU201",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCAR",
+      "ades": "SCEL",
+      "ssr": "5300"
+    },
+    {
+      "callsign": "SKU252",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCDA",
+      "ssr": "5201"
+    },
+    {
+      "callsign": "SKU253",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCDA",
+      "ades": "SCEL",
+      "ssr": "5301"
+    },
+    {
+      "callsign": "SKU304",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCFA",
+      "ssr": "5202"
+    },
+    {
+      "callsign": "SKU305",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCFA",
+      "ades": "SCEL",
+      "ssr": "5302"
+    },
+    {
+      "callsign": "SKU336",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCCF",
+      "ssr": "5203"
+    },
+    {
+      "callsign": "SKU337",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCCF",
+      "ades": "SCEL",
+      "ssr": "5303"
+    },
+    {
+      "callsign": "SKU400",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCIE",
+      "ssr": "5204"
+    },
+    {
+      "callsign": "SKU401",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCIE",
+      "ades": "SCEL",
+      "ssr": "5304"
+    },
+    {
+      "callsign": "SKU450",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCTE",
+      "ssr": "5205"
+    },
+    {
+      "callsign": "SKU451",
+      "operator": "SKU",
+      "icaoType": "A320",
+      "tasKt": 450,
+      "adep": "SCTE",
+      "ades": "SCEL",
+      "ssr": "5305"
+    },
+    {
+      "callsign": "JAT100",
+      "operator": "JAT",
+      "icaoType": "A20N",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCAR",
+      "ssr": "6100"
+    },
+    {
+      "callsign": "JAT101",
+      "operator": "JAT",
+      "icaoType": "A320neo",
+      "tasKt": 450,
+      "adep": "SCAR",
+      "ades": "SCEL",
+      "ssr": "6200"
+    },
+    {
+      "callsign": "JAT122",
+      "operator": "JAT",
+      "icaoType": "A20N",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCDA",
+      "ssr": "6101"
+    },
+    {
+      "callsign": "JAT123",
+      "operator": "JAT",
+      "icaoType": "A320neo",
+      "tasKt": 450,
+      "adep": "SCDA",
+      "ades": "SCEL",
+      "ssr": "6201"
+    },
+    {
+      "callsign": "JAT150",
+      "operator": "JAT",
+      "icaoType": "A20N",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCFA",
+      "ssr": "6102"
+    },
+    {
+      "callsign": "JAT151",
+      "operator": "JAT",
+      "icaoType": "A320neo",
+      "tasKt": 450,
+      "adep": "SCFA",
+      "ades": "SCEL",
+      "ssr": "6202"
+    },
+    {
+      "callsign": "JAT180",
+      "operator": "JAT",
+      "icaoType": "A20N",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCCF",
+      "ssr": "6103"
+    },
+    {
+      "callsign": "JAT181",
+      "operator": "JAT",
+      "icaoType": "A320neo",
+      "tasKt": 450,
+      "adep": "SCCF",
+      "ades": "SCEL",
+      "ssr": "6203"
+    },
+    {
+      "callsign": "JAT210",
+      "operator": "JAT",
+      "icaoType": "A20N",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCIE",
+      "ssr": "6104"
+    },
+    {
+      "callsign": "JAT211",
+      "operator": "JAT",
+      "icaoType": "A320neo",
+      "tasKt": 450,
+      "adep": "SCIE",
+      "ades": "SCEL",
+      "ssr": "6204"
+    },
+    {
+      "callsign": "JAT250",
+      "operator": "JAT",
+      "icaoType": "A20N",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCTE",
+      "ssr": "6105"
+    },
+    {
+      "callsign": "JAT251",
+      "operator": "JAT",
+      "icaoType": "A320neo",
+      "tasKt": 450,
+      "adep": "SCTE",
+      "ades": "SCEL",
+      "ssr": "6205"
+    },
+    {
+      "callsign": "JAT300",
+      "operator": "JAT",
+      "icaoType": "A20N",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCQP",
+      "ssr": "6106"
+    },
+    {
+      "callsign": "JAT301",
+      "operator": "JAT",
+      "icaoType": "A320neo",
+      "tasKt": 450,
+      "adep": "SCQP",
+      "ades": "SCEL",
+      "ssr": "6206"
+    },
+    {
+      "callsign": "JAT330",
+      "operator": "JAT",
+      "icaoType": "A20N",
+      "tasKt": 450,
+      "adep": "SCEL",
+      "ades": "SCVD",
+      "ssr": "6107"
+    },
+    {
+      "callsign": "JAT331",
+      "operator": "JAT",
+      "icaoType": "A320neo",
+      "tasKt": 450,
+      "adep": "SCVD",
+      "ades": "SCEL",
+      "ssr": "6207"
+    },
+    {
+      "callsign": "DHC6",
+      "operator": "DHC",
+      "icaoType": "CCCLT",
+      "tasKt": null,
+      "adep": "C212",
+      "ades": "160–180 kt",
+      "ssr": null
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.field select,
+.field input {
+  font: inherit;
+  font-family: var(--font-data);
+  min-width: 130px;
+  padding: 6px 9px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.time {
+  max-width: 90px;
+  letter-spacing: 0.1em;
+}
+
+.kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-top: 2px;
+  border-top: 1px solid var(--border);
+}
+
+.kind,
+.kindOn {
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 6px 13px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.kind {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.kind:hover {
+  background: var(--surface-sunken);
+  color: var(--text);
+}
+
+.kindOn {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.submit {
+  font: inherit;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-left: auto;
+  padding: 7px 22px;
+  color: var(--surface);
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.submit:hover {
+  filter: brightness(1.1);
+}
+
+.error {
+  margin: 0;
+  padding: 9px 12px;
+  font-size: 13px;
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-left: 3px solid var(--danger);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}

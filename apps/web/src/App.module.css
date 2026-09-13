@@ -1,0 +1,121 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 14px;
+  padding-inline: 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/*
+ * El logo institucional viene sobre fondo blanco opaco, asi que se le da su propia tarjeta
+ * blanca en vez de dejarlo flotando: sobre el tema oscuro, si no, es un rectangulo blanco
+ * pegado al fondo.
+ */
+.logo {
+  display: block;
+  height: 34px;
+  width: auto;
+  padding: 5px 8px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.nav {
+  display: flex;
+  gap: 4px;
+}
+
+.navLink,
+.navLinkActive {
+  padding: 7px 13px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.navLink:hover {
+  background: var(--surface-sunken);
+  color: var(--text);
+}
+
+.navLinkActive {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-block: 24px;
+  padding-inline: 24px;
+}
+
+.footer {
+  padding-block: 14px;
+  padding-inline: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.footer code {
+  font-family: var(--font-data);
+  font-size: 11px;
+}
+
+@media (max-width: 700px) {
+  .header,
+  .main,
+  .footer {
+    padding-inline: 16px;
+  }
+}
+
+/* Rotulo de rol en el menu: dice para quien es cada vista sin necesidad de explicarlo. */
+.role {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.navLink,
+.navLinkActive {
+  line-height: 1.25;
+}

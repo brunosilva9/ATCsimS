@@ -1,0 +1,302 @@
+{
+  "_meta": {
+    "source": "TABLAS...05 AGO 2026 EVAL.xlsx!AWYs",
+    "method": "extracted",
+    "note": "Solo secuencia de fixes. La hoja no trae distancias por tramo. Cuando la planilla parte una aerovia en dos filas y los extremos no coinciden, se emite `segments` en vez de `fixes`."
+  },
+  "airways": [
+    {
+      "ident": "B560",
+      "sourceIdent": "B560",
+      "levels": "lower",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "TOY",
+        "TITKI",
+        "NIRNU",
+        "MIBAS"
+      ]
+    },
+    {
+      "ident": "B684",
+      "sourceIdent": "B684",
+      "levels": "lower",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "ICO",
+        "ANKON"
+      ]
+    },
+    {
+      "ident": "R683",
+      "sourceIdent": "R683",
+      "levels": "lower",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "CHI",
+        "CH200",
+        "CH400",
+        "KAMUR"
+      ]
+    },
+    {
+      "ident": "T107",
+      "sourceIdent": "T107",
+      "levels": "lower",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "LINER",
+        "ANDIX",
+        "MUNEP",
+        "CHI",
+        "VUMIT",
+        "CAR"
+      ]
+    },
+    {
+      "ident": "UL302",
+      "sourceIdent": "U/L302",
+      "levels": "both",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "NUXUP",
+        "DALUS",
+        "TOY",
+        "EDRON",
+        "ISGUD",
+        "SIMOK",
+        "DABIT"
+      ]
+    },
+    {
+      "ident": "UL416",
+      "sourceIdent": "UL416",
+      "levels": "upper",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "TOY",
+        "TITKI",
+        "NIRNU",
+        "MIBAS"
+      ]
+    },
+    {
+      "ident": "UM783",
+      "sourceIdent": "UM783",
+      "levels": "upper",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "LINER",
+        "ANKON"
+      ]
+    },
+    {
+      "ident": "UQ802",
+      "sourceIdent": "U/Q802",
+      "levels": "both",
+      "segments": [
+        [
+          "VAMAN",
+          "DONTI",
+          "ETAVA",
+          "ITAVA",
+          "EDRON",
+          "TITKI",
+          "KUGER",
+          "KILIN",
+          "VUGUS"
+        ],
+        [
+          "ELABA",
+          "ENSER",
+          "CHI",
+          "BOLOK",
+          "EROLO",
+          "VAMAN"
+        ]
+      ],
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "ELABA",
+        "ENSER",
+        "CHI",
+        "BOLOK",
+        "EROLO",
+        "VAMAN",
+        "DONTI",
+        "ETAVA",
+        "ITAVA",
+        "EDRON",
+        "TITKI",
+        "KUGER",
+        "KILIN",
+        "VUGUS"
+      ]
+    },
+    {
+      "ident": "UQ803",
+      "sourceIdent": "U/Q803",
+      "levels": "both",
+      "segments": [
+        [
+          "MORMI",
+          "OGROS",
+          "ARSUS",
+          "NIRNU",
+          "ISGUD",
+          "SIMOK",
+          "DABIT",
+          "UGOLA",
+          "ANGOD"
+        ],
+        [
+          "ANGOD",
+          "ANDIX",
+          "MUNEP",
+          "CH200",
+          "SUMKO",
+          "GEDIN"
+        ]
+      ],
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "MORMI",
+        "OGROS",
+        "ARSUS",
+        "NIRNU",
+        "ISGUD",
+        "SIMOK",
+        "DABIT",
+        "UGOLA",
+        "ANGOD",
+        "ANDIX",
+        "MUNEP",
+        "CH200",
+        "SUMKO",
+        "GEDIN"
+      ]
+    },
+    {
+      "ident": "UQ805",
+      "sourceIdent": "U/Q805",
+      "levels": "both",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "LINER",
+        "PANIN",
+        "MUPAV",
+        "NISDO",
+        "CH200",
+        "TOSET"
+      ]
+    },
+    {
+      "ident": "UT107",
+      "sourceIdent": "UT107",
+      "levels": "upper",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "MUNEP",
+        "CHI"
+      ]
+    },
+    {
+      "ident": "UT200",
+      "sourceIdent": "U/T200",
+      "levels": "both",
+      "segments": [
+        [
+          "OPTAN",
+          "ISENO",
+          "TIMDA",
+          "TOY",
+          "ESNOX",
+          "BUXIS",
+          "VTN",
+          "DGO"
+        ],
+        [
+          "DGO",
+          "ESOKI",
+          "SOSTA",
+          "CAR",
+          "PANEX",
+          "ILNUT"
+        ]
+      ],
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "OPTAN",
+        "ISENO",
+        "TIMDA",
+        "TOY",
+        "ESNOX",
+        "BUXIS",
+        "VTN",
+        "DGO",
+        "ESOKI",
+        "SOSTA",
+        "CAR",
+        "PANEX",
+        "ILNUT"
+      ]
+    },
+    {
+      "ident": "UV200",
+      "sourceIdent": "U/V200",
+      "levels": "both",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "OPTAN",
+        "ISENO",
+        "TIMDA",
+        "TOY",
+        "ESNOX",
+        "BUXIS",
+        "VTN",
+        "DGO"
+      ]
+    },
+    {
+      "ident": "UV208",
+      "sourceIdent": "U/V208",
+      "levels": "both",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "SER",
+        "TOY",
+        "EDRON",
+        "EMBAL",
+        "SIMOK",
+        "MOLPU",
+        "TBN"
+      ]
+    },
+    {
+      "ident": "V103",
+      "sourceIdent": "V103",
+      "levels": "lower",
+      "_source": "TABLAS...05 AGO 2026!AWYs",
+      "_review": "La hoja no trae distancias por tramo: las columnas NM / T(Min) son una tabla de conversion aparte.",
+      "fixes": [
+        "CHI",
+        "VUMIT",
+        "CAR"
+      ]
+    }
+  ]
+}

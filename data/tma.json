@@ -1,0 +1,27 @@
+{
+  "_meta": {
+    "source": "HLDNG, 01_CONFIG, 02_PISTAS",
+    "method": "transcribed"
+  },
+  "tma": {
+    "aerodrome": "SCEL",
+    "name": "TMA Santiago",
+    "transitionAltitudeFt": 10000,
+    "transitionLevel": "FL120",
+    "configurations": [
+      "NORTE",
+      "SUR"
+    ],
+    "runwaysByConfiguration": {
+      "NORTE": [
+        "35L",
+        "35R"
+      ],
+      "SUR": [
+        "17L",
+        "17R"
+      ]
+    },
+    "_review": "Las fuentes usan NORTE/SUR con dos sentidos distintos: configuracion de pista (02_PISTAS, IACs, ESPACIAM) y sector de espacio aereo (ARR-SID N-S, postacion, ACC NORTE / ACC SUR). El mapeo runway<->configuration de arriba vale para el primer sentido. En 11_ESCENARIOS columna C no se puede determinar cual de los dos se usa. Pendiente de confirmar con ATC."
+  }
+}
