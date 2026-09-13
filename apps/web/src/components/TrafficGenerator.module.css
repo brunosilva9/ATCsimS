@@ -1,0 +1,183 @@
+/* Panel del generador. Vive dentro del editor, asi que toma los mismos tokens y la misma
+   densidad que el resto del formulario: no es una herramienta aparte, es un paso mas de armar. */
+
+.runActions {
+  display: flex;
+  gap: 8px;
+}
+
+.primary,
+.secondary {
+  font: inherit;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+.secondary {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.primary:hover,
+.secondary:hover {
+  filter: brightness(1.08);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.field input,
+.field select {
+  font: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.hint {
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------------ resultado */
+
+.outcome,
+.outcomeShort {
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-bottom: var(--gap);
+  background: var(--surface-sunken);
+}
+
+.outcome {
+  border-left-color: var(--ok);
+}
+
+/* Quedarse corto no es un error del instructor: se señala en ambar, no en rojo. */
+.outcomeShort {
+  border-left-color: var(--warn);
+  background: var(--warn-soft);
+}
+
+.outcomeHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.seed {
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.seed code {
+  font-family: var(--font-data);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+}
+
+.shortfall {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+}
+
+.encounters {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.encounters li + li {
+  margin-top: 3px;
+}
+
+.time {
+  display: inline-block;
+  min-width: 42px;
+  margin-right: 6px;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+.loss,
+.marginal {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.loss {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.marginal {
+  background: var(--warn-soft);
+  color: var(--warn);
+}
+
+.span {
+  margin-left: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+}

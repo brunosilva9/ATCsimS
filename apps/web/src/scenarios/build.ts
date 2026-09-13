@@ -8,7 +8,15 @@
  */
 
 import { computeFlightPlan, toFeet } from '@atcsims/core';
-import type { Configuration, Flight, FlightKind, Scenario, UtcMinutes, Weather } from '@atcsims/core';
+import type {
+  Configuration,
+  Flight,
+  FlightKind,
+  GeneratorRequest,
+  Scenario,
+  UtcMinutes,
+  Weather,
+} from '@atcsims/core';
 import { findProcedure, holdings, performance } from '@atcsims/navdata';
 
 export interface FlightDraft {
@@ -41,6 +49,13 @@ export interface ScenarioDraft {
   readonly sivigats: boolean;
   readonly objective: string;
   readonly weather: Weather;
+  /**
+   * Con que parametros se sorteo el trafico, si vino del generador. Se guarda por la misma
+   * razon que el banco guarda la receta y no los numeros: con la semilla, el ejercicio se
+   * vuelve a obtener entero, y cambiando solo la semilla se saca otra version para el alumno
+   * de al lado. Ausente = lo armo el instructor a mano.
+   */
+  readonly generator?: GeneratorRequest;
   readonly flights: readonly FlightDraft[];
 }
 

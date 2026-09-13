@@ -5,5 +5,6 @@ export * from './performance.js';
 export * from './eto.js';
 export * from './instructions.js';
 export * from './conflicts.js';
+export * from './generator.js';
 export * from './exam.js';
 export * from './provisionalMinima.js';

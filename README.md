@@ -17,7 +17,7 @@ npm run dev -w @atcsims/web     # http://localhost:5173
 Otros comandos:
 
 ```bash
-npm test              # 137 pruebas: el motor contra los números de las planillas
+npm test              # 164 pruebas: el motor contra los números de las planillas
 npm run typecheck     # TypeScript estricto en los tres paquetes
 npm run data:build    # reimporta data/*.json desde basedatos/
 npm run data:validate # comprueba la integridad de la base
@@ -53,6 +53,30 @@ Al corregir, la tolerancia por defecto es ±1 min en la hora (RNF-1), ±100 ft e
 puntos cuya referencia no sale directa de las planillas —un nivel interpolado entre dos
 restricciones, un vuelo que arrastra un supuesto del motor— van marcados: el sistema no da por
 mala una respuesta contra un número que se inventó él.
+
+### Generar el tráfico
+
+En el editor hay un generador. Se le pide el número de llegadas, de salidas y de **encuentros**,
+opcionalmente sobre qué punto y con qué geometría, y sortea tráfico hasta dar con un ejercicio que
+cumpla. No inventa ninguna regla: quien dice que dos vuelos están en conflicto es el mismo
+`detectConflicts` que usa el resto de la aplicación, con las mismas mínimas y los mismos avisos.
+
+Un **encuentro** es un par de vuelos que hay que separar, no una fila del informe. Dos llegadas
+demasiado juntas por la misma STAR pierden la separación sobre cada punto que comparten —seis
+filas— pero es un solo problema y se resuelve con una instrucción. El instructor cuenta problemas,
+así que el generador también.
+
+El sorteo es **determinista y lleva semilla**. La misma semilla da el mismo ejercicio hoy y en seis
+meses, así que el banco guarda la semilla y no el resultado, igual que guarda la receta y no los
+números. Y cambiar solo la semilla produce otra versión del mismo ejercicio: es como se le da una
+prueba distinta a cada alumno de un curso sin volver a armarla.
+
+Lo que el generador **no** sabe es si el encuentro que salió vale la pena enseñarlo. Eso sale del
+catálogo de conflictos tipo, la hoja `07_CONFLICTOS`, que está vacía (ver
+[`docs/MODELO_DATOS.md`](docs/MODELO_DATOS.md) §3.5). Mientras siga vacía, lo que entrega es un
+borrador con el número de encuentros pedido, y hay que revisarlo antes de darlo.
+
+### Cómo viaja un ejercicio
 
 Sin servidor, un ejercicio viaja de dos formas: **por enlace** (el escenario va comprimido en el
 hash de la URL) o **por archivo `.json`**. La entrega del alumno no es un resultado: en práctica
@@ -120,8 +144,9 @@ Los assets se construyen con rutas relativas, así que el sitio funciona igual b
 - **No hay cuentas ni control de acceso.** El rol es una elección de vista.
 - **No hay estado compartido en vivo.** El instructor no ve al alumno trabajando; recibe su
   archivo al final.
-- **No genera ejercicios solo.** Falta el catálogo de conflictos tipo. Los escenarios se arman a
-  mano, igual que hoy.
+- **Genera tráfico, no didáctica.** El generador acierta el número de encuentros que se le pide,
+  pero no sabe si el que salió enseña algo: falta el catálogo de conflictos tipo. Lo que produce
+  es un borrador para revisar, no un ejercicio listo.
 - **La prueba no pone nota.** Da aciertos, desviaciones y blancos; la nota la pone el profesor.
 - **Las mínimas de separación en ruta son provisionales** hasta que ATC responda.
 - **Solo configuración SUR / pista 17L**, que es de lo único que hay procedimientos con detalle.

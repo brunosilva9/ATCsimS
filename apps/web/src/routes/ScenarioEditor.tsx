@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { detectConflicts, formatHhmm, parseHhmm } from '@atcsims/core';
+import type { GeneratorRequest } from '@atcsims/core';
 import {
   approachFixes,
   procedures,
@@ -24,6 +25,7 @@ import {
 
 import { ConflictList } from '../components/ConflictList.js';
 import { TimeFixDiagram } from '../components/TimeFixDiagram.js';
+import { TrafficGenerator } from '../components/TrafficGenerator.js';
 import { deleteDraft, getDraft, newDraftId, saveDraft } from '../lib/storage.js';
 import { encodePayload, exerciseLink } from '../lib/share.js';
 import { buildScenario } from '../scenarios/build.js';
@@ -152,6 +154,25 @@ export function ScenarioEditor() {
 
   const removeFlight = (flightId: string) =>
     setDraft((d) => ({ ...d, flights: d.flights.filter((f) => f.id !== flightId) }));
+
+  /**
+   * El generador REEMPLAZA el trafico, no lo añade. Mezclar vuelos sorteados con vuelos puestos
+   * a mano daria un ejercicio que ya no se reproduce con su semilla, y la semilla es lo unico
+   * que hace util al generador para tomar pruebas.
+   */
+  const applyGenerated = (flights: readonly FlightDraft[], request: GeneratorRequest) =>
+    setDraft((d) => ({
+      ...d,
+      flights: [...flights],
+      generator: request,
+      // Solo se renombra si el instructor no le puso nombre: es su ejercicio, no del sorteo.
+      name:
+        d.name === 'Ejercicio sin título'
+          ? `Generado ${request.seed} — ${request.targetEncounters} encuentro${
+              request.targetEncounters === 1 ? '' : 's'
+            }`
+          : d.name,
+    }));
 
   const save = () => {
     const ok = saveDraft(draft);
@@ -371,6 +392,14 @@ export function ScenarioEditor() {
               />
             </label>
           </section>
+
+          <TrafficGenerator
+            runwayInUse={draft.runwayInUse}
+            sivigats={draft.sivigats}
+            lvp={draft.weather.lvp}
+            previous={draft.generator}
+            onGenerate={applyGenerated}
+          />
 
           <section className={shared.section}>
             <div className={shared.sectionHead}>

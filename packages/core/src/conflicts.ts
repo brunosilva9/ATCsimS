@@ -19,10 +19,12 @@ import type {
   Conflict,
   ConflictKind,
   ConflictReport,
+  ConflictSeverity,
   Flight,
   FlightLeg,
   Scenario,
   SeparationMinimum,
+  UtcMinutes,
 } from './types.js';
 import { gapMinutes } from './time.js';
 import {
@@ -180,4 +182,58 @@ export function detectConflicts(scenario: Scenario, options: DetectOptions): Con
     coverage: usedProvisional ? 'approachOnly' : 'full',
     notes,
   };
+}
+
+// ---------------------------------------------------------------- encuentros
+
+/**
+ * Un encuentro entre dos vuelos, con todos los conflictos que produce.
+ *
+ * La distincion importa mas de lo que parece. Dos llegadas que van en fila por la misma STAR
+ * demasiado juntas generan un conflicto sobre CADA fix compartido: seis filas en el informe,
+ * pero para el instructor es UN problema y se resuelve con UNA instruccion. Contar filas dice
+ * "13 conflictos" donde el instructor ve tres; contar pares dice lo que el ve.
+ */
+export interface Encounter {
+  readonly id: string;
+  readonly flightIds: readonly [string, string];
+  readonly conflicts: readonly Conflict[];
+  /** Donde y cuando empieza: es el punto en el que hay que haber hecho algo. */
+  readonly firstFix: string;
+  readonly firstTime: UtcMinutes;
+  readonly kind: ConflictKind;
+  readonly severity: ConflictSeverity;
+}
+
+/** Agrupa el informe por pares de vuelos, en orden de aparicion. */
+export function encounters(report: ConflictReport): readonly Encounter[] {
+  const byPair = new Map<string, Conflict[]>();
+
+  for (const conflict of report.conflicts) {
+    // El par se ordena para que A-B y B-A sean el mismo encuentro.
+    const [x, y] = conflict.flightIds;
+    const id = x < y ? `${x}|${y}` : `${y}|${x}`;
+    const bucket = byPair.get(id);
+    if (bucket) bucket.push(conflict);
+    else byPair.set(id, [conflict]);
+  }
+
+  const out: Encounter[] = [];
+  for (const [id, group] of byPair) {
+    const sorted = [...group].sort((a, b) => a.time - b.time);
+    const first = sorted[0]!;
+    out.push({
+      id,
+      flightIds: first.flightIds,
+      conflicts: sorted,
+      firstFix: first.fix,
+      firstTime: first.time,
+      // El tipo del encuentro es el del primer punto: el resto son el mismo problema arrastrado.
+      kind: first.kind,
+      // Basta que un solo punto pierda la minima para que el encuentro sea una perdida.
+      severity: sorted.some((c) => c.severity === 'LOSS') ? 'LOSS' : 'MARGINAL',
+    });
+  }
+
+  return out.sort((a, b) => a.firstTime - b.firstTime);
 }
