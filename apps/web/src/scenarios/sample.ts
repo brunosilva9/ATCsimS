@@ -18,6 +18,7 @@ import type { BuiltScenario, ScenarioDraft } from './build.js';
 
 export const SAMPLE_DRAFT: ScenarioDraft = {
   id: 'sample-tegeb',
+  mode: 'practice',
   name: 'Secuencia a TEGEB — cuatro llegadas y una salida',
   configuration: 'SUR',
   runwayInUse: '17L',

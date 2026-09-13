@@ -1,191 +1,65 @@
 /**
- * La sesion del alumno: donde se controla.
+ * La puerta de entrada del alumno.
  *
- * El ejercicio llega por el hash de la URL (el enlace que pasa el instructor) o, si no hay
- * ninguno, se carga el de ejemplo para poder probar la app sin que nadie te mande nada.
+ * El ejercicio llega por el hash de la URL —el enlace que le pasa el instructor— y ese enlace
+ * es el que decide en que modo se trabaja:
  *
- * La pantalla es una sola cosa repetida en tres formas: las strips dicen que lleva cada vuelo,
- * el diagrama dice donde se van a encontrar, y la lista de conflictos dice cuales de esos
- * encuentros son un problema. Instruir cambia las tres a la vez.
+ *   - practica: el sistema calcula y el alumno separa el trafico.
+ *   - prueba:   el alumno calcula y nadie le dice si acierta.
+ *
+ * El modo viaja dentro del ejercicio y no en la URL a la vista, para que no baste con editar la
+ * direccion para convertir una prueba en una practica con las respuestas hechas.
+ *
+ * Sin enlace se carga el ejemplo en modo practica, para poder probar la app sin que nadie te
+ * mande nada.
  */
 
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { formatHhmm } from '@atcsims/core';
-
-import { ConflictList } from '../components/ConflictList.js';
-import { FlightProgressStrip } from '../components/FlightProgressStrip.js';
-import { InstructionPanel } from '../components/InstructionPanel.js';
-import { TimeFixDiagram } from '../components/TimeFixDiagram.js';
-import { decodePayload, downloadPayload } from '../lib/share.js';
+import { decodePayload } from '../lib/share.js';
 import { buildSampleScenario } from '../scenarios/sample.js';
-import { useSession } from '../state/session.js';
+import { ExamSession } from './ExamSession.js';
+import { PracticeSession } from './PracticeSession.js';
 import shared from './shared.module.css';
-import styles from './Exercise.module.css';
-
-const KIND_LABEL: Record<string, string> = {
-  LEVEL_CHANGE: 'Nivel',
-  SPEED_RESTRICTION: 'Velocidad',
-  HOLD: 'Espera',
-  VECTOR: 'Vectores',
-  DIRECT: 'Directo',
-  TRANSFER: 'Transferencia',
-};
 
 export function Exercise() {
   const [params] = useSearchParams();
   const encoded = params.get('e');
 
-  const { base, current, conflicts, instructions, error, load, add, remove, reset } = useSession();
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [student, setStudent] = useState('');
-
-  useEffect(() => {
+  const loaded = useMemo(() => {
     if (encoded === null) {
-      setLoadError(null);
-      load(buildSampleScenario().scenario);
-      return;
+      return { payload: null, error: null };
     }
     const decoded = decodePayload(encoded);
-    if (!decoded.ok) {
-      setLoadError(decoded.message);
-      load(buildSampleScenario().scenario);
-      return;
-    }
-    setLoadError(null);
-    load(decoded.payload.scenario, decoded.payload.instructions);
-  }, [encoded, load]);
+    return decoded.ok
+      ? { payload: decoded.payload, error: null }
+      : { payload: null, error: decoded.message };
+  }, [encoded]);
 
-  if (!base || !current) {
+  const fallback = useMemo(() => buildSampleScenario().scenario, []);
+  const scenario = loaded.payload?.scenario ?? fallback;
+  const instructions = loaded.payload?.instructions ?? [];
+
+  if (loaded.payload?.mode === 'exam') {
     return (
-      <div className={shared.page}>
-        <p className={shared.note}>Cargando el ejercicio…</p>
-      </div>
+      <ExamSession
+        scenario={scenario}
+        allowInstructions={loaded.payload.allowInstructions ?? false}
+        assumptions={loaded.payload.assumptions ?? []}
+      />
     );
   }
 
-  const callsignOf = (id: string) =>
-    current.flights.find((f) => f.id === id)?.callsign ?? id;
-
-  const submit = () => {
-    downloadPayload(
-      {
-        version: 1,
-        scenario: base,
-        instructions,
-        student: student.trim() === '' ? 'sin nombre' : student.trim(),
-        submittedAt: new Date().toISOString(),
-      },
-      `${base.id}-${student.trim() || 'entrega'}.json`
-    );
-  };
-
   return (
-    <div className={shared.page}>
-      <header className={shared.pageHead}>
-        <div>
-          <p className={shared.eyebrow}>Sesión de control</p>
-          <h2 className={shared.pageTitle}>{base.name}</h2>
-          <p className={shared.lead}>{base.objective}</p>
-        </div>
-        <div className={styles.actions}>
-          <label className={styles.student}>
-            <span className={styles.studentLabel}>Alumno</span>
-            <input
-              id="student-name"
-              value={student}
-              placeholder="Tu nombre"
-              onChange={(e) => setStudent(e.target.value)}
-            />
-          </label>
-          <button type="button" className={styles.primary} onClick={submit}>
-            Entregar
-          </button>
-        </div>
-      </header>
-
-      {loadError !== null ? (
+    <>
+      {loaded.error !== null ? (
         <div className={shared.notice} role="alert">
-          <strong>No se pudo abrir el enlace.</strong> {loadError} Se cargó el ejercicio de
+          <strong>No se pudo abrir el enlace.</strong> {loaded.error} Se cargó el ejercicio de
           ejemplo en su lugar.
         </div>
       ) : null}
-
-      <div className={styles.split}>
-        <div className={styles.left}>
-          <section className={shared.section}>
-            <h3 className={shared.sectionTitle}>Fichas de progreso</h3>
-            <div className={styles.strips}>
-              {current.flights.map((flight) => (
-                <FlightProgressStrip key={flight.id} flight={flight} variant="APP" />
-              ))}
-            </div>
-          </section>
-
-          <section className={shared.section}>
-            <h3 className={shared.sectionTitle}>Diagrama tiempo × punto</h3>
-            <TimeFixDiagram
-              flights={current.flights}
-              startTime={current.startTime}
-              durationMin={current.durationMin}
-            />
-          </section>
-        </div>
-
-        <aside className={styles.right}>
-          <section className={shared.section}>
-            <h3 className={shared.sectionTitle}>Instruir</h3>
-            <InstructionPanel scenario={current} onSubmit={add} error={error} />
-          </section>
-
-          <section className={shared.section}>
-            <div className={shared.sectionHead}>
-              <h3 className={shared.sectionTitle}>Instrucciones dadas</h3>
-              {instructions.length > 0 ? (
-                <button type="button" className={styles.link} onClick={reset}>
-                  Empezar de nuevo
-                </button>
-              ) : null}
-            </div>
-            {instructions.length === 0 ? (
-              <p className={shared.note}>
-                Todavía no has instruido nada. Las horas que ves son las del plan.
-              </p>
-            ) : (
-              <ol className={styles.log}>
-                {instructions.map((i) => (
-                  <li key={i.id} className={styles.logItem}>
-                    <span className={styles.logTime}>{formatHhmm(i.time)}</span>
-                    <span className={styles.logBody}>
-                      <strong>{callsignOf(i.flightId)}</strong> · {KIND_LABEL[i.kind] ?? i.kind}
-                      {i.levelFt !== undefined ? ` a FL${Math.round(i.levelFt / 100)}` : ''}
-                      {i.speedKt !== undefined ? ` ${i.speedKt} kt` : ''}
-                      {i.holdMinutes !== undefined ? ` ${i.holdMinutes} min` : ''}
-                      {i.extraTrackNm !== undefined ? ` +${i.extraTrackNm} NM` : ''}
-                      {i.targetFix !== undefined ? ` a ${i.targetFix}` : ''}
-                      {i.fromFix !== null ? ` desde ${i.fromFix}` : ''}
-                    </span>
-                    <button
-                      type="button"
-                      className={styles.remove}
-                      aria-label={`Deshacer instrucción de las ${formatHhmm(i.time)}`}
-                      onClick={() => remove(i.id)}
-                    >
-                      ✕
-                    </button>
-                  </li>
-                ))}
-              </ol>
-            )}
-          </section>
-
-          <section className={shared.section}>
-            <h3 className={shared.sectionTitle}>Conflictos</h3>
-            {conflicts ? <ConflictList report={conflicts} scenario={current} /> : null}
-          </section>
-        </aside>
-      </div>
-    </div>
+      <PracticeSession scenario={scenario} initialInstructions={instructions} />
+    </>
   );
 }

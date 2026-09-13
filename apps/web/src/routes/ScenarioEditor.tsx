@@ -86,6 +86,7 @@ export function ScenarioEditor() {
     if (stored) setDraft(stored);
   }, [id]);
 
+  const mode = draft.mode ?? 'practice';
   const built = useMemo(() => buildScenario(draft), [draft]);
 
   const report = useMemo(
@@ -161,7 +162,16 @@ export function ScenarioEditor() {
     }
   };
 
-  const payload = { version: 1 as const, scenario: built.scenario, instructions: [] };
+  // El modo viaja dentro del ejercicio: el alumno recibe una prueba, no un enlace que pueda
+  // convertir en practica quitando un parametro de la URL.
+  const payload = {
+    version: 1 as const,
+    scenario: built.scenario,
+    instructions: [],
+    mode,
+    allowInstructions: draft.allowInstructions ?? false,
+    assumptions: built.assumptions.map((a) => ({ flightId: a.flightId, note: a.note })),
+  };
 
   const copyLink = () => {
     void navigator.clipboard.writeText(exerciseLink(payload)).then(() => {
@@ -229,6 +239,54 @@ export function ScenarioEditor() {
 
       <div className={styles.split}>
         <div className={styles.left}>
+          <section className={shared.section}>
+            <h3 className={shared.sectionTitle}>Cómo se trabaja</h3>
+            <div className={styles.modes} role="group" aria-label="Modo del ejercicio">
+              <button
+                type="button"
+                aria-pressed={mode === 'practice'}
+                className={mode === 'practice' ? styles.modeOn : styles.mode}
+                onClick={() => set('mode', 'practice')}
+              >
+                <span className={styles.modeName}>Práctica</span>
+                <span className={styles.modeHint}>
+                  El sistema calcula las horas y las va corrigiendo. El alumno separa el tráfico y
+                  ve los conflictos aparecer y desaparecer.
+                </span>
+              </button>
+              <button
+                type="button"
+                aria-pressed={mode === 'exam'}
+                className={mode === 'exam' ? styles.modeOn : styles.mode}
+                onClick={() => set('mode', 'exam')}
+              >
+                <span className={styles.modeName}>Prueba</span>
+                <span className={styles.modeHint}>
+                  El alumno calcula a mano la hora, el nivel y la velocidad de cada punto. El
+                  sistema no le dice nada. Corriges tú al abrir la entrega.
+                </span>
+              </button>
+            </div>
+
+            {mode === 'exam' ? (
+              <label className={styles.check}>
+                <input
+                  type="checkbox"
+                  id="cfg-allow-instructions"
+                  checked={draft.allowInstructions ?? false}
+                  onChange={(e) => set('allowInstructions', e.target.checked)}
+                />
+                <span>
+                  Además de calcular, tiene que instruir
+                  <em className={styles.checkHint}>
+                    Las instrucciones se anotan pero no se aplican: recalcular sería resolverle la
+                    prueba. Te llegan en la entrega para que las juzgues.
+                  </em>
+                </span>
+              </label>
+            ) : null}
+          </section>
+
           <section className={shared.section}>
             <h3 className={shared.sectionTitle}>Configuración</h3>
             <div className={styles.grid}>

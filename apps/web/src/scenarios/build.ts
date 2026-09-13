@@ -26,9 +26,16 @@ export interface FlightDraft {
   readonly levelFl: number;
 }
 
+/** Como se trabaja el ejercicio. Lo elige el instructor al armarlo. */
+export type ExerciseMode = 'practice' | 'exam';
+
 export interface ScenarioDraft {
   readonly id: string;
   readonly name: string;
+  /** Ausente = practica, para las recetas guardadas antes de que existiera el modo prueba. */
+  readonly mode?: ExerciseMode;
+  /** Solo en prueba: si ademas de calcular, el alumno tiene que separar el trafico. */
+  readonly allowInstructions?: boolean;
   readonly configuration: Configuration;
   readonly runwayInUse: string;
   readonly sivigats: boolean;
@@ -46,6 +53,7 @@ export interface RejectedFlight {
 
 /** Lo que el motor tuvo que suponer, atribuido al vuelo que lo provoco. */
 export interface FlightAssumption {
+  readonly flightId: string;
   readonly callsign: string;
   readonly note: string;
 }
@@ -122,7 +130,7 @@ export function buildScenario(draft: ScenarioDraft): BuiltScenario {
     if ('flight' in built) {
       flights.push(built.flight);
       for (const note of built.assumptions) {
-        assumptions.push({ callsign: built.flight.callsign, note });
+        assumptions.push({ flightId: built.flight.id, callsign: built.flight.callsign, note });
       }
     } else {
       rejected.push(built);

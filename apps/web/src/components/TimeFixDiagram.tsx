@@ -20,6 +20,11 @@ export interface TimeFixDiagramProps {
   readonly flights: readonly Flight[];
   readonly startTime: UtcMinutes;
   readonly durationMin: number;
+  /**
+   * Marcar las coincidencias. Se apaga en modo prueba: senalar donde mirar es ayudar a
+   * resolver, y ahi el alumno tiene que verlo solo.
+   */
+  readonly showCoincidences?: boolean;
 }
 
 interface Cell {
@@ -31,7 +36,12 @@ interface Cell {
 /** Clave de celda: minuto absoluto + vuelo. */
 const key = (minute: number, flightId: string) => `${minute}|${flightId}`;
 
-export function TimeFixDiagram({ flights, startTime, durationMin }: TimeFixDiagramProps) {
+export function TimeFixDiagram({
+  flights,
+  startTime,
+  durationMin,
+  showCoincidences = true,
+}: TimeFixDiagramProps) {
   const { cells, active, coincident } = useMemo(() => {
     const cells = new Map<string, Cell>();
     // Rango de minutos en que cada vuelo esta dentro del ejercicio, para dibujar la linea de ruta.
@@ -105,7 +115,9 @@ export function TimeFixDiagram({ flights, startTime, durationMin }: TimeFixDiagr
                   styles.cell,
                   enRoute ? styles.enRoute : '',
                   cell ? styles.atFix : '',
-                  coincident.has(key(minute, flight.id)) ? styles.coincident : '',
+                  showCoincidences && coincident.has(key(minute, flight.id))
+                    ? styles.coincident
+                    : '',
                 ]
                   .filter(Boolean)
                   .join(' ');

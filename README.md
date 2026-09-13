@@ -17,7 +17,7 @@ npm run dev -w @atcsims/web     # http://localhost:5173
 Otros comandos:
 
 ```bash
-npm test              # 118 pruebas: el motor contra los números de las planillas
+npm test              # 137 pruebas: el motor contra los números de las planillas
 npm run typecheck     # TypeScript estricto en los tres paquetes
 npm run data:build    # reimporta data/*.json desde basedatos/
 npm run data:validate # comprueba la integridad de la base
@@ -29,14 +29,35 @@ npm run data:validate # comprueba la integridad de la base
 |---|---|---|
 | `/scenarios` | Instructor | Banco de ejercicios guardados en este navegador |
 | `/scenarios/:id` | Instructor | Armar el ejercicio y ver los conflictos que genera |
-| `/exercise` | Alumno | Controlar: instruir, separar, entregar |
-| `/runs` | Instructor | Cargar la entrega del alumno y ver qué resolvió |
+| `/exercise` | Alumno | Trabajar el ejercicio, en práctica o en prueba |
+| `/runs` | Instructor | Cargar la entrega del alumno y corregirla |
 | `/navdata` | Ambos | Qué se importó de las planillas |
 | `/print` | Ambos | Las strips en A4 apaisado para escribir encima |
 
+### Dos modos, y son lo contrario el uno del otro
+
+Lo elige el instructor al armar el ejercicio, y viaja dentro del enlace.
+
+**Práctica.** El sistema calcula las horas y las va corrigiendo solo. El alumno separa el
+tráfico y ve los conflictos aparecer y desaparecer con cada instrucción. Se practica el criterio.
+
+**Prueba.** El alumno calcula a mano la hora de paso, el nivel y la velocidad de cada punto, y
+el sistema **no le dice nada**: no hay conflictos marcados, no hay marcas en el diagrama, no hay
+casillas que cambien de color. Lo único que devuelve la pantalla es su propio trabajo — el
+diagrama se dibuja con sus horas, acertadas o no. Corrige el profesor, al abrir la entrega.
+Opcionalmente el alumno también anota las instrucciones que daría, pero **no se aplican**:
+recalcular sería resolverle la prueba.
+
+Al corregir, la tolerancia por defecto es ±1 min en la hora (RNF-1), ±100 ft en el nivel y
+±10 kt en la velocidad. Una casilla en blanco se cuenta aparte y **no es un error**. Y los
+puntos cuya referencia no sale directa de las planillas —un nivel interpolado entre dos
+restricciones, un vuelo que arrastra un supuesto del motor— van marcados: el sistema no da por
+mala una respuesta contra un número que se inventó él.
+
 Sin servidor, un ejercicio viaja de dos formas: **por enlace** (el escenario va comprimido en el
-hash de la URL) o **por archivo `.json`**. La entrega del alumno no es un resultado, es su lista
-de instrucciones con la hora de cada una: el instructor la vuelve a aplicar desde cero.
+hash de la URL) o **por archivo `.json`**. La entrega del alumno no es un resultado: en práctica
+es su lista de instrucciones con la hora de cada una, que el instructor vuelve a aplicar desde
+cero; en prueba, lo que escribió en cada casilla.
 
 ## Estructura
 
@@ -101,6 +122,7 @@ Los assets se construyen con rutas relativas, así que el sitio funciona igual b
   archivo al final.
 - **No genera ejercicios solo.** Falta el catálogo de conflictos tipo. Los escenarios se arman a
   mano, igual que hoy.
+- **La prueba no pone nota.** Da aciertos, desviaciones y blancos; la nota la pone el profesor.
 - **Las mínimas de separación en ruta son provisionales** hasta que ATC responda.
 - **Solo configuración SUR / pista 17L**, que es de lo único que hay procedimientos con detalle.
 

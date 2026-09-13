@@ -7,7 +7,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { formatHhmm, parseHhmm } from '@atcsims/core';
+import { formatHhmm, gradeExam, parseHhmm } from '@atcsims/core';
 import { ssrCodes } from '@atcsims/navdata';
 
 import { decodePayload, encodePayload, parsePayload } from '../src/lib/share.js';
@@ -147,5 +147,69 @@ describe('horas', () => {
   it('la receta guarda minutos, no texto: HHMM es solo como se escribe', () => {
     expect(SAMPLE_DRAFT.flights[0]!.entryTime).toBe(parseHhmm('1100'));
     expect(formatHhmm(SAMPLE_DRAFT.flights[0]!.entryTime)).toBe('1100');
+  });
+});
+
+describe('modo prueba', () => {
+  const { scenario } = buildSampleScenario();
+
+  it('el modo viaja dentro del ejercicio, no como parametro de la URL', () => {
+    const encoded = encodePayload({
+      version: 1,
+      scenario,
+      instructions: [],
+      mode: 'exam',
+      allowInstructions: true,
+    });
+    // El hash no deja leer a simple vista que es una prueba ni convertirla en practica.
+    expect(encoded).not.toContain('exam');
+
+    const decoded = decodePayload(encoded);
+    if (!decoded.ok) throw new Error(decoded.message);
+    expect(decoded.payload.mode).toBe('exam');
+    expect(decoded.payload.allowInstructions).toBe(true);
+  });
+
+  it('un enlace sin modo se abre como practica: los ya repartidos siguen valiendo', () => {
+    const decoded = decodePayload(
+      encodePayload({ version: 1, scenario, instructions: [] })
+    );
+    if (!decoded.ok) throw new Error(decoded.message);
+    expect(decoded.payload.mode).toBeUndefined();
+  });
+
+  it('las respuestas del alumno sobreviven al archivo de entrega', () => {
+    const flight = scenario.flights[0]!;
+    const answers = {
+      entries: flight.legs
+        .filter((l) => l.seq !== 1)
+        .map((l) => ({
+          flightId: flight.id,
+          fix: l.fix,
+          eto: l.eto,
+          levelFt: l.levelFt,
+          gsKt: l.gsKt,
+        })),
+    };
+
+    const reloaded = parsePayload(
+      JSON.stringify({
+        version: 1,
+        scenario,
+        instructions: [],
+        mode: 'exam',
+        answers,
+        student: 'Bruno',
+      })
+    );
+    if (!reloaded.ok) throw new Error(reloaded.message);
+    expect(reloaded.payload.answers).toEqual(answers);
+    expect(reloaded.payload.student).toBe('Bruno');
+  });
+
+  it('una entrega sin respuestas se corrige igual: todo en blanco, ningun error', () => {
+    const report = gradeExam(scenario, { entries: [] });
+    expect(report.eto.outOfTolerance).toBe(0);
+    expect(report.eto.blank).toBeGreaterThan(0);
   });
 });

@@ -263,3 +263,53 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Los dos modos, uno al lado del otro con lo que implica cada uno escrito debajo: la
+   diferencia es pedagogica y no se entiende por el nombre. */
+.modes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.mode,
+.modeOn {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font: inherit;
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.mode {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+}
+
+.mode:hover {
+  border-color: var(--accent);
+}
+
+.modeOn {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+}
+
+.modeName {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.modeOn .modeName {
+  color: var(--accent);
+}
+
+.modeHint {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}

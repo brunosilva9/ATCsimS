@@ -1,0 +1,141 @@
+/*
+ * Misma materia que la strip calculada —papel blanco, linea negra, tipografia condensada— para
+ * que se reconozca como la misma ficha. Lo que cambia es que aqui esta vacia.
+ */
+
+.strip {
+  display: flex;
+  align-items: stretch;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-strip);
+  font-size: 13px;
+  border: 1.5px solid var(--rule);
+  margin-bottom: -1.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ident {
+  flex: 0 0 152px;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  padding: 4px 6px;
+  border-right: 1.5px solid var(--rule);
+}
+
+.callsign {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+}
+
+.identRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.identKey {
+  color: var(--rule-thin);
+}
+
+.ssr {
+  font-family: var(--font-data);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  margin-right: auto;
+  padding-left: 14px;
+}
+
+.tas {
+  font-family: var(--font-data);
+  font-size: 12px;
+}
+
+.grid {
+  flex: 1;
+  border-collapse: collapse;
+}
+
+.rowHead {
+  width: 48px;
+  padding: 0 6px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rule-thin);
+  border-right: 1.5px solid var(--rule);
+}
+
+.fixHead,
+.givenHead {
+  padding: 3px 4px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-bottom: 1.5px solid var(--rule);
+  border-left: 1px solid var(--rule-thin);
+}
+
+/* El punto de entrada es el enunciado: va en negro y no se puede tocar. */
+.givenHead {
+  background: #f0f0f0;
+}
+
+.givenTag {
+  display: block;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--rule-thin);
+}
+
+.given {
+  padding: 0 6px;
+  text-align: center;
+  font-family: var(--font-data);
+  background: #f0f0f0;
+  border-left: 1px solid var(--rule-thin);
+  border-top: 1px solid var(--rule-thin);
+}
+
+.grid td {
+  border-left: 1px solid var(--rule-thin);
+  border-top: 1px solid var(--rule-thin);
+  padding: 0;
+}
+
+/*
+ * La casilla no cambia de color pase lo que pase. En una prueba, un borde que se pone verde al
+ * escribir el numero correcto seria exactamente la ayuda que no debe haber.
+ */
+.cell {
+  font: inherit;
+  font-family: var(--font-data);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  width: 100%;
+  min-width: 62px;
+  padding: 5px 4px;
+  text-align: center;
+  color: var(--pen);
+  background: transparent;
+  border: 0;
+}
+
+.cell::placeholder {
+  color: #bbbbbb;
+  font-size: 11px;
+}
+
+.cell:focus {
+  outline: 2px solid var(--pen);
+  outline-offset: -2px;
+  background: #f4f7ff;
+}

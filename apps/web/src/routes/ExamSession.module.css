@@ -1,0 +1,161 @@
+/* El rotulo de prueba es lo unico que distingue esta pantalla a primera vista. Va en ambar. */
+.eyebrow {
+  display: inline-block;
+  margin: 0 0 6px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-radius: 999px;
+}
+
+.rules {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px 15px;
+  font-size: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--warn);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.progress {
+  margin-left: auto;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+
+.actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.student {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.student input {
+  font: inherit;
+  padding: 7px 10px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.primary {
+  font: inherit;
+  font-weight: 600;
+  padding: 8px 20px;
+  color: var(--surface);
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.facts > div {
+  background: var(--surface);
+  padding: 10px 14px;
+}
+
+.facts dt {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.facts dd {
+  margin: 3px 0 0;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+}
+
+.strips {
+  overflow-x: auto;
+  padding-block: 6px 10px;
+}
+
+.strips > * {
+  min-width: 760px;
+}
+
+.log {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.logItem {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 7px 11px;
+  background: var(--surface);
+  font-size: 13px;
+}
+
+.logTime {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.logBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.remove {
+  font: inherit;
+  font-size: 12px;
+  padding: 0 5px;
+  color: var(--text-muted);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.remove:hover {
+  color: var(--danger);
+}

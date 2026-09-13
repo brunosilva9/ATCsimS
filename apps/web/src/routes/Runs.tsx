@@ -8,32 +8,52 @@
 
 import { useMemo, useState } from 'react';
 
-import { applyInstructions, detectConflicts, formatHhmm } from '@atcsims/core';
+import {
+  DEFAULT_TOLERANCE,
+  applyInstructions,
+  detectConflicts,
+  formatHhmm,
+  gradeExam,
+} from '@atcsims/core';
 import type { Conflict } from '@atcsims/core';
 import { approachFixes, coordinates, performance, separation, tmaFixes } from '@atcsims/navdata';
 
 import { ConflictList } from '../components/ConflictList.js';
+import { ExamReportTable } from '../components/ExamReportTable.js';
 import { TimeFixDiagram } from '../components/TimeFixDiagram.js';
+import { describeInstruction } from '../lib/instructionText.js';
 import { parsePayload } from '../lib/share.js';
 import type { Payload } from '../lib/share.js';
 import shared from './shared.module.css';
 import styles from './Runs.module.css';
 
-const KIND_LABEL: Record<string, string> = {
-  LEVEL_CHANGE: 'Nivel',
-  SPEED_RESTRICTION: 'Velocidad',
-  HOLD: 'Espera',
-  VECTOR: 'Vectores',
-  DIRECT: 'Directo',
-  TRANSFER: 'Transferencia',
-};
-
 export function Runs() {
   const [payload, setPayload] = useState<Payload | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * La correccion de una prueba. Se recalcula el ejercicio original y se compara con lo que
+   * escribio el alumno; los vuelos cuyo plan arrastra supuestos del motor van marcados, para
+   * que el profesor no de por malo un numero que el sistema tampoco sabia.
+   */
+  const exam = useMemo(() => {
+    if (!payload || payload.mode !== 'exam') return null;
+
+    // Solo los vuelos cuyo PLAN arrastra un supuesto declarado por el motor. Lo de marcar el
+    // vuelo entero porque alguno de sus tramos es interpolado ya lo hace gradeExam tramo a
+    // tramo; hacerlo tambien aqui marcaba el ejercicio completo y la senal dejaba de servir.
+    const assumed = (payload.assumptions ?? []).map((a) => a.flightId);
+
+    return gradeExam(
+      payload.scenario,
+      payload.answers ?? { entries: [] },
+      DEFAULT_TOLERANCE,
+      assumed
+    );
+  }, [payload]);
+
   const review = useMemo(() => {
-    if (!payload) return null;
+    if (!payload || payload.mode === 'exam') return null;
 
     const detectOptions = {
       separation,
@@ -112,7 +132,7 @@ export function Runs() {
         </div>
       ) : null}
 
-      {payload && review ? (
+      {payload ? (
         <>
           <dl className={styles.facts}>
             <div>
@@ -130,12 +150,57 @@ export function Runs() {
               <dd>{payload.scenario.name}</dd>
             </div>
             <div>
+              <dt>Modo</dt>
+              <dd>{payload.mode === 'exam' ? 'Prueba' : 'Práctica'}</dd>
+            </div>
+            <div>
               <dt>Instrucciones</dt>
               <dd>{payload.instructions.length}</dd>
             </div>
           </dl>
 
-          {'failure' in review ? (
+          {exam ? (
+            <>
+              <section className={shared.section}>
+                <h3 className={shared.sectionTitle}>Corrección del cálculo</h3>
+                <p className={shared.note}>
+                  Lo que escribió el alumno junto a lo que da el motor. No hay nota: hay aciertos,
+                  desviaciones y casillas en blanco. La nota la pones tú.
+                </p>
+                <ExamReportTable report={exam} />
+              </section>
+
+              {payload.allowInstructions === true ? (
+                <section className={shared.section}>
+                  <h3 className={shared.sectionTitle}>
+                    Instrucciones que dio ({payload.instructions.length})
+                  </h3>
+                  <p className={shared.note}>
+                    En modo prueba se anotan pero no se aplican, así que las horas de arriba no
+                    las incluyen. Se juzgan como criterio, no como resultado.
+                  </p>
+                  {payload.instructions.length === 0 ? (
+                    <p className={shared.note}>No dio ninguna.</p>
+                  ) : (
+                    <ol className={styles.log}>
+                      {[...payload.instructions]
+                        .sort((a, b) => a.time - b.time)
+                        .map((i) => {
+                          const flight = payload.scenario.flights.find((f) => f.id === i.flightId);
+                          return (
+                            <li key={i.id}>
+                              <span className={styles.time}>{formatHhmm(i.time)}</span>
+                              <strong>{flight?.callsign ?? i.flightId}</strong>{' '}
+                              {describeInstruction(i)}
+                            </li>
+                          );
+                        })}
+                    </ol>
+                  )}
+                </section>
+              ) : null}
+            </>
+          ) : review === null ? null : 'failure' in review ? (
             <div className={shared.notice} role="alert">
               <strong>La entrega no se puede reproducir.</strong> {review.failure}
             </div>
@@ -185,13 +250,7 @@ export function Runs() {
                         <li key={i.id}>
                           <span className={styles.time}>{formatHhmm(i.time)}</span>
                           <strong>{flight?.callsign ?? i.flightId}</strong>{' '}
-                          {KIND_LABEL[i.kind] ?? i.kind}
-                          {i.levelFt !== undefined ? ` a FL${Math.round(i.levelFt / 100)}` : ''}
-                          {i.speedKt !== undefined ? ` ${i.speedKt} kt` : ''}
-                          {i.holdMinutes !== undefined ? ` ${i.holdMinutes} min` : ''}
-                          {i.extraTrackNm !== undefined ? ` +${i.extraTrackNm} NM` : ''}
-                          {i.targetFix !== undefined ? ` a ${i.targetFix}` : ''}
-                          {i.fromFix !== null ? ` desde ${i.fromFix}` : ''}
+                          {describeInstruction(i)}
                         </li>
                       );
                     })}

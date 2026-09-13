@@ -13,15 +13,35 @@
 
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
 
-import type { Instruction, Scenario } from '@atcsims/core';
+import type { ExamAnswers, Instruction, Scenario } from '@atcsims/core';
 
 /** Version del formato. Si cambia la forma del escenario, esto sube y se puede migrar. */
 export const PAYLOAD_VERSION = 1;
+
+/**
+ * Como se trabaja el ejercicio.
+ *
+ *  - `practice`: el sistema calcula las horas y el alumno trabaja el trafico.
+ *  - `exam`: el alumno calcula a mano y el sistema no le dice si acierta. Solo el profesor
+ *    ve la correccion, al abrir la entrega.
+ */
+export type ExerciseMode = 'practice' | 'exam';
 
 export interface Payload {
   readonly version: number;
   readonly scenario: Scenario;
   readonly instructions: readonly Instruction[];
+  /** Ausente = practica, por compatibilidad con los enlaces ya repartidos. */
+  readonly mode?: ExerciseMode;
+  /** En prueba: si ademas de calcular, el alumno tiene que separar el trafico. */
+  readonly allowInstructions?: boolean;
+  /** En prueba: lo que el alumno escribio. Va en la entrega, nunca en el enlace de partida. */
+  readonly answers?: ExamAnswers;
+  /**
+   * Lo que el motor tuvo que suponer al calcular este ejercicio. Viaja con el porque sin esto
+   * el profesor no puede distinguir un error del alumno de un hueco de las planillas.
+   */
+  readonly assumptions?: readonly { readonly flightId: string; readonly note: string }[];
   /** Quien entrega. Vacio en un enlace del instructor. */
   readonly student?: string;
   readonly submittedAt?: string;
@@ -74,6 +94,12 @@ export function parsePayload(json: string): DecodeResult {
       version: PAYLOAD_VERSION,
       scenario: payload.scenario,
       instructions: payload.instructions ?? [],
+      ...(payload.mode !== undefined ? { mode: payload.mode } : {}),
+      ...(payload.allowInstructions !== undefined
+        ? { allowInstructions: payload.allowInstructions }
+        : {}),
+      ...(payload.answers !== undefined ? { answers: payload.answers } : {}),
+      ...(payload.assumptions !== undefined ? { assumptions: payload.assumptions } : {}),
       ...(payload.student !== undefined ? { student: payload.student } : {}),
       ...(payload.submittedAt !== undefined ? { submittedAt: payload.submittedAt } : {}),
     },
