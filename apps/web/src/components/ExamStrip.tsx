@@ -1,12 +1,16 @@
 /**
  * La ficha en blanco: lo que el alumno rellena en una prueba.
  *
- * A la izquierda va el bloque de identificacion de la strip de siempre, para que se reconozca
- * como la misma ficha. A la derecha, en vez de las horas calculadas, una casilla por punto y
- * por dato: hora, nivel y velocidad.
+ * Misma anatomia que FlightProgressStrip (la ficha calculada de practica), fix por fix: el
+ * nombre arriba, borde por debajo, el dato abajo. Antes esto era una `<table>` con una columna
+ * "HORA/NIVEL/GS" aparte y una linea de grilla en cada celda — se leia como una planilla de
+ * calculo, no como la misma tira de papel. Ahora cada fix es su propia caja, igual que en la
+ * calculada, solo que con tres filas en vez de una (hora, nivel y velocidad: los tres datos que
+ * pide una prueba) y sin las lineas de grilla entre ellas.
  *
- * Lo que viene dado no se pregunta: el punto de entrada al sector, con su hora y su nivel, es
- * el enunciado del problema. Sale impreso en negro, como en la hoja.
+ * Lo que viene dado no se pregunta: el punto de entrada al sector, con su hora, su nivel y su
+ * velocidad, es el enunciado del problema. Sale impreso en negro, como en la hoja, con la misma
+ * tipografia de hora y de nivel que usa la strip calculada (StripPrimitives).
  *
  * Aqui no hay ni un solo indicio de si va bien. Ni colores, ni avisos, ni recalculo. Es
  * deliberado: el sistema no ayuda a resolver.
@@ -16,11 +20,6 @@
  * `<input>` con lapiz— y un input vacio a veces imprime su placeholder ("hhmm") segun el
  * navegador, que en papel se leeria como parte del enunciado. Por eso en modo impreso se
  * dibuja un casillero inerte del mismo tamaño, en vez de reusar el input y ocultarlo con CSS.
- *
- * Se ve igual que FlightProgressStrip (la ficha calculada de practica): misma insignia de
- * sector junto al indicativo, misma celda de ruta al final, mismo peso de linea. Practica y
- * prueba son la misma ficha para el alumno; lo unico que cambia es si el numero ya esta puesto
- * o hay que calcularlo.
  */
 
 import { formatHhmm } from '@atcsims/core';
@@ -91,40 +90,39 @@ export function ExamStrip({ flight, variant, entries, onChange, route }: ExamStr
         </div>
       </div>
 
-      <table className={styles.grid}>
-        <thead>
-          <tr>
-            <th scope="col" className={styles.rowHead} />
-            {given ? (
-              <th scope="col" className={styles.givenHead}>
-                {given.fix}
-                <span className={styles.givenTag}>dado</span>
-              </th>
-            ) : null}
-            {toFill.map((leg) => (
-              <th key={leg.seq} scope="col" className={styles.fixHead}>
-                {leg.fix}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row" className={styles.rowHead}>
-              Hora
-            </th>
-            {given ? (
-              <td className={styles.given}>
-                <Hhmm time={given.eto} tone="printed" />
-              </td>
-            ) : null}
-            {toFill.map((leg) =>
-              printable ? (
-                <td key={leg.seq}>
+      {given ? (
+        <div className={styles.entry}>
+          <div className={styles.entryFix}>
+            {given.fix}
+            <span className={styles.givenTag}>dado</span>
+          </div>
+          <div className={styles.rows}>
+            <div className={styles.row}>
+              <span className={styles.rowTag}>H</span>
+              <Hhmm time={given.eto} tone="printed" />
+            </div>
+            <div className={styles.row}>
+              <span className={styles.rowTag}>N</span>
+              {given.levelFt === null ? '—' : <LevelBadge valueFt={given.levelFt} />}
+            </div>
+            <div className={styles.row}>
+              <span className={styles.rowTag}>V</span>
+              <span className={styles.gsValue}>{given.gsKt}</span>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <div className={styles.fixes}>
+        {toFill.map((leg) => (
+          <div key={leg.seq} className={styles.fixCell}>
+            <div className={styles.fixName}>{leg.fix}</div>
+            <div className={styles.rows}>
+              <div className={styles.row}>
+                <span className={styles.rowTag}>H</span>
+                {printable ? (
                   <span className={styles.blank} />
-                </td>
-              ) : (
-                <td key={leg.seq}>
+                ) : (
                   <input
                     id={`eto-${flight.id}-${leg.fix}`}
                     className={styles.cell}
@@ -138,26 +136,13 @@ export function ExamStrip({ flight, variant, entries, onChange, route }: ExamStr
                     }
                     onChange={(e) => change(leg.fix, { eto: toMinutes(e.target.value) })}
                   />
-                </td>
-              )
-            )}
-          </tr>
-          <tr>
-            <th scope="row" className={styles.rowHead}>
-              Nivel
-            </th>
-            {given ? (
-              <td className={styles.given}>
-                {given.levelFt === null ? '—' : <LevelBadge valueFt={given.levelFt} />}
-              </td>
-            ) : null}
-            {toFill.map((leg) =>
-              printable ? (
-                <td key={leg.seq}>
+                )}
+              </div>
+              <div className={styles.row}>
+                <span className={styles.rowTag}>N</span>
+                {printable ? (
                   <span className={styles.blank} />
-                </td>
-              ) : (
-                <td key={leg.seq}>
+                ) : (
                   <input
                     id={`lvl-${flight.id}-${leg.fix}`}
                     className={styles.cell}
@@ -174,26 +159,13 @@ export function ExamStrip({ flight, variant, entries, onChange, route }: ExamStr
                       change(leg.fix, { levelFt: fl === null ? null : fl * 100 });
                     }}
                   />
-                </td>
-              )
-            )}
-          </tr>
-          <tr>
-            <th scope="row" className={styles.rowHead}>
-              GS
-            </th>
-            {given ? (
-              <td className={styles.given}>
-                <span className={styles.gsValue}>{given.gsKt}</span>
-              </td>
-            ) : null}
-            {toFill.map((leg) =>
-              printable ? (
-                <td key={leg.seq}>
+                )}
+              </div>
+              <div className={styles.row}>
+                <span className={styles.rowTag}>V</span>
+                {printable ? (
                   <span className={styles.blank} />
-                </td>
-              ) : (
-                <td key={leg.seq}>
+                ) : (
                   <input
                     id={`gs-${flight.id}-${leg.fix}`}
                     className={styles.cell}
@@ -203,12 +175,12 @@ export function ExamStrip({ flight, variant, entries, onChange, route }: ExamStr
                     defaultValue={entries?.get(leg.fix)?.gsKt?.toString() ?? ''}
                     onChange={(e) => change(leg.fix, { gsKt: toNumber(e.target.value) })}
                   />
-                </td>
-              )
-            )}
-          </tr>
-        </tbody>
-      </table>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
       <div className={styles.route}>{routeLabel}</div>
     </article>

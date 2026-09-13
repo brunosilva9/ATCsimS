@@ -1,10 +1,12 @@
 /*
  * Misma materia que la strip calculada —papel blanco, linea negra, tipografia condensada— para
- * que se reconozca como la misma ficha. Lo que cambia es que aqui esta vacia. Reusa el mismo
- * peso de linea (1.5px, var(--rule)) y la misma regla de bordes por hermano que
- * FlightProgressStrip.module.css: antes esta ficha usaba lineas mas finas y claras
- * (var(--rule-thin)) puertas adentro, asi que aunque las dos fueran "papel" no se veian igual
- * de firmes.
+ * que se reconozca como la misma ficha. Lo que cambia es que aqui esta vacia.
+ *
+ * Antes esto era una <table>: una columna "HORA/NIVEL/GS" separada y una linea de grilla en
+ * cada celda, asi que aunque la tipografia fuera igual el conjunto se leia como una planilla de
+ * calculo, no como la misma tira de papel de FlightProgressStrip.module.css. Ahora la estructura
+ * es la misma que ahi: una caja por fix (nombre arriba con borde, dato abajo), con borde solo
+ * ENTRE cajas — nunca una linea horizontal que cruce toda la ficha.
  */
 
 .strip {
@@ -74,39 +76,27 @@
   font-size: 12px;
 }
 
-.grid {
-  flex: 1;
-  border-collapse: collapse;
-}
+/* -------------------------------------------------------------------- el punto dado */
 
-.rowHead {
-  width: 48px;
-  padding: 0 6px;
-  text-align: left;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--rule-thin);
-  border-right: 1.5px solid var(--rule);
-}
-
-.fixHead,
-.givenHead {
-  padding: 3px 4px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  border-bottom: 1.5px solid var(--rule);
-  border-left: 1.5px solid var(--rule);
-}
-
-/* El punto de entrada es el enunciado: va en negro y no se puede tocar. */
-.givenHead {
+/* El enunciado del problema: entra al sector por aqui, con esta hora, nivel y velocidad. */
+.entry {
+  flex: 0 0 120px;
+  display: grid;
+  grid-template-rows: 20px 1fr;
   background: var(--paper-shade);
 }
 
+.entryFix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border-bottom: 1.5px solid var(--rule);
+}
+
 .givenTag {
-  display: block;
   font-size: 8px;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -114,27 +104,67 @@
   color: var(--rule-thin);
 }
 
-.given {
-  padding: 4px 6px;
-  text-align: center;
-  font-family: var(--font-data);
-  background: var(--paper-shade);
-  border-left: 1.5px solid var(--rule);
-  border-top: 1.5px solid var(--rule);
+/* ------------------------------------------------------------------------- casillas */
+
+.fixes {
+  display: flex;
+  align-items: stretch;
 }
 
-/* La GS dada, a la misma escala que el nivel (StripPrimitives .level): ninguna de las tres */
-/* filas del enunciado deberia leerse mas chica que las otras dos. */
+.fixCell {
+  flex: 0 0 76px;
+  display: grid;
+  grid-template-rows: 20px 1fr;
+}
+
+.fixCell + .fixCell {
+  border-left: 1.5px solid var(--rule);
+}
+
+.fixName {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1.5px solid var(--rule);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/*
+ * Las tres filas de un punto (hora, nivel, velocidad), tanto en el dado como en los que hay que
+ * calcular. Sin lineas entre ellas: lo unico que separa un punto de otro es el borde vertical
+ * de .fixCell, igual que en la strip calculada.
+ */
+.rows {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px 4px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* La letra que dice que dato es cada fila, ya que no hay una columna aparte que lo diga una vez. */
+.rowTag {
+  flex: 0 0 auto;
+  width: 9px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--rule-thin);
+}
+
+/* La GS, a la misma escala que el nivel (StripPrimitives .level): ninguna de las tres filas del */
+/* enunciado deberia leerse mas chica que las otras dos. */
 .gsValue {
   font-family: var(--font-data);
   font-size: 15px;
   font-weight: 500;
-}
-
-.grid td {
-  border-left: 1.5px solid var(--rule);
-  border-top: 1.5px solid var(--rule);
-  padding: 0;
 }
 
 /* La ruta al final, igual que en la strip calculada: mismo procedimiento o aerovia. */
@@ -157,12 +187,12 @@
 .cell {
   font: inherit;
   font-family: var(--font-data);
-  font-size: 14px;
+  font-size: 13px;
   font-variant-numeric: tabular-nums;
   width: 100%;
-  min-width: 62px;
-  padding: 5px 4px;
-  text-align: center;
+  min-width: 0;
+  padding: 1px 2px;
+  text-align: left;
   color: var(--pen);
   background: transparent;
   border: 0;
@@ -170,7 +200,7 @@
 
 .cell::placeholder {
   color: #bbbbbb;
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .cell:focus {
@@ -185,7 +215,6 @@
  */
 .blank {
   display: block;
-  min-width: 62px;
-  padding: 5px 4px;
-  min-height: 1.2em;
+  flex: 1;
+  min-height: 1.1em;
 }
