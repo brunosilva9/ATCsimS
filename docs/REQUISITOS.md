@@ -61,7 +61,11 @@ Los seis del documento original, con su alcance concretado:
   condición (VMC/IMC), visibilidad y techo.
 - **RF-1.5 [R]** Debe permitir definir viento por nivel, y usarlo para corregir la GS. *(Las fuentes
   actuales no lo contemplan — ver RN-4.)*
-- **RN-1.1** Altitud de transición del TMA Santiago: **10 000 ft**. Nivel de transición: **FL120**.
+- **RN-1.1** Altitud de transición del TMA Santiago: **10 000 ft**. Nivel de transición: **depende
+  del QNH**, no es una constante — FL110 con 1013 hPa o más, FL115 por debajo. *(Esta hoja traía
+  FL120 como valor fijo, transcrito de la planilla; corregido tras confirmar que el nivel de
+  transición no es una constante del TMA sino que se deriva del QNH de cada momento. Implementado
+  en `transitionLevelFor()` de `packages/core`; ver también `data/tma.json`.)*
 
 ---
 

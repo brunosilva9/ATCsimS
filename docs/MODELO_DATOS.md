@@ -184,8 +184,10 @@ Fuente: hoja `HLDNG`.
 espera { fijo, nivel_inferior_ft, nivel_superior_ft, fijos_alternos: [], observaciones }
 ```
 
-Constantes del TMA que acompañan: **nivel de transición FL120**, **altitud de transición 10000 ft**.
-Van en `configuracion_tma`, no en `espera`.
+Constante del TMA que acompaña: **altitud de transición 10000 ft**. Va en `configuracion_tma`, no
+en `espera`. El **nivel** de transición no es una constante — depende del QNH de cada ejercicio
+(1013 hPa o más → FL110, por debajo → FL115); ver `transitionLevelFor()` en `packages/core` y la
+corrección de RN-1.1 en `docs/REQUISITOS.md`.
 
 ### 2.7 `perfil_performance`
 

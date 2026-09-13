@@ -12,7 +12,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { detectConflicts, formatHhmm, parseHhmm } from '@atcsims/core';
+import { detectConflicts, formatHhmm, parseHhmm, transitionLevelFor } from '@atcsims/core';
 import type { GeneratorRequest } from '@atcsims/core';
 import {
   approachFixes,
@@ -50,7 +50,7 @@ function emptyDraft(): ScenarioDraft {
     objective: '',
     weather: {
       qnhHpa: 1013,
-      transitionLevel: 'FL150',
+      transitionLevel: 'FL110', // 1013+ hPa -> FL110, ver transitionLevelFor()
       vmc: true,
       visibilityM: 9999,
       ceilingFt: null,
@@ -435,18 +435,28 @@ export function ScenarioEditor() {
                   id="cfg-qnh"
                   inputMode="numeric"
                   value={draft.weather.qnhHpa}
-                  onChange={(e) => setWeather('qnhHpa', Number(e.target.value) || 0)}
+                  onChange={(e) => {
+                    const qnhHpa = Number(e.target.value) || 0;
+                    // El nivel de transicion no se escribe: depende solo del QNH (1013 hPa o
+                    // mas, FL110; por debajo, FL115), asi que se recalcula con el mismo gesto.
+                    setDraft((d) => ({
+                      ...d,
+                      weather: { ...d.weather, qnhHpa, transitionLevel: transitionLevelFor(qnhHpa) },
+                    }));
+                  }}
                 />
               </label>
 
-              <label className={styles.field}>
+              <div className={styles.field}>
                 <span className={styles.label}>Nivel de transición</span>
-                <input
+                <output
                   id="cfg-trl"
-                  value={draft.weather.transitionLevel}
-                  onChange={(e) => setWeather('transitionLevel', e.target.value)}
-                />
-              </label>
+                  className={styles.derived}
+                  title="Depende solo del QNH: 1013 hPa o más da FL110, por debajo da FL115."
+                >
+                  {draft.weather.transitionLevel}
+                </output>
+              </div>
 
               <label className={styles.check}>
                 <input

@@ -22,6 +22,7 @@
         "17R"
       ]
     },
-    "_review": "Las fuentes usan NORTE/SUR con dos sentidos distintos: configuracion de pista (02_PISTAS, IACs, ESPACIAM) y sector de espacio aereo (ARR-SID N-S, postacion, ACC NORTE / ACC SUR). El mapeo runway<->configuration de arriba vale para el primer sentido. En 11_ESCENARIOS columna C no se puede determinar cual de los dos se usa. Pendiente de confirmar con ATC."
+    "_review": "Las fuentes usan NORTE/SUR con dos sentidos distintos: configuracion de pista (02_PISTAS, IACs, ESPACIAM) y sector de espacio aereo (ARR-SID N-S, postacion, ACC NORTE / ACC SUR). El mapeo runway<->configuration de arriba vale para el primer sentido. En 11_ESCENARIOS columna C no se puede determinar cual de los dos se usa. Pendiente de confirmar con ATC.",
+    "_reviewTransitionLevel": "transitionLevel (FL120) es el valor que trae la planilla, pero no es una constante real: el nivel de transicion depende del QNH del ejercicio (1013 hPa o mas -> FL110, por debajo -> FL115). La app usa transitionLevelFor(qnhHpa) de packages/core, no este campo. Se deja aqui por trazabilidad de lo que decia la fuente, no como el dato vigente."
   }
 }

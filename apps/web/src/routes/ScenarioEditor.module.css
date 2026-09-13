@@ -136,6 +136,29 @@
   resize: vertical;
 }
 
+/*
+ * Un valor CALCULADO, no un campo. El nivel de transicion depende solo del QNH (RN-1.1
+ * corregida): mostrarlo en una caja igual a un input invitaria a escribirle encima, que es
+ * exactamente lo que no hay que dejar hacer. El fondo rayado y el borde punteado lo distinguen
+ * de un vistazo de los campos que si se editan.
+ */
+.derived {
+  display: block;
+  padding: 7px 10px;
+  color: var(--text-muted);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--surface-sunken),
+    var(--surface-sunken) 6px,
+    var(--surface) 6px,
+    var(--surface) 12px
+  );
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: help;
+}
+
 .check {
   display: flex;
   align-items: flex-start;

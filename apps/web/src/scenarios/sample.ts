@@ -28,7 +28,7 @@ export const SAMPLE_DRAFT: ScenarioDraft = {
     'coordinar la salida sin perder el espaciamiento en aproximación.',
   weather: {
     qnhHpa: 1014,
-    transitionLevel: 'FL150',
+    transitionLevel: 'FL110', // 1013+ hPa -> FL110, ver transitionLevelFor()
     vmc: true,
     visibilityM: 9999,
     ceilingFt: null,

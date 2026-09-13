@@ -56,6 +56,7 @@ import { computeFlightPlan } from './eto.js';
 import { detectConflicts, encounters } from './conflicts.js';
 import type { DetectOptions, Encounter } from './conflicts.js';
 import { toFeet } from './performance.js';
+import { transitionLevelFor } from './transitionLevel.js';
 
 // ------------------------------------------------------------------ entradas
 
@@ -471,7 +472,7 @@ export function generateTraffic(
       durationMin: Math.max(1, Math.ceil(Math.max(...ends) - startTime) + 2),
       weather: {
         qnhHpa: 1013,
-        transitionLevel: 'FL150',
+        transitionLevel: transitionLevelFor(1013),
         vmc: true,
         visibilityM: 9999,
         ceilingFt: null,
