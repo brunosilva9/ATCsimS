@@ -54,6 +54,7 @@
 
   /* Papel: constante en ambos temas. */
   --paper: #ffffff;
+  --paper-shade: #f0f0f0; /* el enunciado dado, sombreado sobre el papel blanco */
   --ink: #111111;
   --rule: #111111;
   --rule-thin: #555555;

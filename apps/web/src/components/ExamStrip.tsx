@@ -16,6 +16,11 @@
  * `<input>` con lapiz— y un input vacio a veces imprime su placeholder ("hhmm") segun el
  * navegador, que en papel se leeria como parte del enunciado. Por eso en modo impreso se
  * dibuja un casillero inerte del mismo tamaño, en vez de reusar el input y ocultarlo con CSS.
+ *
+ * Se ve igual que FlightProgressStrip (la ficha calculada de practica): misma insignia de
+ * sector junto al indicativo, misma celda de ruta al final, mismo peso de linea. Practica y
+ * prueba son la misma ficha para el alumno; lo unico que cambia es si el numero ya esta puesto
+ * o hay que calcularlo.
  */
 
 import { formatHhmm } from '@atcsims/core';
@@ -26,9 +31,13 @@ import styles from './ExamStrip.module.css';
 
 export interface ExamStripProps {
   readonly flight: Flight;
+  /** APP trabaja la llegada dentro del TMA; ACC el tramo en ruta. Igual que en la ficha calculada. */
+  readonly variant: 'APP' | 'ACC';
   /** Lo que el alumno lleva escrito, por fix. Ausente = ficha para imprimir, siempre en blanco. */
   readonly entries?: ReadonlyMap<string, ExamEntry>;
   readonly onChange?: (fix: string, patch: Partial<Omit<ExamEntry, 'flightId' | 'fix'>>) => void;
+  /** Lo que va en la casilla final: aerovia o procedimiento. Por defecto, el del vuelo. */
+  readonly route?: string;
 }
 
 /** Texto de la casilla a numero. Vacio o ilegible = sin contestar, que no es lo mismo que cero. */
@@ -49,7 +58,7 @@ function toMinutes(text: string): number | null {
   return hours * 60 + minutes;
 }
 
-export function ExamStrip({ flight, entries, onChange }: ExamStripProps) {
+export function ExamStrip({ flight, variant, entries, onChange, route }: ExamStripProps) {
   const given = flight.legs.find((l) => isGiven(l.seq));
   const toFill = flight.legs.filter((l) => !isGiven(l.seq));
 
@@ -58,11 +67,15 @@ export function ExamStrip({ flight, entries, onChange }: ExamStripProps) {
   // tres veces, una por fila.
   const printable = onChange === undefined;
   const change = onChange ?? (() => undefined);
+  const routeLabel = route ?? flight.procedureIdent ?? flight.airway ?? '';
 
   return (
     <article className={styles.strip} aria-label={`Ficha en blanco de ${flight.callsign}`}>
       <div className={styles.ident}>
-        <div className={styles.callsign}>{flight.callsign}</div>
+        <div className={styles.callsign}>
+          <span>{flight.callsign}</span>
+          <span className={styles.sector}>{variant}</span>
+        </div>
         <div className={styles.identRow}>
           <span className={styles.identKey}>A:</span>
           <span className={styles.ssr}>{flight.ssr}</span>
@@ -187,6 +200,8 @@ export function ExamStrip({ flight, entries, onChange }: ExamStripProps) {
           </tr>
         </tbody>
       </table>
+
+      <div className={styles.route}>{routeLabel}</div>
     </article>
   );
 }

@@ -1,11 +1,16 @@
 /*
  * Misma materia que la strip calculada —papel blanco, linea negra, tipografia condensada— para
- * que se reconozca como la misma ficha. Lo que cambia es que aqui esta vacia.
+ * que se reconozca como la misma ficha. Lo que cambia es que aqui esta vacia. Reusa el mismo
+ * peso de linea (1.5px, var(--rule)) y la misma regla de bordes por hermano que
+ * FlightProgressStrip.module.css: antes esta ficha usaba lineas mas finas y claras
+ * (var(--rule-thin)) puertas adentro, asi que aunque las dos fueran "papel" no se veian igual
+ * de firmes.
  */
 
 .strip {
   display: flex;
   align-items: stretch;
+  min-height: 78px;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-strip);
@@ -15,21 +20,34 @@
   font-variant-numeric: tabular-nums;
 }
 
+.strip > * + * {
+  border-left: 1.5px solid var(--rule);
+}
+
 .ident {
   flex: 0 0 152px;
   display: grid;
   grid-template-rows: repeat(4, 1fr);
-  padding: 4px 6px;
-  border-right: 1.5px solid var(--rule);
+  padding: 2px 6px;
 }
 
 .callsign {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   font-weight: 700;
   font-size: 15px;
   letter-spacing: 0.04em;
+}
+
+.sector {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0 3px;
+  border: 1px solid var(--rule-thin);
+  color: var(--rule-thin);
 }
 
 .identRow {
@@ -79,12 +97,12 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   border-bottom: 1.5px solid var(--rule);
-  border-left: 1px solid var(--rule-thin);
+  border-left: 1.5px solid var(--rule);
 }
 
 /* El punto de entrada es el enunciado: va en negro y no se puede tocar. */
 .givenHead {
-  background: #f0f0f0;
+  background: var(--paper-shade);
 }
 
 .givenTag {
@@ -100,15 +118,28 @@
   padding: 0 6px;
   text-align: center;
   font-family: var(--font-data);
-  background: #f0f0f0;
-  border-left: 1px solid var(--rule-thin);
-  border-top: 1px solid var(--rule-thin);
+  background: var(--paper-shade);
+  border-left: 1.5px solid var(--rule);
+  border-top: 1.5px solid var(--rule);
 }
 
 .grid td {
-  border-left: 1px solid var(--rule-thin);
-  border-top: 1px solid var(--rule-thin);
+  border-left: 1.5px solid var(--rule);
+  border-top: 1.5px solid var(--rule);
   padding: 0;
+}
+
+/* La ruta al final, igual que en la strip calculada: mismo procedimiento o aerovia. */
+.route {
+  flex: 1 1 96px;
+  display: flex;
+  align-items: flex-start;
+  padding: 3px 5px;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-align: left;
+  overflow-wrap: anywhere;
 }
 
 /*

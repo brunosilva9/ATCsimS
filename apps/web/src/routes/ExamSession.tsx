@@ -156,6 +156,7 @@ export function ExamSession({ scenario, allowInstructions, assumptions }: ExamSe
             <ExamStrip
               key={flight.id}
               flight={flight}
+              variant="APP"
               entries={entriesFor(flight.id)}
               onChange={(fix, values) => patch(flight.id, fix, values)}
             />

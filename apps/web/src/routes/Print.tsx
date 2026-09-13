@@ -120,7 +120,7 @@ export function Print() {
         <>
           <div className={styles.strips}>
             {scenario.flights.map((flight) => (
-              <ExamStrip key={flight.id} flight={flight} />
+              <ExamStrip key={flight.id} flight={flight} variant="APP" />
             ))}
           </div>
 
