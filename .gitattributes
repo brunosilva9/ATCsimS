@@ -1,0 +1,13 @@
+# Finales de linea deterministas.
+#
+# Sin esto, git avisa 89 veces al hacer commit desde Windows y, peor, alguien en Linux puede
+# generar un diff que solo cambia finales de linea. Se normaliza a LF en el repositorio; cada
+# quien ve en su disco lo que su sistema espera.
+* text=auto eol=lf
+
+# Binarios: que git no los toque.
+*.png binary
+*.jpeg binary
+*.jpg binary
+*.xlsx binary
+*.docx binary
