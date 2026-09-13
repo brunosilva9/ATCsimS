@@ -91,6 +91,19 @@ editor también tiene, al final, **«Clave»**: la solución que calcula el moto
 fichas de progreso de siempre. Es la única pantalla que la muestra sin haber recibido nada del
 alumno, y solo la ve el instructor.
 
+### Imprimir
+
+`/print` también respeta el modo: en **práctica** imprime la strip ya resuelta, en dos tandas
+(APP y ACC), como siempre; en **prueba** imprime la ficha **en blanco** —sin ninguna hora
+puesta— para que el alumno la trabaje a mano en papel, exactamente como en pantalla.
+
+Ahí mismo hay una casilla, apagada por defecto, **«Incluir la clave»**: si se marca, el mismo
+trabajo de impresión agrega después la solución completa, en una hoja aparte con un aviso en
+rojo — para la copia del instructor, no para repartir junto con la ficha en blanco.
+
+Se llega a `/print` desde el editor de un ejercicio (**«Imprimir»**) o directo desde el banco
+(**Ejercicios → Imprimir**, sin abrir cada uno).
+
 ## Estructura
 
 ```

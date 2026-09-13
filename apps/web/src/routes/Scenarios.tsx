@@ -11,7 +11,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { formatHhmm } from '@atcsims/core';
 
-import { downloadPayload, parsePayload } from '../lib/share.js';
+import { downloadPayload, encodePayload, parsePayload } from '../lib/share.js';
 import { deleteDraft, listDrafts, newDraftId, saveDraft } from '../lib/storage.js';
 import { buildScenario } from '../scenarios/build.js';
 import type { ScenarioDraft } from '../scenarios/build.js';
@@ -27,11 +27,25 @@ export function Scenarios() {
   const refresh = () => setDrafts(listDrafts());
   useEffect(refresh, []);
 
+  /**
+   * El mismo payload para exportar y para imprimir, con el modo incluido: exportar sin el modo
+   * era un bug pequeño y silencioso, porque el instructor solo lo notaba si volvia a abrir el
+   * archivo — una prueba exportada asi se reabria como practica.
+   */
+  const payloadOf = (draft: ScenarioDraft) => {
+    const built = buildScenario(draft);
+    return {
+      version: 1 as const,
+      scenario: built.scenario,
+      instructions: [],
+      mode: draft.mode ?? 'practice',
+      allowInstructions: draft.allowInstructions ?? false,
+      assumptions: built.assumptions.map((a) => ({ flightId: a.flightId, note: a.note })),
+    };
+  };
+
   const exportOne = (draft: ScenarioDraft) => {
-    downloadPayload(
-      { version: 1, scenario: buildScenario(draft).scenario, instructions: [] },
-      `${draft.id}.json`
-    );
+    downloadPayload(payloadOf(draft), `${draft.id}.json`);
   };
 
   const importFile = async (file: File) => {
@@ -127,6 +141,17 @@ export function Scenarios() {
         <ul className={styles.list}>
           {drafts.map((draft) => {
             const built = buildScenario(draft);
+            // Reusa el `built` de arriba en vez de llamar a payloadOf: la lista ya recalcula
+            // cada ejercicio para mostrar la ventana, y no hace falta hacerlo dos veces por fila
+            // solo para armar el enlace de impresion.
+            const printPayload = {
+              version: 1 as const,
+              scenario: built.scenario,
+              instructions: [],
+              mode: draft.mode ?? ('practice' as const),
+              allowInstructions: draft.allowInstructions ?? false,
+              assumptions: built.assumptions.map((a) => ({ flightId: a.flightId, note: a.note })),
+            };
             return (
               <li key={draft.id} className={styles.item}>
                 <div className={styles.itemMain}>
@@ -147,6 +172,14 @@ export function Scenarios() {
                   </p>
                 </div>
                 <div className={styles.itemActions}>
+                  <a
+                    className={styles.link}
+                    href={`#/print?e=${encodePayload(printPayload)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Imprimir
+                  </a>
                   <button type="button" className={styles.link} onClick={() => exportOne(draft)}>
                     Exportar
                   </button>

@@ -139,3 +139,14 @@
   outline-offset: -2px;
   background: #f4f7ff;
 }
+
+/*
+ * La casilla en papel: mismo alto que el input interactivo, para que la reticula no cambie
+ * segun de donde salga la ficha, pero sin nada que sugiera "aqui se escribe con teclado".
+ */
+.blank {
+  display: block;
+  min-width: 62px;
+  padding: 5px 4px;
+  min-height: 1.2em;
+}

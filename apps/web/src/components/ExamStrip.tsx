@@ -10,6 +10,12 @@
  *
  * Aqui no hay ni un solo indicio de si va bien. Ni colores, ni avisos, ni recalculo. Es
  * deliberado: el sistema no ayuda a resolver.
+ *
+ * `entries`/`onChange` son opcionales: sin ellos la ficha sale para PAPEL, no para pantalla.
+ * Una casilla interactiva no tiene sentido en una hoja impresa —nadie va a escribirle a un
+ * `<input>` con lapiz— y un input vacio a veces imprime su placeholder ("hhmm") segun el
+ * navegador, que en papel se leeria como parte del enunciado. Por eso en modo impreso se
+ * dibuja un casillero inerte del mismo tamaño, en vez de reusar el input y ocultarlo con CSS.
  */
 
 import { formatHhmm } from '@atcsims/core';
@@ -20,9 +26,9 @@ import styles from './ExamStrip.module.css';
 
 export interface ExamStripProps {
   readonly flight: Flight;
-  /** Lo que el alumno lleva escrito, por fix. */
-  readonly entries: ReadonlyMap<string, ExamEntry>;
-  readonly onChange: (fix: string, patch: Partial<Omit<ExamEntry, 'flightId' | 'fix'>>) => void;
+  /** Lo que el alumno lleva escrito, por fix. Ausente = ficha para imprimir, siempre en blanco. */
+  readonly entries?: ReadonlyMap<string, ExamEntry>;
+  readonly onChange?: (fix: string, patch: Partial<Omit<ExamEntry, 'flightId' | 'fix'>>) => void;
 }
 
 /** Texto de la casilla a numero. Vacio o ilegible = sin contestar, que no es lo mismo que cero. */
@@ -46,6 +52,12 @@ function toMinutes(text: string): number | null {
 export function ExamStrip({ flight, entries, onChange }: ExamStripProps) {
   const given = flight.legs.find((l) => isGiven(l.seq));
   const toFill = flight.legs.filter((l) => !isGiven(l.seq));
+
+  // Sin onChange, la ficha es para imprimir: no hay casillas interactivas que llenar en React,
+  // asi que esta funcion nunca llega a invocarse. Existe solo para no repetir el `if (onChange)`
+  // tres veces, una por fila.
+  const printable = onChange === undefined;
+  const change = onChange ?? (() => undefined);
 
   return (
     <article className={styles.strip} aria-label={`Ficha en blanco de ${flight.callsign}`}>
@@ -88,23 +100,29 @@ export function ExamStrip({ flight, entries, onChange }: ExamStripProps) {
               Hora
             </th>
             {given ? <td className={styles.given}>{formatHhmm(given.eto)}</td> : null}
-            {toFill.map((leg) => (
-              <td key={leg.seq}>
-                <input
-                  id={`eto-${flight.id}-${leg.fix}`}
-                  className={styles.cell}
-                  inputMode="numeric"
-                  placeholder="hhmm"
-                  aria-label={`Hora de paso de ${flight.callsign} por ${leg.fix}`}
-                  defaultValue={
-                    entries.get(leg.fix)?.eto != null
-                      ? formatHhmm(entries.get(leg.fix)!.eto!)
-                      : ''
-                  }
-                  onChange={(e) => onChange(leg.fix, { eto: toMinutes(e.target.value) })}
-                />
-              </td>
-            ))}
+            {toFill.map((leg) =>
+              printable ? (
+                <td key={leg.seq}>
+                  <span className={styles.blank} />
+                </td>
+              ) : (
+                <td key={leg.seq}>
+                  <input
+                    id={`eto-${flight.id}-${leg.fix}`}
+                    className={styles.cell}
+                    inputMode="numeric"
+                    placeholder="hhmm"
+                    aria-label={`Hora de paso de ${flight.callsign} por ${leg.fix}`}
+                    defaultValue={
+                      entries?.get(leg.fix)?.eto != null
+                        ? formatHhmm(entries.get(leg.fix)!.eto!)
+                        : ''
+                    }
+                    onChange={(e) => change(leg.fix, { eto: toMinutes(e.target.value) })}
+                  />
+                </td>
+              )
+            )}
           </tr>
           <tr>
             <th scope="row" className={styles.rowHead}>
@@ -115,45 +133,57 @@ export function ExamStrip({ flight, entries, onChange }: ExamStripProps) {
                 {given.levelFt === null ? '—' : String(Math.round(given.levelFt / 100)).padStart(3, '0')}
               </td>
             ) : null}
-            {toFill.map((leg) => (
-              <td key={leg.seq}>
-                <input
-                  id={`lvl-${flight.id}-${leg.fix}`}
-                  className={styles.cell}
-                  inputMode="numeric"
-                  placeholder="FL"
-                  aria-label={`Nivel de ${flight.callsign} sobre ${leg.fix}`}
-                  defaultValue={
-                    entries.get(leg.fix)?.levelFt != null
-                      ? String(Math.round(entries.get(leg.fix)!.levelFt! / 100))
-                      : ''
-                  }
-                  onChange={(e) => {
-                    const fl = toNumber(e.target.value);
-                    onChange(leg.fix, { levelFt: fl === null ? null : fl * 100 });
-                  }}
-                />
-              </td>
-            ))}
+            {toFill.map((leg) =>
+              printable ? (
+                <td key={leg.seq}>
+                  <span className={styles.blank} />
+                </td>
+              ) : (
+                <td key={leg.seq}>
+                  <input
+                    id={`lvl-${flight.id}-${leg.fix}`}
+                    className={styles.cell}
+                    inputMode="numeric"
+                    placeholder="FL"
+                    aria-label={`Nivel de ${flight.callsign} sobre ${leg.fix}`}
+                    defaultValue={
+                      entries?.get(leg.fix)?.levelFt != null
+                        ? String(Math.round(entries.get(leg.fix)!.levelFt! / 100))
+                        : ''
+                    }
+                    onChange={(e) => {
+                      const fl = toNumber(e.target.value);
+                      change(leg.fix, { levelFt: fl === null ? null : fl * 100 });
+                    }}
+                  />
+                </td>
+              )
+            )}
           </tr>
           <tr>
             <th scope="row" className={styles.rowHead}>
               GS
             </th>
             {given ? <td className={styles.given}>{given.gsKt}</td> : null}
-            {toFill.map((leg) => (
-              <td key={leg.seq}>
-                <input
-                  id={`gs-${flight.id}-${leg.fix}`}
-                  className={styles.cell}
-                  inputMode="numeric"
-                  placeholder="kt"
-                  aria-label={`Velocidad de ${flight.callsign} hasta ${leg.fix}`}
-                  defaultValue={entries.get(leg.fix)?.gsKt?.toString() ?? ''}
-                  onChange={(e) => onChange(leg.fix, { gsKt: toNumber(e.target.value) })}
-                />
-              </td>
-            ))}
+            {toFill.map((leg) =>
+              printable ? (
+                <td key={leg.seq}>
+                  <span className={styles.blank} />
+                </td>
+              ) : (
+                <td key={leg.seq}>
+                  <input
+                    id={`gs-${flight.id}-${leg.fix}`}
+                    className={styles.cell}
+                    inputMode="numeric"
+                    placeholder="kt"
+                    aria-label={`Velocidad de ${flight.callsign} hasta ${leg.fix}`}
+                    defaultValue={entries?.get(leg.fix)?.gsKt?.toString() ?? ''}
+                    onChange={(e) => change(leg.fix, { gsKt: toNumber(e.target.value) })}
+                  />
+                </td>
+              )
+            )}
           </tr>
         </tbody>
       </table>

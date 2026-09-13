@@ -28,6 +28,36 @@
   color: var(--text-muted);
 }
 
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+/*
+ * La clave se imprime, pero no se confunde con el ejercicio: pagina aparte y un aviso en rojo
+ * de marca que no se puede pasar por alto. Es la unica hoja de este documento que un alumno no
+ * deberia ver, y va dentro del MISMO trabajo de impresion que la ficha en blanco.
+ */
+.solution {
+  break-before: page;
+}
+
+.solutionWarning {
+  margin: 0 0 14px;
+  padding: 6px 10px;
+  display: inline-block;
+  border: 1.5px dashed var(--brand-red);
+  border-radius: var(--radius);
+  font-family: var(--font-strip);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--brand-red);
+}
+
 .title,
 .subtitle {
   font-family: var(--font-strip);
