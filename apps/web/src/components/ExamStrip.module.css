@@ -115,12 +115,20 @@
 }
 
 .given {
-  padding: 0 6px;
+  padding: 4px 6px;
   text-align: center;
   font-family: var(--font-data);
   background: var(--paper-shade);
   border-left: 1.5px solid var(--rule);
   border-top: 1.5px solid var(--rule);
+}
+
+/* La GS dada, a la misma escala que el nivel (StripPrimitives .level): ninguna de las tres */
+/* filas del enunciado deberia leerse mas chica que las otras dos. */
+.gsValue {
+  font-family: var(--font-data);
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .grid td {

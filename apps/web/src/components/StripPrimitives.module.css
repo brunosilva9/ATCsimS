@@ -1,0 +1,60 @@
+/*
+ * Lo comun a cualquier strip, calculada o en blanco: como se escribe una hora (grande, con los
+ * minutos en exponente, igual que a mano) y como se escribe un nivel. Vive aparte para que las
+ * dos fichas —FlightProgressStrip y ExamStrip— dibujen exactamente los mismos pixeles en vez de
+ * dos CSS que hay que mantener iguales a mano.
+ */
+
+.time {
+  display: inline-flex;
+  align-items: flex-start;
+  font-family: var(--font-data);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.timeHours {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.timeMinutes {
+  font-size: 12px;
+  line-height: 1;
+  top: -0.35em;
+  margin-left: 1px;
+}
+
+/** Impreso por el sistema: tinta negra, como el formulario. */
+.printed {
+  color: var(--ink);
+}
+
+/** Escrito a mano por el controlador. Su tooltip trae la cuenta: distancia, GS y de donde salio. */
+.pen {
+  color: var(--pen);
+  cursor: help;
+}
+
+/** Estimada superada por una instruccion: se tacha y se escribe la nueva debajo. */
+.struck {
+  color: var(--rule-thin);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.level {
+  font-family: var(--font-data);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.levelStruck {
+  font-family: var(--font-data);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--rule-thin);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}

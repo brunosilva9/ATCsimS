@@ -22,8 +22,9 @@
  */
 
 import type { Flight, FlightLeg } from '@atcsims/core';
-import { formatHhmm, splitHhmm } from '@atcsims/core';
+import { formatHhmm } from '@atcsims/core';
 
+import { Hhmm, LevelBadge } from './StripPrimitives.js';
 import styles from './FlightProgressStrip.module.css';
 
 /** De donde salio la GS de un tramo, en el mismo orden de precedencia que el motor. */
@@ -69,33 +70,6 @@ export interface FlightProgressStripProps {
   readonly route?: string;
   /** Marcado con destacador, como el EJERCITOC de la hoja. */
   readonly highlighted?: boolean;
-}
-
-/** Nivel de vuelo a como se escribe en la strip: 24000 -> "240". */
-function levelLabel(valueFt: number): string {
-  return String(Math.round(valueFt / 100)).padStart(3, '0');
-}
-
-/**
- * La hora como la escribe el controlador: hora grande, minutos en exponente. El tooltip explica
- * como se calculo — la distancia, la GS y de donde salio, no solo repetir la hora que ya se lee.
- */
-function Hhmm({
-  time,
-  tone,
-  detail,
-}: {
-  time: number;
-  tone: 'printed' | 'pen' | 'struck';
-  detail?: string | undefined;
-}) {
-  const { hours, minutes } = splitHhmm(time);
-  return (
-    <span className={`${styles.time} ${styles[tone]}`} title={detail ?? formatHhmm(time)}>
-      <span className={styles.timeHours}>{hours}</span>
-      <sup className={styles.timeMinutes}>{minutes}</sup>
-    </span>
-  );
 }
 
 /**
@@ -211,12 +185,7 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
 
       <div className={styles.levels} title={levelDetail}>
         {levels.map((level, i) => (
-          <span
-            key={`${level.valueFt}-${i}`}
-            className={level.superseded ? styles.levelStruck : styles.level}
-          >
-            {levelLabel(level.valueFt)}
-          </span>
+          <LevelBadge key={`${level.valueFt}-${i}`} valueFt={level.valueFt} superseded={level.superseded} />
         ))}
       </div>
 

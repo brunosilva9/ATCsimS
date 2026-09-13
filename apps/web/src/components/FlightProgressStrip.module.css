@@ -127,21 +127,8 @@
 
 .levels {
   flex-basis: 62px;
-  font-family: var(--font-data);
-  font-size: 15px;
-  font-weight: 500;
   /* Trae un tooltip con la restriccion que fijo el nivel: se nota que hay algo que leer. */
   cursor: help;
-}
-
-.level {
-  color: var(--ink);
-}
-
-.levelStruck {
-  color: var(--rule-thin);
-  text-decoration: line-through;
-  text-decoration-thickness: 1.5px;
 }
 
 .route {
@@ -188,45 +175,11 @@
   justify-content: center;
 }
 
-/* ----------------------------------------------------------------------------- horas */
-
-.time {
-  display: inline-flex;
-  align-items: flex-start;
-  font-family: var(--font-data);
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.timeHours {
-  font-size: 19px;
-  line-height: 1;
-}
-
-.timeMinutes {
-  font-size: 12px;
-  line-height: 1;
-  top: -0.35em;
-  margin-left: 1px;
-}
-
-/** Impreso por el sistema: tinta negra, como el formulario. */
-.printed {
-  color: var(--ink);
-}
-
-/** Escrito a mano por el controlador. Su tooltip trae la cuenta: distancia, GS y de donde salio. */
-.pen {
-  color: var(--pen);
-  cursor: help;
-}
-
-/** Estimada superada por una instruccion: se tacha y se escribe la nueva debajo. */
-.struck {
-  color: var(--rule-thin);
-  text-decoration: line-through;
-  text-decoration-thickness: 1.5px;
-}
+/*
+ * Las horas y los niveles mismos (tipografia, tonos printed/pen/struck) viven en
+ * StripPrimitives.module.css: los usa tambien ExamStrip, y asi los dos dibujan exactamente los
+ * mismos pixeles en vez de dos CSS que hay que mantener sincronizados a mano.
+ */
 
 @media (max-width: 900px) {
   .strip {

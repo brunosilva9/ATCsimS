@@ -27,6 +27,7 @@ import { formatHhmm } from '@atcsims/core';
 import type { ExamEntry, Flight } from '@atcsims/core';
 import { isGiven } from '@atcsims/core';
 
+import { Hhmm, LevelBadge } from './StripPrimitives.js';
 import styles from './ExamStrip.module.css';
 
 export interface ExamStripProps {
@@ -112,7 +113,11 @@ export function ExamStrip({ flight, variant, entries, onChange, route }: ExamStr
             <th scope="row" className={styles.rowHead}>
               Hora
             </th>
-            {given ? <td className={styles.given}>{formatHhmm(given.eto)}</td> : null}
+            {given ? (
+              <td className={styles.given}>
+                <Hhmm time={given.eto} tone="printed" />
+              </td>
+            ) : null}
             {toFill.map((leg) =>
               printable ? (
                 <td key={leg.seq}>
@@ -143,7 +148,7 @@ export function ExamStrip({ flight, variant, entries, onChange, route }: ExamStr
             </th>
             {given ? (
               <td className={styles.given}>
-                {given.levelFt === null ? '—' : String(Math.round(given.levelFt / 100)).padStart(3, '0')}
+                {given.levelFt === null ? '—' : <LevelBadge valueFt={given.levelFt} />}
               </td>
             ) : null}
             {toFill.map((leg) =>
@@ -177,7 +182,11 @@ export function ExamStrip({ flight, variant, entries, onChange, route }: ExamStr
             <th scope="row" className={styles.rowHead}>
               GS
             </th>
-            {given ? <td className={styles.given}>{given.gsKt}</td> : null}
+            {given ? (
+              <td className={styles.given}>
+                <span className={styles.gsValue}>{given.gsKt}</span>
+              </td>
+            ) : null}
             {toFill.map((leg) =>
               printable ? (
                 <td key={leg.seq}>
