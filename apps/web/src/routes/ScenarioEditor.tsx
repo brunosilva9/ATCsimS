@@ -10,7 +10,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { detectConflicts, formatHhmm, parseHhmm } from '@atcsims/core';
 import type { GeneratorRequest } from '@atcsims/core';
@@ -214,6 +214,15 @@ export function ScenarioEditor() {
 
   return (
     <div className={shared.page}>
+      {/*
+        La unica pantalla del instructor a la que se llega desde una lista (/scenarios) y no
+        directo desde el menu de arriba. Sin esto, la unica vuelta al banco era editar la URL a
+        mano: el enlace "Ejercicios" del menu tambien sirve, pero nada en esta pantalla lo dice.
+      */}
+      <Link to="/scenarios" className={styles.back}>
+        ← Ejercicios
+      </Link>
+
       <header className={shared.pageHead}>
         <div className={styles.titleBlock}>
           <p className={shared.eyebrow}>Instructor · armar ejercicio</p>
