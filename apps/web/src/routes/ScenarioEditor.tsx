@@ -66,6 +66,83 @@ function freeSsr(used: readonly string[]): string {
   return ssrCodes.find((c) => !taken.has(c)) ?? '0000';
 }
 
+function parseHhmmOrNull(text: string): number | null {
+  try {
+    return parseHhmm(text);
+  } catch {
+    return null;
+  }
+}
+
+function parseLevelOrNull(text: string): number | null {
+  const trimmed = text.trim();
+  if (trimmed === '') return null;
+  const n = Number(trimmed);
+  return Number.isFinite(n) ? n : null;
+}
+
+const formatLevel = (value: number): string => String(value);
+
+interface BufferedFieldProps {
+  readonly id: string;
+  /** Como el className de cualquier elemento: el modulo CSS puede no traer la clase. */
+  readonly className?: string | undefined;
+  readonly ariaLabel: string;
+  readonly value: number;
+  readonly format: (value: number) => string;
+  readonly parse: (text: string) => number | null;
+  readonly onCommit: (value: number) => void;
+}
+
+/**
+ * Un campo de texto que no se resetea en cada tecla intermedia.
+ *
+ * Vincular `value={format(x)}` directo contra el estado calculado tiene un problema: al
+ * escribir, casi todos los estados de a medio camino no forman un valor valido ("1", "12", o
+ * vacio al borrar para reescribir), y si esos casos no tocan el estado, React repinta el input
+ * con el valor VIEJO en cada tecla — el campo salta hacia atras y no deja escribir nada nuevo.
+ * Es justo lo que pasaba con la hora de entrada: escribir "1230" mostraba "0000" o volvia a la
+ * hora anterior en cada digito.
+ *
+ * Aca el texto que se ve es SIEMPRE lo que el usuario escribio (un estado propio, no el
+ * calculado), y el valor de verdad solo se actualiza cuando ese texto ya es valido. Al perder el
+ * foco con algo invalido a medio escribir, se repone el ultimo valor bueno.
+ */
+function BufferedField({
+  id,
+  className,
+  ariaLabel,
+  value,
+  format,
+  parse,
+  onCommit,
+}: BufferedFieldProps) {
+  const [text, setText] = useState(() => format(value));
+
+  // Si el valor cambia por otra via mientras no se esta escribiendo aca (otro campo lo afecta,
+  // se carga un borrador distinto), el texto se pone al dia. Mientras se escribe, el valor de
+  // verdad no cambia por si solo, asi que esto no le pisa a nadie lo que lleva a medio escribir.
+  useEffect(() => {
+    setText(format(value));
+  }, [value, format]);
+
+  return (
+    <input
+      id={id}
+      className={className}
+      inputMode="numeric"
+      aria-label={ariaLabel}
+      value={text}
+      onChange={(e) => {
+        setText(e.target.value);
+        const parsed = parse(e.target.value);
+        if (parsed !== null) onCommit(parsed);
+      }}
+      onBlur={() => setText(format(value))}
+    />
+  );
+}
+
 export function ScenarioEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -520,29 +597,25 @@ export function ScenarioEditor() {
                           </select>
                         </td>
                         <td>
-                          <input
+                          <BufferedField
+                            id={`entry-${f.id}`}
                             className={styles.cellInput}
-                            value={formatHhmm(f.entryTime)}
-                            inputMode="numeric"
-                            aria-label={`Hora de entrada de ${f.callsign}`}
-                            onChange={(e) => {
-                              try {
-                                patchFlight(f.id, { entryTime: parseHhmm(e.target.value) });
-                              } catch {
-                                // Se ignora mientras el texto está a medio escribir.
-                              }
-                            }}
+                            ariaLabel={`Hora de entrada de ${f.callsign}`}
+                            value={f.entryTime}
+                            format={formatHhmm}
+                            parse={parseHhmmOrNull}
+                            onCommit={(entryTime) => patchFlight(f.id, { entryTime })}
                           />
                         </td>
                         <td>
-                          <input
+                          <BufferedField
+                            id={`level-${f.id}`}
                             className={styles.cellInput}
+                            ariaLabel={`Nivel de ${f.callsign}`}
                             value={f.levelFl}
-                            inputMode="numeric"
-                            aria-label={`Nivel de ${f.callsign}`}
-                            onChange={(e) =>
-                              patchFlight(f.id, { levelFl: Number(e.target.value) || 0 })
-                            }
+                            format={formatLevel}
+                            parse={parseLevelOrNull}
+                            onCommit={(levelFl) => patchFlight(f.id, { levelFl })}
                           />
                         </td>
                         <td>
