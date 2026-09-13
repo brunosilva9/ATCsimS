@@ -12,15 +12,14 @@ export interface Exclusion {
   readonly reason: string;
 }
 
-export const EXCLUSIONS: readonly Exclusion[] = [
-  {
-    kind: 'procedure',
-    id: 'ASIMO7D',
-    reason:
-      'P-02: la planilla lista 8 fixes y solo 7 distancias. Falta el valor de PUMAR y no se ' +
-      'puede deducir a que fix corresponde cada uno.',
-  },
-];
+/*
+ * ASIMO7D estuvo aca (P-02: le faltaba la distancia de PUMAR). Se corrigio a mano en
+ * data/procedures.json —ver el campo `_manualFix` de esa entrada— cruzando SIMOK7B, que
+ * comparte la misma cola final UGOLA-EL220-PUMAR-TEGEB y trae la secuencia completa. Sigue
+ * pendiente corregir la celda en el Excel; hasta entonces, una reimportacion con
+ * tools/build-db.js pisa la correccion y esto habria que volver a excluirlo.
+ */
+export const EXCLUSIONS: readonly Exclusion[] = [];
 
 const excludedByKind = (kind: Exclusion['kind']): ReadonlySet<string> =>
   new Set(EXCLUSIONS.filter((e) => e.kind === kind).map((e) => e.id));

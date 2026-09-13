@@ -133,21 +133,34 @@ describe('UMKAL7C en detalle', () => {
   });
 });
 
-describe('datos incompletos', () => {
-  it('ASIMO7D no se calcula: se niega en vez de inventar la distancia que falta', () => {
-    const asimo = procedures.find((p) => p.ident === 'ASIMO7D');
-    expect(asimo).toBeDefined();
+describe('ASIMO7D — la distancia de PUMAR que faltaba', () => {
+  /*
+   * Este procedimiento estuvo excluido (P-02): la planilla trae 8 fijos y solo 7 distancias,
+   * y no se podia deducir a cual de los 8 le faltaba la suya. Se corrigio a mano en
+   * data/procedures.json —ver el campo `_manualFix` de esa entrada— cruzando SIMOK7B, que
+   * comparte la misma cola final UGOLA-EL220-PUMAR-TEGEB y trae la secuencia completa y
+   * limpia (...,14,9,0). Este test fija ese resultado: si alguien reimporta antes de corregir
+   * el Excel, `tools/build-db.js` pisa la correccion y ESTE test es el que lo va a notar.
+   */
+  it('ahora se calcula entero, con PUMAR a 9 NM del final', () => {
+    const asimo = byIdent('ASIMO7D');
+    expect(asimo.legs.every((l) => l.distToEndNm !== null)).toBe(true);
+
+    const pumar = asimo.legs.find((l) => l.fix === 'PUMAR');
+    const tegeb = asimo.legs.find((l) => l.fix === 'TEGEB');
+    expect(pumar?.distToEndNm).toBe(9);
+    expect(tegeb?.distToEndNm).toBe(0);
 
     const result = computeFlightPlan({
-      procedure: asimo!,
+      procedure: asimo,
       entryTime: parseHhmm('1100'),
       cruiseLevelFt: toFeet(240),
       performance,
     });
 
-    expect(result.ok).toBe(false);
-    if (result.ok) return;
-    expect(result.reason).toBe('INCOMPLETE_DATA');
-    expect(result.message).toContain('ASIMO7D');
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.legs).toHaveLength(asimo.legs.length);
+    expect(result.legs[result.legs.length - 1]!.fix).toBe('TEGEB');
   });
 });

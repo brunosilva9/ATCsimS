@@ -128,8 +128,9 @@ lo muestra.
 Hay tres sitios donde eso es visible y conviene conocerlos antes de tocar nada:
 
 - [`packages/navdata/src/sanitize.ts`](packages/navdata/src/sanitize.ts) — lo que se excluye a
-  propósito, con el punto del informe a ATC que lo resolverá. Hoy: `ASIMO7D`, a la que le falta
-  una distancia.
+  propósito, con el punto del informe a ATC que lo resolverá. Vacío por ahora: la última exclusión
+  (`ASIMO7D`, le faltaba una distancia) se corrigió a mano — ver `_manualFix` en
+  `data/procedures.json` y el punto 1 de [`data/README.md`](data/README.md#defectos-encontrados-en-las-planillas).
 - [`packages/core/src/provisionalMinima.ts`](packages/core/src/provisionalMinima.ts) — las
   mínimas de separación en ruta, que **no son datos de la dependencia**. Ningún informe de
   conflictos se declara limpio sin decir con qué se midió.

@@ -50,13 +50,15 @@ describe('de receta a ejercicio', () => {
     expect(result.rejected[0]?.reason).toBeTruthy();
   });
 
-  it('ASIMO7D queda excluida: el motor se niega y el ejercicio lo dice', () => {
+  it('ASIMO7D ya se calcula: la distancia de PUMAR que faltaba se corrigio a mano', () => {
+    // Ver packages/core/test/eto.test.ts para el detalle de la correccion (P-02).
     const withAsimo: ScenarioDraft = {
       ...SAMPLE_DRAFT,
       flights: [{ ...SAMPLE_DRAFT.flights[0]!, procedureIdent: 'ASIMO7D' }],
     };
     const result = buildScenario(withAsimo);
-    expect(result.rejected).toHaveLength(1);
+    expect(result.rejected).toHaveLength(0);
+    expect(result.scenario.flights).toHaveLength(1);
   });
 
   it('un ejercicio sin trafico no revienta', () => {

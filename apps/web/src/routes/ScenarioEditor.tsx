@@ -95,18 +95,22 @@ interface BufferedFieldProps {
 }
 
 /**
- * Un campo de texto que no se resetea en cada tecla intermedia.
+ * Un campo que se valida al SALIR, no al escribir.
  *
- * Vincular `value={format(x)}` directo contra el estado calculado tiene un problema: al
- * escribir, casi todos los estados de a medio camino no forman un valor valido ("1", "12", o
- * vacio al borrar para reescribir), y si esos casos no tocan el estado, React repinta el input
- * con el valor VIEJO en cada tecla — el campo salta hacia atras y no deja escribir nada nuevo.
- * Es justo lo que pasaba con la hora de entrada: escribir "1230" mostraba "0000" o volvia a la
- * hora anterior en cada digito.
+ * La primera version validaba en cada tecla, y eso trajo un bug propio: "334" (tres digitos)
+ * ya es una hora valida para parseHhmm — 3:34, el mismo formato corto que acepta "1125" o
+ * "930" — asi que confirmar en cada tecla reescribia el campo a "0334" ANTES de que el usuario
+ * terminara de escribir, por ejemplo, "1334". La tecla siguiente se pegaba detras de ese
+ * "0334" en vez de seguir la hora que se queria escribir: el campo se sentia anteponiendo un 0.
  *
- * Aca el texto que se ve es SIEMPRE lo que el usuario escribio (un estado propio, no el
- * calculado), y el valor de verdad solo se actualiza cuando ese texto ya es valido. Al perder el
- * foco con algo invalido a medio escribir, se repone el ultimo valor bueno.
+ * Ninguna heuristica sobre CUANDO un estado intermedio "ya cuenta como completo" es correcta en
+ * un formato de largo variable como HHMM/H:MM. La unica forma honesta es no decidir nada
+ * mientras se escribe: el input queda sin controlar (defaultValue, no value) durante la edicion,
+ * y recien al perder el foco se revisa lo que quedo. Si es una hora valida, se aplica y se
+ * prolija al formato de siempre; si no, se repone la ultima buena. `key={value}` fuerza a
+ * remontar el input con su defaultValue al dia cuando el valor de verdad cambia por cualquier
+ * via —tanto por esta misma confirmacion como por otra cosa—, sin pisarle nada a quien esta
+ * escribiendo mientras tanto, porque mientras se escribe `value` no cambia por si solo.
  */
 function BufferedField({
   id,
@@ -117,28 +121,29 @@ function BufferedField({
   parse,
   onCommit,
 }: BufferedFieldProps) {
-  const [text, setText] = useState(() => format(value));
-
-  // Si el valor cambia por otra via mientras no se esta escribiendo aca (otro campo lo afecta,
-  // se carga un borrador distinto), el texto se pone al dia. Mientras se escribe, el valor de
-  // verdad no cambia por si solo, asi que esto no le pisa a nadie lo que lleva a medio escribir.
-  useEffect(() => {
-    setText(format(value));
-  }, [value, format]);
+  const commit = (input: HTMLInputElement) => {
+    const parsed = parse(input.value);
+    if (parsed !== null) {
+      input.value = format(parsed);
+      onCommit(parsed);
+    } else {
+      input.value = format(value);
+    }
+  };
 
   return (
     <input
+      key={value}
       id={id}
       className={className}
       inputMode="numeric"
       aria-label={ariaLabel}
-      value={text}
-      onChange={(e) => {
-        setText(e.target.value);
-        const parsed = parse(e.target.value);
-        if (parsed !== null) onCommit(parsed);
+      defaultValue={format(value)}
+      onBlur={(e) => commit(e.currentTarget)}
+      onKeyDown={(e) => {
+        // Enter confirma sin tener que hacer clic en otro lado, como en cualquier formulario.
+        if (e.key === 'Enter') e.currentTarget.blur();
       }}
-      onBlur={() => setText(format(value))}
     />
   );
 }

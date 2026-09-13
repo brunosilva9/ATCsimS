@@ -91,11 +91,12 @@ En las SID el primer tramo va del aeródromo al primer fix, por eso llevan adem�
 
 Están marcados en el JSON, no corregidos en silencio.
 
-1. **`ASIMO7D` tiene 8 fijos y solo 7 distancias.** Falta un valor y no se puede deducir a cuál
-   corresponde. Comparando con las otras STAR que comparten cola (`UGOLA 19 → EL220 14 → PUMAR 9
-   → TEGEB 0`), lo que falta es probablemente `PUMAR = 9`, pero eso hay que confirmarlo, no
-   asumirlo. El procedimiento se emite con todas las distancias en `null`: **el motor no puede
-   calcularlo hasta que se arregle el Excel**. Mismo defecto en `BUSES_horario_ver5.xlsx`.
+1. ~~`ASIMO7D` tiene 8 fijos y solo 7 distancias.~~ **Corregido a mano, confirmado.** Faltaba
+   `PUMAR`; comparando con las otras STAR que comparten cola (`UGOLA 19 → EL220 14 → PUMAR 9 →
+   TEGEB 0`) ya se sospechaba `PUMAR = 9`, y se confirmó cruzando `SIMOK7B` —misma cola, secuencia
+   completa y limpia. El detalle de qué celdas están corridas en el Excel (y que la corrección
+   vive solo en el JSON hasta que se arreglen) está en el campo `_manualFix` de esa entrada en
+   `procedures.json`. Mismo defecto de origen en `BUSES_horario_ver5.xlsx`, sin corregir ahí.
 
 2. **14 de 21 procedimientos omiten el tiempo de algún tramo** (normalmente el primero). No afecta
    al cálculo — el motor calcula el tiempo desde la distancia y la performance — pero impide

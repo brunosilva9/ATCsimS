@@ -2,7 +2,8 @@
  * Tipos del dominio. Traduccion de docs/MODELO_DATOS.md.
  *
  * Regla: los campos que la planilla puede no traer son `| null` explicito, nunca un cero
- * silencioso. Si ASIMO7D no tiene distancias, el tipo lo dice y el motor se niega a calcular.
+ * silencioso. Si a un procedimiento le falta una distancia, el tipo lo dice y el motor se
+ * niega a calcular (fue el caso de ASIMO7D hasta que se corrigio, ver data/README.md).
  */
 
 // ---------------------------------------------------------------- primitivas

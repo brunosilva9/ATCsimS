@@ -905,19 +905,19 @@
       "requiresSivigats": false,
       "entryFix": "ASIMO",
       "exitFix": "TEGEB",
-      "totalDistNm": null,
+      "totalDistNm": 90,
       "legs": [
         {
           "seq": 1,
           "fix": "ASIMO",
-          "distToEndNm": null,
+          "distToEndNm": 90,
           "legDistNm": null
         },
         {
           "seq": 2,
           "fix": "VULBI",
-          "distToEndNm": null,
-          "legDistNm": null,
+          "distToEndNm": 60,
+          "legDistNm": 30,
           "minAltFt": 21000,
           "maxAltFt": 24000,
           "maxSpeedKt": 300,
@@ -927,38 +927,38 @@
         {
           "seq": 3,
           "fix": "MORPA",
-          "distToEndNm": null,
-          "legDistNm": null
+          "distToEndNm": 39,
+          "legDistNm": 21
         },
         {
           "seq": 4,
           "fix": "VUDOG",
-          "distToEndNm": null,
-          "legDistNm": null
+          "distToEndNm": 29,
+          "legDistNm": 10
         },
         {
           "seq": 5,
           "fix": "UGOLA",
-          "distToEndNm": null,
-          "legDistNm": null
+          "distToEndNm": 19,
+          "legDistNm": 10
         },
         {
           "seq": 6,
           "fix": "EL220",
-          "distToEndNm": null,
-          "legDistNm": null
+          "distToEndNm": 14,
+          "legDistNm": 5
         },
         {
           "seq": 7,
           "fix": "PUMAR",
-          "distToEndNm": null,
-          "legDistNm": null
+          "distToEndNm": 9,
+          "legDistNm": 5
         },
         {
           "seq": 8,
           "fix": "TEGEB",
-          "distToEndNm": null,
-          "legDistNm": null
+          "distToEndNm": 0,
+          "legDistNm": 9
         }
       ],
       "_source": "TABLAS...05 AGO 2026!STARs-SIDs-2",
@@ -971,20 +971,11 @@
         12.337
       ],
       "_timesNote": "La planilla trae 5 tiempos por tramo y el procedimiento tiene 7. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
-      "_review": "La planilla lista 8 fixes pero solo 7 distancias (90, 60, 39, 29, 19, 14, 0). Falta un valor y no se puede deducir a que fix corresponde cada uno. Corregir en el Excel y volver a ejecutar tools/build-db.js.",
-      "_sourceDistances": [
-        90,
-        60,
-        39,
-        29,
-        19,
-        14,
-        0
-      ],
       "_dist05Star": {
         "fix": "VULBI",
         "distNm": 60
-      }
+      },
+      "_manualFix": "PUMAR y TEGEB corregidos a mano (9 y 0 NM): la planilla trae 0 y 21 en esas dos celdas (BB8 y BC8 de STARs-SIDs-2), corridas una posicion por un valor de PUMAR que falta. Confirmado por SIMOK7B, que comparte la misma cola UGOLA-EL220-PUMAR-TEGEB y trae la secuencia completa y limpia: ...,14,9,0. Pendiente corregir en el Excel (TABLAS AWY-STAR-IAC-MIN ESPAC - APP SIVIGATS 05 AGO 2026 EVAL.xlsx, hoja STARs-SIDs-2, fila 8: BB8=9, BC8=0); mientras eso no pase, una reimportacion con tools/build-db.js pisa esta correccion."
     },
     {
       "ident": "EROLO6E",

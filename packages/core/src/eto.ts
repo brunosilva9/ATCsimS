@@ -236,8 +236,9 @@ export function computeFlightPlan(options: ComputeOptions): ComputeResult {
     return { ok: false, reason: 'INCOMPLETE_DATA', message: `${procedure.ident} no tiene tramos.` };
   }
 
-  // Si la planilla dejo huecos (caso ASIMO7D, P-02 del informe a ATC) no se calcula nada.
-  // Es preferible a rellenar el hueco por deduccion y producir horas que parecen validas.
+  // Si la planilla dejo huecos no se calcula nada (fue el caso de ASIMO7D, P-02 del informe
+  // a ATC, hasta que se corrigio a mano en data/procedures.json). Es preferible a rellenar el
+  // hueco por deduccion y producir horas que parecen validas.
   const missing = legs.find((leg) => leg.distToEndNm === null);
   if (missing) {
     return {
