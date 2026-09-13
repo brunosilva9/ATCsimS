@@ -1,0 +1,176 @@
+/*
+ * Pie del sitio. Tres columnas que no compiten: el titulo de cada una es pequeno y en
+ * mayusculas, y lo que pesa es el texto. Un pie con tres encabezados grandes discute con el
+ * contenido de la pagina, que es lo que el usuario vino a leer.
+ */
+
+.footer {
+  margin-top: 32px;
+  padding-block: 28px 20px;
+  padding-inline: 24px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  /* Eco de la regla roja del logo, mas fina que la de la cabecera: cierra sin competir con ella. */
+  box-shadow: inset 0 1px 0 0 var(--brand-red);
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 28px;
+  max-width: 1200px;
+}
+
+.column {
+  min-width: 0;
+}
+
+.columnTitle {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text);
+  /* El subrayado corto con el azul de marca marca el inicio de columna sin usar una caja. */
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--brand);
+  display: inline-block;
+}
+
+.body {
+  margin: 0 0 8px;
+  line-height: 1.65;
+  max-width: 46ch;
+}
+
+.meta {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+
+.footer a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.footer a:hover {
+  border-bottom-color: currentColor;
+}
+
+/* --------------------------------------------------------------- las cifras de la base */
+
+/*
+ * Cifra encima, rotulo debajo, en fila. Son cinco numeros pequenos: una tabla seria demasiado
+ * aparato, y una lista de "Fijos: 107" se lee peor de un vistazo que la cifra destacada.
+ */
+.counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 12px 0 10px;
+}
+
+.counts div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.counts dt {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.counts dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+/* El aviso de las provisionales no es una nota al pie: es la limitacion que hay que conocer. */
+.warnLine {
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 3px solid var(--warn);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: var(--warn-soft);
+  color: var(--warn);
+  line-height: 1.55;
+  font-size: 11.5px;
+}
+
+.warnLine strong {
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------------- el Colegio */
+
+.address {
+  margin: 0;
+  font-style: normal;
+  line-height: 1.8;
+}
+
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+/*
+ * Enlaces de texto con icono, no botones. Un pie con cuatro botones pide que lo pulses, y lo
+ * que uno viene a hacer aqui es leer una direccion o buscar un telefono. El nombre de la red va
+ * escrito ademas del glifo: esto se proyecta en sala y un icono suelto a cinco metros no se lee.
+ */
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.socialLink svg {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.socialLink:hover svg {
+  opacity: 1;
+}
+
+/* ------------------------------------------------------------------------------- el aviso */
+
+.legal {
+  max-width: 1200px;
+  margin: 24px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 11.5px;
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .footer {
+    padding-inline: 16px;
+  }
+
+  .columns {
+    gap: 22px;
+  }
+}
