@@ -91,10 +91,3 @@
 .notice li + li {
   margin-top: 4px;
 }
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-}

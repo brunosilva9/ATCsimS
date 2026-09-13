@@ -19,7 +19,10 @@
 .primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #ffffff;
+  /* var(--surface), no blanco fijo: en tema oscuro --accent es un cian claro y el blanco
+     encima quedaba en 2.1:1. --surface da el oscuro casi negro que usan los demas botones
+     primarios de la app, y con el resuelve solo en los dos temas (7.8:1 oscuro, 5.8:1 claro). */
+  color: var(--surface);
 }
 
 .secondary {

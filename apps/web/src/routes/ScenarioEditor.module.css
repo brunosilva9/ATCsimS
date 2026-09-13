@@ -39,7 +39,11 @@
 .titleInput:focus {
   background: var(--surface);
   border-color: var(--accent);
-  outline: none;
+  /* Sin "outline: none" a secas: eso quitaba el foco del navegador y no ponia nada en su
+     lugar, dejando el UNICO campo sin marca de foco visible de toda la app. Se pone el mismo
+     anillo que usa el resto (tokens.css), en vez de confiar en el borde de 1px de color. */
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }
 
 .actions {
