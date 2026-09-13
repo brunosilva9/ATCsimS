@@ -5,25 +5,47 @@
  *  - el "papel": las strips y el diagrama, que imitan la hoja impresa (blanco, linea negra fina,
  *    tipografia condensada). No cambian con el tema: una strip se lee como en la referencia.
  *  - el "chrome": el resto de la app, que si sigue el tema del sistema.
+ *
+ * -------------------------------------------------------------------------------------------
+ * LA PALETA INSTITUCIONAL
+ *
+ * No esta inventada ni copiada a ojo: los tres colores de marca estan MUESTREADOS del propio
+ * logo de ATC Chile (apps/web/public/logo.png), contando pixeles.
+ *
+ *   #48A8C0  el azul de las letras "ATC"      — 8050 px, el color dominante del logo
+ *   #D83820  la regla roja que separa ATC de CHILE, con la estrella de la bandera
+ *   #B8D8E0  la estela palida del fondo
+ *
+ * Tipografia: Work Sans, que es la que usa atcchile.cl. Solo para el chrome — las strips siguen
+ * en Plex Condensed porque imitan un formulario impreso, no una pagina web.
+ *
+ * El azul de marca puro da 2.75:1 sobre blanco, que no alcanza para texto (hacen falta 4.5).
+ * Por eso `--brand` se reserva para reglas, bordes y manchas grandes, y `--accent` es el mismo
+ * azul oscurecido hasta 5.83:1. Un logo bonito no justifica un enlace que no se lee.
  */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&display=swap');
 
 :root {
-  --font-ui: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-ui: 'Work Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-strip: 'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
   --font-data: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
 
-  /* Chrome, tema claro. El gris lleva un sesgo frio hacia el azul del acento. */
-  --bg: #eef1f4;
+  /* Marca. Iguales en ambos temas salvo donde el contraste obliga: son de ATC, no del tema. */
+  --brand: #48a8c0;
+  --brand-red: #d83820;
+  --brand-pale: #b8d8e0;
+
+  /* Chrome, tema claro. El gris lleva un sesgo frio hacia el azul de la marca. */
+  --bg: #edf1f3;
   --surface: #ffffff;
-  --surface-sunken: #e3e8ed;
-  --border: #c6cfd8;
-  --border-strong: #8d9aa7;
-  --text: #16202b;
-  --text-muted: #5b6b7a;
-  --accent: #1f5f8b;
-  --accent-soft: #d6e6f2;
+  --surface-sunken: #e0e8ec;
+  --border: #c3d0d6;
+  --border-strong: #8a9aa2;
+  --text: #142025;
+  --text-muted: #566a73;
+  --accent: #2f6d7d;
+  --accent-soft: #dceef3;
   --warn: #9a5b00;
   --warn-soft: #fdeccd;
   --danger: #a32020;
@@ -46,15 +68,17 @@
 @media (prefers-color-scheme: dark) {
   /* Preferencia del sistema: solo manda si el usuario no eligio claro explicitamente. */
   :root:not([data-theme='light']) {
-    --bg: #12171d;
-    --surface: #1a2129;
-    --surface-sunken: #0d1216;
-    --border: #2e3943;
-    --border-strong: #4a5a68;
-    --text: #e4eaf0;
-    --text-muted: #97a6b5;
-    --accent: #63aede;
-    --accent-soft: #1d3242;
+    --bg: #101619;
+    --surface: #182126;
+    --surface-sunken: #0b1114;
+    --border: #2b383e;
+    --border-strong: #475a62;
+    --text: #e2eaee;
+    --text-muted: #93a6ae;
+    --accent: #53c1dd;
+    --accent-soft: #12323b;
+    /* La regla roja sobre fondo oscuro se apaga; se aclara lo justo para que siga leyendose. */
+    --brand-red: #e04a32;
     --warn: #e0a33c;
     --warn-soft: #3a2c11;
     --danger: #e37070;
@@ -64,15 +88,17 @@
 }
 
 :root[data-theme='dark'] {
-  --bg: #12171d;
-  --surface: #1a2129;
-  --surface-sunken: #0d1216;
-  --border: #2e3943;
-  --border-strong: #4a5a68;
-  --text: #e4eaf0;
-  --text-muted: #97a6b5;
-  --accent: #63aede;
-  --accent-soft: #1d3242;
+  --bg: #101619;
+  --surface: #182126;
+  --surface-sunken: #0b1114;
+  --border: #2b383e;
+  --border-strong: #475a62;
+  --text: #e2eaee;
+  --text-muted: #93a6ae;
+  --accent: #53c1dd;
+  --accent-soft: #12323b;
+  /* La regla roja sobre fondo oscuro se apaga; se aclara lo justo para que siga leyendose. */
+  --brand-red: #e04a32;
   --warn: #e0a33c;
   --warn-soft: #3a2c11;
   --danger: #e37070;
