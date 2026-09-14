@@ -83,6 +83,11 @@ Unidades: NM, pies, nudos, minutos, grados decimales (negativo S/W).
   `performance.json`.
 - Solo **7 de 21** procedimientos traen este perfil: en los otros la planilla omite el tiempo de
   algún tramo y no se puede saber cuál. Ver "Defectos" abajo.
+- **`entryAirways`** (solo STAR) es la aerovía que alimenta el fijo de entrada, de la hoja
+  `CIRC-STAR-SID` — antes esto solo se sabía cruzando a ojo qué fijo aparecía en qué aerovía de
+  `airways.json`, y esa forma de mirarlo se quedaba ciega justo en `ASIMO7D`/`UMKAL7C`, cuyas
+  aerovías (`UL322`/`UM799`/`UM529` y `L405`) no tienen geometría en `airways.json`. La hoja lo
+  dice directo y cubre las 8 STAR sin excepción.
 
 En las SID el primer tramo va del aeródromo al primer fix, por eso llevan además
 `distFromOriginNm`.
@@ -118,7 +123,7 @@ Están marcados en el JSON, no corregidos en silencio.
    el viraje ocurre al alcanzar esa altitud, no sobre una posición). No impiden calcular tiempos
    —que salen de las distancias tabuladas— pero sí cualquier representación gráfica.
 
-## Dos datos que no están en ninguna planilla
+## Datos que no están en ninguna planilla
 
 No son defectos: simplemente no aparecen. El motor los suple y **declara el supuesto** en cada
 cálculo, para que la interfaz pueda decirlo en vez de callarlo.
@@ -128,6 +133,16 @@ cálculo, para que la interfaz pueda decirlo en vez de callarlo.
 2. **El nivel al que termina una llegada.** Sale del MCL del último fix en `holdings.json`
    (TEGEB = 5000 ft), que es dato real. `EROLO8A` termina en `ISILO`, que no tiene MCL
    publicado: ese procedimiento se calcula con el último nivel conocido y lo avisa.
+3. **De qué dirección del mundo viene cada aerovía de entrada, y a qué región pertenece cada
+   aeropuerto de origen.** A diferencia de los dos puntos anteriores, esto no es un dato que
+   ATC Chile vaya a tener nunca: una planilla de TMA describe el espacio local, no el ruteo
+   internacional. `packages/core/src/originRegions.ts` trae, con el mismo tipo de encabezado de
+   advertencia que `packages/core/src/provisionalMinima.ts`, una tabla chica anotada a mano solo
+   para las aerovías que ya aparecen en `entryAirways` — de qué corredor real vienen (público,
+   no inventado) — y otra por prefijo ICAO para el origen del vuelo. La usa el generador de
+   tráfico para no asignarle a una llegada una STAR de un corredor geográficamente imposible.
+   Dos aerovías (`UL322`/`UM799`/`UM529` de ASIMO7D y `L405` de UMKAL7C) quedan sin región
+   asignada a propósito hasta que se confirme con un controlador.
 
 ## Limitaciones de alcance
 

@@ -303,6 +303,14 @@ export function TrafficGenerator({
               </ul>
             ) : null}
 
+            {result.notes.length > 0 ? (
+              <ul className={styles.shortfall}>
+                {result.notes.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            ) : null}
+
             {result.encounters.length > 0 ? (
               <ol className={styles.encounters}>
                 {result.encounters.map((e) => {

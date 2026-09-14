@@ -57,6 +57,7 @@ import { detectConflicts, encounters } from './conflicts.js';
 import type { DetectOptions, Encounter } from './conflicts.js';
 import { toFeet } from './performance.js';
 import { transitionLevelFor } from './transitionLevel.js';
+import { regionForIcao, starRegions } from './originRegions.js';
 
 // ------------------------------------------------------------------ entradas
 
@@ -123,6 +124,12 @@ export interface GeneratorResult {
   readonly matched: boolean;
   /** En que se quedo corto, en castellano y para leerlo en pantalla. Vacio si `matched`. */
   readonly shortfall: readonly string[];
+  /**
+   * Cuando no se pudo restringir el sorteo de STAR al corredor geografico del origen del vuelo,
+   * y por que (origen sin region conocida, o STAR sin corredor conocido). Vacio = no hizo falta
+   * avisar: cada llegada quedo con una STAR de su propia region.
+   */
+  readonly notes: readonly string[];
 }
 
 export type GenerateOutcome =
@@ -228,13 +235,42 @@ function usableFor(procedures: readonly Procedure[], focusFix: string | null): r
   return through.length > 0 ? through : complete;
 }
 
+/**
+ * De las STAR disponibles, las que le sirven a un vuelo que llega desde `adep`: mismo corredor
+ * geografico (originRegions.ts), no cualquiera. Nunca deja `stars` en cero: sin corredor
+ * conocido para el origen o sin ninguna STAR de ese corredor, se sortea sin esta restriccion y
+ * se anota por que — un vuelo domestico o de un origen sin mapear no puede dejar sin ejercicio
+ * al instructor.
+ */
+function starsForOrigin(
+  stars: readonly Procedure[],
+  adep: string,
+  notes: Set<string>
+): readonly Procedure[] {
+  const region = regionForIcao(adep);
+  if (region === null) return stars;
+
+  const matching = stars.filter((s) => {
+    const regions = starRegions(s);
+    return regions.size === 0 || regions.has(region);
+  });
+  if (matching.length === 0) {
+    notes.add(
+      `Sin STAR de corredor conocido para vuelos desde ${adep}: se sorteó sin esa restricción.`
+    );
+    return stars;
+  }
+  return matching;
+}
+
 function buildCandidate(
   request: GeneratorRequest,
   catalogue: GeneratorCatalogue,
   stars: readonly Procedure[],
   sids: readonly Procedure[],
   pools: ReturnType<typeof splitTemplates>,
-  d: Dice
+  d: Dice,
+  notes: Set<string>
 ): readonly GeneratedFlight[] {
   const flights: GeneratedFlight[] = [];
   const usedSsr = new Set<string>();
@@ -268,7 +304,9 @@ function buildCandidate(
   };
 
   const arrivals = d.shuffle(pools.arrivals).slice(0, request.arrivals);
-  for (const template of arrivals) add(template, 'ARRIVAL', d.pick(stars));
+  for (const template of arrivals) {
+    add(template, 'ARRIVAL', d.pick(starsForOrigin(stars, template.adep, notes)));
+  }
 
   const departures = d.shuffle(pools.departures).slice(0, request.departures);
   for (const template of departures) add(template, 'DEPARTURE', d.pick(sids));
@@ -451,11 +489,12 @@ export function generateTraffic(
     score: Score;
   } | null = null;
   let attempts = 0;
+  const notes = new Set<string>();
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     attempts = attempt + 1;
 
-    const generated = buildCandidate(request, catalogue, stars, sids, pools, d);
+    const generated = buildCandidate(request, catalogue, stars, sids, pools, d, notes);
     const flights = computeCandidate(generated, catalogue, byIdent);
     if (flights === null) continue;
 
@@ -511,5 +550,6 @@ export function generateTraffic(
     attempts,
     matched: best.score.shortfall.length === 0,
     shortfall: best.score.shortfall,
+    notes: [...notes],
   };
 }

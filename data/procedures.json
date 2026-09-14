@@ -2,10 +2,11 @@
   "_meta": {
     "source": [
       "TABLAS...05 AGO 2026 EVAL.xlsx!STARs-SIDs-2",
-      "APP_SCEL_Training_System_v1.0.xlsx!05_STAR"
+      "APP_SCEL_Training_System_v1.0.xlsx!05_STAR",
+      "TABLAS...05 AGO 2026 EVAL.xlsx!CIRC-STAR-SID"
     ],
     "method": "extracted",
-    "note": "STAR: distToEndNm es el dato de la planilla; legDistNm se deriva. SID: legDistNm es el dato; el primer tramo va del aerodromo al primer fix.",
+    "note": "STAR: distToEndNm es el dato de la planilla; legDistNm se deriva. SID: legDistNm es el dato; el primer tramo va del aerodromo al primer fix. entryAirways (solo STAR) es la aerovia que alimenta el fix de entrada, de CIRC-STAR-SID.",
     "limitation": "Solo configuracion SUR / RWY 17L. No hay procedimientos detallados para NORTE en las fuentes."
   },
   "procedures": [
@@ -891,6 +892,13 @@
         12.29
       ],
       "_timesNote": "La planilla trae 5 tiempos por tramo y el procedimiento tiene 6. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "entryAirways": [
+        "V551",
+        "T112",
+        "UV204",
+        "UV208"
+      ],
+      "_sourceEntryAirways": "TABLAS...05 AGO 2026!CIRC-STAR-SID",
       "_dist05Star": {
         "fix": "MOLPU",
         "distNm": 60
@@ -971,11 +979,17 @@
         12.337
       ],
       "_timesNote": "La planilla trae 5 tiempos por tramo y el procedimiento tiene 7. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "entryAirways": [
+        "UL322",
+        "UM799",
+        "UM529"
+      ],
+      "_sourceEntryAirways": "TABLAS...05 AGO 2026!CIRC-STAR-SID",
       "_dist05Star": {
         "fix": "VULBI",
         "distNm": 60
       },
-      "_manualFix": "PUMAR y TEGEB corregidos a mano (9 y 0 NM): la planilla trae 0 y 21 en esas dos celdas (BB8 y BC8 de STARs-SIDs-2), corridas una posicion por un valor de PUMAR que falta. Confirmado por SIMOK7B, que comparte la misma cola UGOLA-EL220-PUMAR-TEGEB y trae la secuencia completa y limpia: ...,14,9,0. Pendiente corregir en el Excel (TABLAS AWY-STAR-IAC-MIN ESPAC - APP SIVIGATS 05 AGO 2026 EVAL.xlsx, hoja STARs-SIDs-2, fila 8: BB8=9, BC8=0); mientras eso no pase, una reimportacion con tools/build-db.js pisa esta correccion."
+      "_manualFix": "PUMAR y TEGEB corregidos a mano (9 y 0 NM): la planilla trae 0 y 21 en esas dos celdas (BB8 y BC8 de STARs-SIDs-2), corridas una posicion por un valor de PUMAR que falta. Confirmado por SIMOK7B, que comparte la misma cola UGOLA-EL220-PUMAR-TEGEB y trae la secuencia completa y limpia: ...,14,9,0. Pendiente corregir en el Excel (TABLAS AWY-STAR-IAC-MIN ESPAC - APP SIVIGATS 05 AGO 2026 EVAL.xlsx, hoja STARs-SIDs-2, fila 8: BB8=9, BC8=0); mientras eso no pase, una reimportacion con tools/build-db.js pisa esta correccion. IMPORTANTE: esto se repite cada vez que se corre tools/build-db.js hasta que se corrija el Excel — volver a aplicar este parche si se reimporta."
     },
     {
       "ident": "EROLO6E",
@@ -1032,6 +1046,11 @@
         9.203
       ],
       "_timesNote": "La planilla trae 3 tiempos por tramo y el procedimiento tiene 4. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "entryAirways": [
+        "UQ808",
+        "UQ810"
+      ],
+      "_sourceEntryAirways": "TABLAS...05 AGO 2026!CIRC-STAR-SID",
       "_dist05Star": {
         "fix": "KADAK",
         "distNm": 55
@@ -1114,6 +1133,11 @@
         19.392
       ],
       "_timesNote": "La planilla trae 6 tiempos por tramo y el procedimiento tiene 7. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "entryAirways": [
+        "UQ808",
+        "UQ810"
+      ],
+      "_sourceEntryAirways": "TABLAS...05 AGO 2026!CIRC-STAR-SID",
       "_dist05Star": {
         "fix": "KADAK",
         "distNm": 96
@@ -1181,6 +1205,11 @@
         11.581
       ],
       "_timesNote": "La planilla trae 4 tiempos por tramo y el procedimiento tiene 5. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "entryAirways": [
+        "UQ808",
+        "UQ810"
+      ],
+      "_sourceEntryAirways": "TABLAS...05 AGO 2026!CIRC-STAR-SID",
       "_dist05Star": {
         "fix": "KADAK",
         "distNm": 58
@@ -1261,6 +1290,11 @@
         12.157
       ],
       "_timesNote": "La planilla trae 5 tiempos por tramo y el procedimiento tiene 7. No se pueden alinear sin suponer cual falta (o el emparejamiento daba velocidades imposibles). Quedan solo en _sourceTimesMin.",
+      "entryAirways": [
+        "UQ803",
+        "UL302"
+      ],
+      "_sourceEntryAirways": "TABLAS...05 AGO 2026!CIRC-STAR-SID",
       "_dist05Star": {
         "fix": "DABIT",
         "distNm": 60
@@ -1348,6 +1382,10 @@
         14.035
       ],
       "sourceTotalTimeMin": 14.035,
+      "entryAirways": [
+        "L405"
+      ],
+      "_sourceEntryAirways": "TABLAS...05 AGO 2026!CIRC-STAR-SID",
       "_dist05Star": {
         "fix": "UMKAL",
         "distNm": 70
@@ -1435,6 +1473,10 @@
         11.332
       ],
       "sourceTotalTimeMin": 11.332,
+      "entryAirways": [
+        "UV200"
+      ],
+      "_sourceEntryAirways": "TABLAS...05 AGO 2026!CIRC-STAR-SID",
       "_dist05Star": {
         "fix": "VTN",
         "distNm": 55

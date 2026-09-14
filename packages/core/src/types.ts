@@ -75,6 +75,11 @@ export interface Procedure {
   readonly totalDistNm: number | null;
   readonly legs: readonly ProcedureLeg[];
   readonly sourceTotalTimeMin?: number;
+  /**
+   * Solo STAR. Aerovia(s) que alimentan el fijo de entrada (hoja CIRC-STAR-SID). La usa
+   * originRegions.ts para saber de que corredor geografico viene esta STAR.
+   */
+  readonly entryAirways?: readonly string[];
   /** Presente = la planilla tiene un problema en este procedimiento. */
   readonly _review?: string;
 }

@@ -120,7 +120,12 @@ procedimiento {
   requiere_sivigats,     // bool  (EROLO8A* lo exige)
   fijo_entrada,          // STAR: primer fijo. SID: fijo de salida del TMA
   fijo_salida,           // STAR: TEGEB / ISILO. SID: ALBAL, ANGOD…
-  aerovias: [ … ],       // enlaces desde CIRC-STAR-SID
+  entryAirways: [ … ],   // solo STAR. Aerovia(s) que alimentan el fijo de entrada, de CIRC-STAR-SID.
+                         // Implementado (antes solo planeado): ver Procedure.entryAirways en
+                         // packages/core/src/types.ts y packages/core/src/originRegions.ts, que
+                         // usa este campo para no dejar que el generador cruce corredores
+                         // geograficos imposibles (una llegada de Europa no puede entrar por el
+                         // fijo de una STAR que solo alimenta una aerovia trasandina).
   pasos: [ paso_procedimiento ]
 }
 ```

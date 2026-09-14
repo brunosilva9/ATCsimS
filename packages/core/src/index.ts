@@ -9,3 +9,4 @@ export * from './conflicts.js';
 export * from './generator.js';
 export * from './exam.js';
 export * from './provisionalMinima.js';
+export * from './originRegions.js';

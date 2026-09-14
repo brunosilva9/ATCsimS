@@ -142,8 +142,51 @@ function buildFixes(wbMaster, wbTables) {
  * En las STAR el bloque numerico es la DISTANCIA RESTANTE al fix final (decreciente, termina en 0).
  * En las SID es la distancia de cada TRAMO (la primera, del aerodromo al primer fix).
  */
+
+/**
+ * Una celda de aerovias puede traer varias, separadas por salto de linea ("U/Q808\r\nU/Q810")
+ * o por " / " con espacios ("V551 / T112", que son DOS aerovias, no una con una barra rara en
+ * el nombre). Los saltos de linea desaparecen si se pasa por `clean()` antes de separarlos, asi
+ * que esta funcion trabaja sobre el texto crudo de la celda.
+ */
+function parseAirwayList(raw) {
+  const out = [];
+  for (const line of String(raw ?? '').split(/\r\n|\n/)) {
+    for (const part of line.split(' / ')) {
+      const ident = part.replace(/\s+/g, '').replace(/\//g, '').toUpperCase();
+      if (ident) out.push(ident);
+    }
+  }
+  return out;
+}
+
+/**
+ * Que aerovia alimenta a cada STAR, segun la hoja CIRC-STAR-SID ("Mapa circular: fijo de
+ * entrada -> AWY -> SID/STAR asociadas"). A diferencia de cruzar a ojo que fix de entrada
+ * aparece en que aerovia de la hoja AWYs, esta hoja lo dice directo y cubre tambien ASIMO7D y
+ * UMKAL7C, cuyo fix de entrada no tiene geometria en AWYs (UL322/UM799/UM529 y L405 no estan
+ * ahi, pero si en esta hoja).
+ */
+function buildProcedureEntryAirways(wbTables) {
+  const grid = wbTables['CIRC-STAR-SID'];
+  const byStar = new Map();
+  for (const r of grid || []) {
+    if (!r || !r.length) continue;
+    const awyCell = String(r[0] ?? '');
+    const starCell = String(r[3] ?? '');
+    if (!awyCell.trim() || !starCell.trim()) continue;
+    const airways = parseAirwayList(awyCell);
+    for (const raw of starCell.split(/\r\n|\n/)) {
+      const ident = clean(raw);
+      if (ident) byStar.set(ident, airways);
+    }
+  }
+  return byStar;
+}
+
 function buildProcedures(wbTables, wbMaster) {
   const grid = wbTables['STARs-SIDs-2'];
+  const entryAirwaysByStar = buildProcedureEntryAirways(wbTables);
   const procedures = [];
 
   for (const r of grid) {
@@ -298,6 +341,22 @@ function buildProcedures(wbTables, wbMaster) {
         `Corregir en el Excel y volver a ejecutar tools/build-db.js.`;
       procedure._sourceDistances = values;
     }
+
+    // Aerovia(s) que alimentan la entrada de esta STAR (CIRC-STAR-SID). La hoja a veces omite
+    // la letra de revision final del designador (p. ej. "VENTANAS1" por "VENTANAS1D"): si el
+    // ident completo no aparece, se reintenta sin esa letra antes de dar por no encontrado.
+    if (isStar) {
+      const entryAirways =
+        entryAirwaysByStar.get(procedure.ident) ??
+        entryAirwaysByStar.get(procedure.ident.replace(/[A-Z]$/, ''));
+      if (entryAirways) {
+        procedure.entryAirways = entryAirways;
+        procedure._sourceEntryAirways = 'TABLAS...05 AGO 2026!CIRC-STAR-SID';
+      } else {
+        console.warn(`  ! ${procedure.ident}: sin fila en CIRC-STAR-SID — sin entryAirways`);
+      }
+    }
+
     procedures.push(procedure);
   }
 
@@ -682,9 +741,13 @@ function main() {
   }, { fixes });
 
   write('procedures.json', {
-    source: ['TABLAS...05 AGO 2026 EVAL.xlsx!STARs-SIDs-2', 'APP_SCEL_Training_System_v1.0.xlsx!05_STAR'],
+    source: [
+      'TABLAS...05 AGO 2026 EVAL.xlsx!STARs-SIDs-2',
+      'APP_SCEL_Training_System_v1.0.xlsx!05_STAR',
+      'TABLAS...05 AGO 2026 EVAL.xlsx!CIRC-STAR-SID',
+    ],
     method: 'extracted',
-    note: 'STAR: distToEndNm es el dato de la planilla; legDistNm se deriva. SID: legDistNm es el dato; el primer tramo va del aerodromo al primer fix.',
+    note: 'STAR: distToEndNm es el dato de la planilla; legDistNm se deriva. SID: legDistNm es el dato; el primer tramo va del aerodromo al primer fix. entryAirways (solo STAR) es la aerovia que alimenta el fix de entrada, de CIRC-STAR-SID.',
     limitation: 'Solo configuracion SUR / RWY 17L. No hay procedimientos detallados para NORTE en las fuentes.',
   }, { procedures });
 

@@ -112,7 +112,15 @@ for (const s of separation) {
   keys.add(key);
 }
 
-// 8. Cobertura de datos
+// 8. entryAirways: toda STAR deberia traer de que aerovia entra (CIRC-STAR-SID). Que cuadre con
+//    una region geografica real es cosa de packages/core/src/originRegions.ts, no de esta base.
+for (const p of procedures) {
+  if (p.type === 'STAR' && (!p.entryAirways || p.entryAirways.length === 0)) {
+    warn(`STAR ${p.ident}: sin entryAirways — revisar CIRC-STAR-SID`);
+  }
+}
+
+// 9. Cobertura de datos
 const noCoords = fixes.filter((f) => f.lat === null);
 const inferred = fixes.filter((f) => f._inferred);
 const withProfile = procedures.filter((p) => p.legs.some((l) => l.sourceGsKt));

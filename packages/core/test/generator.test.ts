@@ -19,6 +19,7 @@ import type { GeneratorCatalogue, GeneratorRequest } from '../src/generator.js';
 import { encounters } from '../src/conflicts.js';
 import type { DetectOptions } from '../src/conflicts.js';
 import type { Conflict, ConflictReport } from '../src/types.js';
+import { starRegions } from '../src/originRegions.js';
 
 import proceduresDoc from '../../../data/procedures.json' with { type: 'json' };
 import performanceDoc from '../../../data/performance.json' with { type: 'json' };
@@ -248,6 +249,69 @@ describe('generateTraffic — las indicaciones especificas', () => {
     expect(r.ok).toBe(true);
     if (!r.ok) return;
     expect(r.encounters.some((e) => e.kind === 'IN_TRAIL')).toBe(true);
+  });
+});
+
+describe('generateTraffic — corredor de origen', () => {
+  const template = (adep: string) => ({
+    callsign: 'TEST01',
+    icaoType: 'A320',
+    tasKt: 450,
+    adep,
+    ades: 'SCEL',
+  });
+
+  it('un vuelo desde Europa nunca sale con una STAR confirmada de otro corredor', () => {
+    // LFPG (Francia) es NORTE. Ninguna STAR confirmada ESTE (SIMOK7B, ANDES1) deberia salir
+    // sorteada para este vuelo, en ninguna semilla.
+    const europeanOnly: GeneratorCatalogue = { ...catalogue, templates: [template('LFPG')] };
+    for (const seed of ['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7', 'O8', 'O9', 'O10']) {
+      const r = generateTraffic(
+        { ...base, seed, arrivals: 1, departures: 0, targetEncounters: 0 },
+        europeanOnly,
+        detect
+      );
+      expect(r.ok).toBe(true);
+      if (!r.ok) return;
+      const flight = r.flights[0]!;
+      const procedure = catalogue.stars.find((p) => p.ident === flight.procedureIdent)!;
+      const regions = starRegions(procedure);
+      // Sin corredor conocido (ASIMO7D/UMKAL7C) se acepta; confirmado y distinto de NORTE, no.
+      expect(regions.size === 0 || regions.has('NORTE')).toBe(true);
+    }
+  });
+
+  it('un origen domestico (sin corredor internacional) sigue generando sin problema', () => {
+    const domesticOnly: GeneratorCatalogue = { ...catalogue, templates: [template('SCFA')] };
+    const r = generateTraffic(
+      { ...base, seed: 'DOM', arrivals: 1, departures: 0, targetEncounters: 0 },
+      domesticOnly,
+      detect
+    );
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.flights).toHaveLength(1);
+    expect(r.notes).toHaveLength(0); // SC no tiene corredor: no hizo falta restringir ni avisar
+  });
+
+  it('si ninguna STAR disponible calza con el corredor del origen, sortea sin esa restricción y avisa', () => {
+    // Catalogo reducido a solo STAR confirmadas ESTE (SIMOK7B, ANDES1): un origen NORTE no
+    // encuentra ninguna que le sirva, asi que cae al sorteo sin restriccion y lo anota.
+    const esteOnly: GeneratorCatalogue = {
+      ...catalogue,
+      stars: catalogue.stars.filter((p) => p.ident === 'SIMOK7B' || p.ident === 'ANDES1'),
+      templates: [template('LFPG')],
+    };
+    const r = generateTraffic(
+      { ...base, seed: 'FALLBACK', arrivals: 1, departures: 0, targetEncounters: 0 },
+      esteOnly,
+      detect
+    );
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.flights).toHaveLength(1);
+    expect(r.notes.length).toBeGreaterThan(0);
+    expect(r.notes.join(' ')).toContain('LFPG');
   });
 });
 
