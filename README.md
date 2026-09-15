@@ -22,6 +22,7 @@ npm run typecheck     # TypeScript estricto en los tres paquetes
 npm run data:build    # reimporta data/*.json desde basedatos/
 npm run data:validate # comprueba la integridad de la base
 npm run data:sqlite   # exporta data/*.json a SQLite, para explorarla con SQL (Node 22+)
+npm run data:firestore # sube data/*.json a Firestore como espejo de consulta (ver data/README.md)
 ```
 
 ## Cómo se usa

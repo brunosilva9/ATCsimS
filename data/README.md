@@ -36,6 +36,53 @@ mensual fijo por la instancia de Cloud SQL —no es gratis pasados los primeros 
 dejaría de funcionar sin conexión, que es justo lo que permite imprimir un ejercicio y trabajarlo
 en papel. SQLite da el mismo SQL real sin ninguna de las dos cosas.)
 
+## Espejo en Firestore
+
+Distinto del punto anterior: **Firestore nativo** (no Data Connect) tiene un nivel gratuito real
+sin tarjeta de crédito (1 GiB, 50k lecturas/20k escrituras/20k borrados por día) y su SDK cliente
+cachea localmente (IndexedDB), así que puede seguir sirviendo datos sin conexión después de la
+primera sincronización. Es el primer paso hacia que la app lea de ahí en vez de los JSON
+empaquetados en el build — un cambio grande aparte, todavía no hecho: **hoy la app sigue leyendo
+únicamente `data/*.json`**, esto es solo la copia de consulta.
+
+```bash
+npm run data:firestore   # sube data/*.json a Firestore (ver tools/upload-firestore.js)
+```
+
+Requiere una service account key propia (`tools/serviceAccountKey.json`, gitignored — se baja de
+Consola Firebase › Configuración del proyecto › Cuentas de servicio) y `firebase-admin` instalado.
+Cada corrida borra y vuelve a escribir cada colección entera: si algo desapareció de un JSON,
+desaparece también de Firestore.
+
+Hay una colección por archivo, con los anidados embebidos en el documento (igual forma que en el
+JSON, sin subcolecciones) y el id del documento tomado de la clave natural de cada registro:
+
+| Colección | Doc ID | Colección | Doc ID |
+|---|---|---|---|
+| `fixes` | `ident` | `operators` | `icaoPrefix` |
+| `procedures` | `ident` | `sampleFlights` | `callsign` |
+| `airways` | `ident` | `ssrBlocks` (de `ssr.json`) | `base` |
+| `runways` | `ident` | `units` | `id` |
+| `approaches` | `code` | `radars` | slug de `equipment` |
+| `holdings` | `fix` | `separation` | `runway`+`withDepartures`+`sivigats`+`lvp` |
+| `performance` | `level` | `tma` | doc único `scel` (es un objeto, no un array) |
+| `aircraftTypes` | `icao` | | |
+
+Reglas de Firestore (solo lectura pública; las escrituras del script usan la service account, que
+las ignora — se pegan a mano en Consola Firebase › Firestore Database › Reglas):
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
+```
+
 ## Convención
 
 Todo archivo trae un bloque `_meta` con:

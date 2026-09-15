@@ -2,10 +2,15 @@ node_modules/
 dist/
 *.local
 .DS_Store
+.env
 
 # Exportado por tools/build-sqlite.js para explorar data/*.json con SQL. 100% derivado y
 # regenerable (`npm run data:sqlite`); la app nunca lo lee, asi que no hace falta versionarlo.
 data/atcsims.sqlite
+
+# Credencial de administrador para tools/upload-firestore.js. A diferencia de las VITE_FIREBASE_*
+# de apps/web/.env (config publica), esto es una clave real con permisos de escritura total.
+tools/serviceAccountKey.json
 
 # Planillas fuente. Son la materia prima del importador, no del repo: pesan, son
 # propiedad de ATC y lo que importa de ellas ya esta volcado en data/*.json.
