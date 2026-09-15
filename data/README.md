@@ -55,7 +55,11 @@ Cada corrida borra y vuelve a escribir cada colección entera: si algo desaparec
 desaparece también de Firestore.
 
 Hay una colección por archivo, con los anidados embebidos en el documento (igual forma que en el
-JSON, sin subcolecciones) y el id del documento tomado de la clave natural de cada registro:
+JSON, sin subcolecciones) y el id del documento tomado de la clave natural de cada registro.
+**Única excepción:** Firestore no acepta un array que contenga otro array directo, así que
+`airways.segments` (las 3 aerovías partidas en dos filas de la planilla: `UQ802`/`UQ803`/`UT200`)
+sube cada tramo envuelto como `{ values: [...] }` en vez de `string[][]` — ver
+`sanitizeForFirestore` en `tools/upload-firestore.js`.
 
 | Colección | Doc ID | Colección | Doc ID |
 |---|---|---|---|
