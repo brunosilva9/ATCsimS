@@ -46,6 +46,16 @@ jobs:
 
       - name: Construir
         run: npm run build -w @atcsims/web
+        env:
+          # Config publica del SDK de Firebase (no son secretos: identifican el proyecto, ver
+          # apps/web/.env.example), pero no viven en el repo. Se cargan como secrets del repo
+          # para que el build de produccion las incluya igual que un .env.local local.
+          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
 
       - uses: actions/configure-pages@v5
 
