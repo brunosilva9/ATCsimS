@@ -54,6 +54,25 @@ try {
 admin.initializeApp({ credential: admin.credential.cert(require(KEY_PATH)) });
 const db = admin.firestore();
 
+/**
+ * Firestore no permite arrays de arrays (ej. `segments` en airways.json: UQ802/UQ803/UT200 son
+ * aerovias partidas en dos filas en la planilla, y cada tramo es un array de fixes). Se envuelve
+ * cada array-dentro-de-array en `{ values: [...] }` para poder subirlo — unica desviacion de la
+ * forma del JSON original, documentada en data/README.md.
+ */
+function sanitizeForFirestore(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => {
+      const sanitized = sanitizeForFirestore(item);
+      return Array.isArray(sanitized) ? { values: sanitized } : sanitized;
+    });
+  }
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitizeForFirestore(v)]));
+  }
+  return value;
+}
+
 /** Convierte texto libre en un id de documento legible (para radars, que no trae clave corta). */
 function slugify(text) {
   return text
@@ -92,7 +111,7 @@ async function mirror(collectionName, records, idFn, meta) {
       console.warn(`  aviso: id duplicado "${id}" en ${collectionName}, se usa "${id}-${n}"`);
       id = `${id}-${n}`;
     }
-    docs.set(id, { ...record, _meta: meta });
+    docs.set(id, sanitizeForFirestore({ ...record, _meta: meta }));
   }
 
   const colRef = db.collection(collectionName);
