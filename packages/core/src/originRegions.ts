@@ -27,8 +27,7 @@ export type ArrivalRegion = 'NORTE' | 'ESTE' | 'SUR';
 
 /** Solo las aerovias que ya aparecen en `entryAirways` de alguna STAR de SCEL. */
 export const AIRWAY_REGION: Readonly<Partial<Record<string, ArrivalRegion>>> = {
-  UQ802: 'NORTE', // EROLO6E/7F/8A — corredor costero norte (ELABA/ENSER/CHI/BOLOK)
-  UQ808: 'NORTE',
+  UQ808: 'NORTE', // EROLO6E/7F/8A — corredor costero norte
   UQ810: 'NORTE',
   UV200: 'NORTE', // VENTANAS1D, via OPTAN
   UT200: 'NORTE',

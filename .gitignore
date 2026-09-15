@@ -3,6 +3,10 @@ dist/
 *.local
 .DS_Store
 
+# Exportado por tools/build-sqlite.js para explorar data/*.json con SQL. 100% derivado y
+# regenerable (`npm run data:sqlite`); la app nunca lo lee, asi que no hace falta versionarlo.
+data/atcsims.sqlite
+
 # Planillas fuente. Son la materia prima del importador, no del repo: pesan, son
 # propiedad de ATC y lo que importa de ellas ya esta volcado en data/*.json.
 basedatos/*

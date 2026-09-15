@@ -10,6 +10,7 @@
   "scripts": {
     "data:build": "node tools/build-db.js",
     "data:validate": "node tools/validate.js",
+    "data:sqlite": "node tools/build-sqlite.js",
     "test": "npm run test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },

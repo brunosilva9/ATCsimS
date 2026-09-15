@@ -17,10 +17,11 @@ npm run dev -w @atcsims/web     # http://localhost:5173
 Otros comandos:
 
 ```bash
-npm test              # 164 pruebas: el motor contra los números de las planillas
+npm test              # 191 pruebas: el motor contra los números de las planillas
 npm run typecheck     # TypeScript estricto en los tres paquetes
 npm run data:build    # reimporta data/*.json desde basedatos/
 npm run data:validate # comprueba la integridad de la base
+npm run data:sqlite   # exporta data/*.json a SQLite, para explorarla con SQL (Node 22+)
 ```
 
 ## Cómo se usa

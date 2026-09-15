@@ -10,6 +10,32 @@ node tools/validate.js     # comprueba integridad; sale con codigo 1 si hay erro
 Si un dato está mal, se corrige **en el Excel** y se vuelve a importar. Así la planilla sigue
 siendo la fuente de verdad y el instructor no tiene que aprender JSON.
 
+## Consultarla con SQL
+
+Cruzar dos o tres de estos archivos a mano significa escribir un script de Node cada vez —así se
+armó `entryAirways` en `procedures.json`. Para no repetir eso, hay un exportador a SQLite:
+
+```bash
+npm run data:sqlite       # genera data/atcsims.sqlite (Node 22+; ver tools/build-sqlite.js)
+```
+
+Es solo para explorar: la app y el importador siguen leyendo y escribiendo nada más que
+`data/*.json`, y el `.sqlite` no se versiona (es 100% derivado, se regenera al toque). Los
+arrays anidados —los tramos de un procedimiento, los fixes de una aerovía— salen en tablas
+propias con una columna que apunta a la fila padre, para poder hacer `JOIN` de verdad:
+
+```sql
+-- Que STAR entra por una aerovia dada
+SELECT DISTINCT p.ident FROM procedures p
+JOIN procedure_entry_airways a ON a.procedure_ident = p.ident
+WHERE a.airway = 'UQ808';
+```
+
+(Se descartó llevar esto a una base en la nube tipo Firebase Data Connect: además de un costo
+mensual fijo por la instancia de Cloud SQL —no es gratis pasados los primeros 3 meses—, la app
+dejaría de funcionar sin conexión, que es justo lo que permite imprimir un ejercicio y trabajarlo
+en papel. SQLite da el mismo SQL real sin ninguna de las dos cosas.)
+
 ## Convención
 
 Todo archivo trae un bloque `_meta` con:
