@@ -1,0 +1,122 @@
+.screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.card {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 28px 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-top: 3px solid var(--brand-red);
+}
+
+.logo {
+  align-self: center;
+  height: 34px;
+  width: auto;
+  padding: 5px 8px;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 4px;
+}
+
+.title {
+  margin: 0;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: -8px 0 8px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.field input {
+  padding: 8px 10px;
+  font-size: 14px;
+  font-family: var(--font-ui);
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.field input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.submit {
+  margin-top: 4px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.link {
+  padding: 0;
+  font-size: 12px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.error {
+  margin: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-radius: var(--radius);
+}
+
+.notice {
+  margin: 0;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--ok);
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+}
+
+.hint {
+  margin: 4px 0 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}

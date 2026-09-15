@@ -4,8 +4,9 @@ Simulador didáctico de ejercicios de control de tránsito aéreo para el **TMA 
 posiciones APP y ACC. Reemplaza el ejercicio de papel que hoy prepara el instructor a mano:
 las fichas de progreso de vuelo, la planilla de horas de paso y la corrección.
 
-Prototipo. Corre entero en el navegador y se publica como sitio estático — no hay servidor, no
-hay cuentas y ningún dato sale del equipo de quien lo usa.
+Prototipo. Corre entero en el navegador y se publica como sitio estático, sin servidor propio.
+El único punto que sale a la red es el login (Firebase Auth, para restringir quién entra); salvo
+por eso, ningún dato sale del equipo de quien lo usa.
 
 ## Empezar
 
@@ -24,6 +25,18 @@ npm run data:validate # comprueba la integridad de la base
 npm run data:sqlite   # exporta data/*.json a SQLite, para explorarla con SQL (Node 22+)
 npm run data:firestore # sube data/*.json a Firestore como espejo de consulta (ver data/README.md)
 ```
+
+## Acceso
+
+La app pide login (Firebase Auth, email y contraseña) antes de mostrar cualquier pantalla. Es
+solo para restringir quién entra — todavía no distingue rol por cuenta, eso sigue siendo una
+elección de vista una vez adentro (ver más abajo).
+
+No hay pantalla de registro propia: las cuentas se crean a mano desde **Consola Firebase >
+Authentication > Users > Add user**, con el proveedor **Email/Password** habilitado en
+**Authentication > Sign-in method**. Para desarrollar localmente hace falta copiar
+`apps/web/.env.example` a `apps/web/.env.local` con la config del proyecto (ver el comentario del
+propio archivo).
 
 ## Cómo se usa
 
@@ -170,7 +183,8 @@ Los assets se construyen con rutas relativas, así que el sitio funciona igual b
 
 ## Lo que este prototipo no es
 
-- **No hay cuentas ni control de acceso.** El rol es una elección de vista.
+- **El login restringe el acceso, pero no distingue rol todavía.** Adentro, el rol sigue siendo
+  una elección de vista libre, no una propiedad de la cuenta — eso es lo próximo por agregar.
 - **No hay estado compartido en vivo.** El instructor no ve al alumno trabajando; recibe su
   archivo al final.
 - **Genera tráfico, no didáctica.** El generador acierta el número de encuentros que se le pide,

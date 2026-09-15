@@ -2,12 +2,14 @@ import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 
 import { SiteFooter } from './components/SiteFooter.js';
 import { Exercise } from './routes/Exercise.js';
+import { Login } from './routes/Login.js';
 import { NavdataExplorer } from './routes/NavdataExplorer.js';
 import { Print } from './routes/Print.js';
 import { Runs } from './routes/Runs.js';
 import { ScenarioEditor } from './routes/ScenarioEditor.js';
 import { Scenarios } from './routes/Scenarios.js';
 import { StripGallery } from './routes/StripGallery.js';
+import { useAuthStore } from './state/auth.js';
 import styles from './App.module.css';
 
 /** Las dos columnas del menu son los dos roles del documento funcional. */
@@ -21,8 +23,13 @@ const LINKS = [
 
 export function App() {
   const { pathname } = useLocation();
+  const { user, loading, signOut } = useAuthStore();
   // La vista de impresion es papel: no lleva ni cabecera ni pie.
   const bare = pathname.startsWith('/print');
+
+  // Se restringe el acceso a toda la app, impresion incluida: sin sesion no se ve nada mas.
+  if (loading) return null;
+  if (!user) return <Login />;
 
   if (bare) {
     return (
@@ -57,6 +64,12 @@ export function App() {
             </NavLink>
           ))}
         </nav>
+        <div className={styles.account}>
+          <span className={styles.accountEmail}>{user.email}</span>
+          <button type="button" className={styles.signOut} onClick={() => void signOut()}>
+            Cerrar sesión
+          </button>
+        </div>
       </header>
 
       <main className={styles.main}>

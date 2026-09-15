@@ -64,8 +64,8 @@ export function SiteFooter() {
             ejercicio de papel que el instructor prepara a mano.
           </p>
           <p className={styles.body}>
-            Corre entero en el navegador: no hay servidor, no hay cuentas y ningún dato sale de
-            este equipo.
+            Corre entero en el navegador: no hay servidor propio, solo un login para restringir
+            quién entra. Salvo por eso, ningún dato sale de este equipo.
           </p>
           <p className={styles.meta}>
             Prototipo · configuración SUR, RWY 17L ·{' '}
