@@ -36,14 +36,29 @@ mensual fijo por la instancia de Cloud SQL —no es gratis pasados los primeros 
 dejaría de funcionar sin conexión, que es justo lo que permite imprimir un ejercicio y trabajarlo
 en papel. SQLite da el mismo SQL real sin ninguna de las dos cosas.)
 
-## Espejo en Firestore
+## Firestore es la base viva de la app
 
 Distinto del punto anterior: **Firestore nativo** (no Data Connect) tiene un nivel gratuito real
 sin tarjeta de crédito (1 GiB, 50k lecturas/20k escrituras/20k borrados por día) y su SDK cliente
 cachea localmente (IndexedDB), así que puede seguir sirviendo datos sin conexión después de la
-primera sincronización. Es el primer paso hacia que la app lea de ahí en vez de los JSON
-empaquetados en el build — un cambio grande aparte, todavía no hecho: **hoy la app sigue leyendo
-únicamente `data/*.json`**, esto es solo la copia de consulta.
+primera sincronización.
+
+**Desde que existe `/admin`, Firestore dejó de ser solo un espejo de consulta: es la base que la
+app corriendo realmente lee** (`apps/web/src/state/navdata.ts` trae las 16 colecciones una vez al
+iniciar sesión). `data/*.json` y el Excel siguen siendo el import original — y lo que siguen
+usando los tests y las herramientas, que no dependen de un proyecto de Firebase real — pero ya
+**no se mantienen sincronizados automáticamente** con lo que ve el alumno.
+
+**Importante:** si el instructor edita algo desde `/admin` y después alguien vuelve a correr
+
+```bash
+npm run data:firestore
+```
+
+ese comando **borra y reescribe cada colección entera**, así que **pisa cualquier edición hecha
+desde el panel**. Ya no es un comando de rutina — se corre solo a propósito, para resetear
+Firestore al estado que dice el Excel (por ejemplo, tras corregir algo ahí y reimportar con
+`tools/build-db.js`).
 
 ```bash
 npm run data:firestore   # sube data/*.json a Firestore (ver tools/upload-firestore.js)
@@ -72,20 +87,57 @@ sube cada tramo envuelto como `{ values: [...] }` en vez de `string[][]` — ver
 | `performance` | `level` | `tma` | doc único `scel` (es un objeto, no un array) |
 | `aircraftTypes` | `icao` | | |
 
-Reglas de Firestore (solo lectura pública; las escrituras del script usan la service account, que
-las ignora — se pegan a mano en Consola Firebase › Firestore Database › Reglas):
+## Quién puede editar: la colección `users`
+
+Desde que `/admin` permite escribir, ya no alcanza con "solo lectura pública" — hace falta saber
+quién tiene permiso de editar. Hay una colección más, `users`, doc ID = uid de Firebase Auth,
+`{ email, role: "admin" | "instructor" | "student" }`. Hoy **solo el rol `admin` tiene función
+real**; `instructor`/`student` quedan en el esquema para cuando la app distinga esas dos vistas
+por cuenta y no solo por elección de menú (ver `README.md` § Acceso).
+
+**No hay pantalla para asignar el rol todavía.** El primer admin se crea a mano: Consola Firebase
+› Authentication › Users para encontrar el uid, y Firestore Database › colección `users` ›
+documento nuevo con ese ID y `{ "role": "admin" }`.
+
+Reglas de Firestore (se pegan a mano en Consola Firebase › Firestore Database › Reglas; las
+escrituras de `tools/upload-firestore.js` usan la service account, que las ignora):
 
 ```
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read: if true;
-      allow write: if false;
+    function isAdmin() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /fixes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /procedures/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /airways/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /runways/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /approaches/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /holdings/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /performance/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /separation/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /aircraftTypes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /fleet/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /operators/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /sampleFlights/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /ssrBlocks/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /units/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /radars/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /tma/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+
+    match /users/{uid} {
+      allow read: if request.auth.uid == uid;
+      allow write: if false; // el rol se asigna a mano en consola, por ahora
     }
   }
 }
 ```
+
+Lo que de verdad impide que alguien sin rol `admin` escriba es esto, no el panel: `/admin` en la
+app solo evita mostrarle el panel a quien no lo va a poder usar.
 
 ## Convención
 

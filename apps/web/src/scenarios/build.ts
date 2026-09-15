@@ -13,11 +13,24 @@ import type {
   Flight,
   FlightKind,
   GeneratorRequest,
+  HoldingPattern,
+  PerformanceTable,
+  Procedure,
   Scenario,
   UtcMinutes,
   Weather,
 } from '@atcsims/core';
-import { findProcedure, holdings, performance } from '@atcsims/navdata';
+
+/**
+ * Lo que build.ts necesita de la base de navegacion, pasado por quien llama en vez de importado
+ * directo — para que este modulo siga siendo un util puro y testeable, sin acoplarse a de donde
+ * sale la base (hoy Firestore via state/navdata.ts, antes @atcsims/navdata).
+ */
+export interface BuildContext {
+  readonly findProcedure: (ident: string) => Procedure | undefined;
+  readonly holdings: readonly HoldingPattern[];
+  readonly performance: PerformanceTable;
+}
 
 export interface FlightDraft {
   readonly id: string;
@@ -84,8 +97,8 @@ interface BuiltFlight {
   readonly assumptions: readonly string[];
 }
 
-export function buildFlight(draft: FlightDraft): BuiltFlight | RejectedFlight {
-  const procedure = findProcedure(draft.procedureIdent);
+export function buildFlight(draft: FlightDraft, ctx: BuildContext): BuiltFlight | RejectedFlight {
+  const procedure = ctx.findProcedure(draft.procedureIdent);
   if (!procedure) {
     return {
       callsign: draft.callsign,
@@ -100,8 +113,8 @@ export function buildFlight(draft: FlightDraft): BuiltFlight | RejectedFlight {
     procedure,
     entryTime: draft.entryTime,
     cruiseLevelFt,
-    performance,
-    holdings,
+    performance: ctx.performance,
+    holdings: ctx.holdings,
   });
 
   if (!result.ok) {
@@ -135,13 +148,13 @@ export function buildFlight(draft: FlightDraft): BuiltFlight | RejectedFlight {
   };
 }
 
-export function buildScenario(draft: ScenarioDraft): BuiltScenario {
+export function buildScenario(draft: ScenarioDraft, ctx: BuildContext): BuiltScenario {
   const flights: Flight[] = [];
   const rejected: RejectedFlight[] = [];
   const assumptions: FlightAssumption[] = [];
 
   for (const seed of draft.flights) {
-    const built = buildFlight(seed);
+    const built = buildFlight(seed, ctx);
     if ('flight' in built) {
       flights.push(built.flight);
       for (const note of built.assumptions) {

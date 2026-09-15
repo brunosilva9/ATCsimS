@@ -12,11 +12,12 @@
  * quedaria viejo en la primera correccion y estariamos presumiendo de una base que no es.
  */
 
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 import { PROVISIONAL_SOURCE } from '@atcsims/core';
-import { airways, fixes, holdings, procedures } from '@atcsims/navdata';
 
+import { useNavdataStore } from '../state/navdata.js';
 import styles from './SiteFooter.module.css';
 
 /** Las redes y el contacto del Colegio, tal como estan publicados en atcchile.cl. */
@@ -44,16 +45,25 @@ const SOCIAL = [
   },
 ] as const;
 
-/** Se cuentan una vez: la base se carga en tiempo de build y no cambia mientras corre la app. */
-const COUNTS = {
-  fixes: fixes.length,
-  stars: procedures.filter((p) => p.type === 'STAR').length,
-  sids: procedures.filter((p) => p.type === 'SID').length,
-  airways: airways.length,
-  holdings: holdings.length,
-};
-
 export function SiteFooter() {
+  const fixes = useNavdataStore((s) => s.fixes);
+  const procedures = useNavdataStore((s) => s.procedures);
+  const airways = useNavdataStore((s) => s.airways);
+  const holdings = useNavdataStore((s) => s.holdings);
+
+  // Se cuentan de nuevo solo cuando cambia la base (recien cargada, o el instructor la edito
+  // desde /admin y refresco) — no en cada render.
+  const COUNTS = useMemo(
+    () => ({
+      fixes: fixes.length,
+      stars: procedures.filter((p) => p.type === 'STAR').length,
+      sids: procedures.filter((p) => p.type === 'SID').length,
+      airways: airways.length,
+      holdings: holdings.length,
+    }),
+    [fixes, procedures, airways, holdings]
+  );
+
   return (
     <footer className={styles.footer}>
       <div className={styles.columns}>

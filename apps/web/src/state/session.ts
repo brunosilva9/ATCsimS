@@ -11,7 +11,8 @@ import { create } from 'zustand';
 
 import { applyInstructions, detectConflicts } from '@atcsims/core';
 import type { ConflictReport, Instruction, Scenario } from '@atcsims/core';
-import { approachFixes, coordinates, performance, separation, tmaFixes } from '@atcsims/navdata';
+
+import { useNavdataStore } from './navdata.js';
 
 export interface SessionState {
   /** El ejercicio tal como lo armo el instructor. Solo se reemplaza al cargar otro. */
@@ -29,16 +30,20 @@ export interface SessionState {
   readonly reset: () => void;
 }
 
-const context = { performance, coordinates };
-
 function evaluate(base: Scenario, instructions: readonly Instruction[]) {
-  const applied = applyInstructions(base, instructions, context);
+  // Se lee en el momento, no se captura al cargar el modulo: la base viene de Firestore y solo
+  // esta lista despues de que App.tsx resuelve el gate de carga (ver state/navdata.ts).
+  const navdata = useNavdataStore.getState();
+  const applied = applyInstructions(base, instructions, {
+    performance: navdata.performance,
+    coordinates: navdata.coordinates,
+  });
   if (!applied.ok) return { error: applied.message };
 
   const conflicts = detectConflicts(applied.scenario, {
-    separation,
-    approachFixes,
-    tmaFixes,
+    separation: navdata.separation,
+    approachFixes: navdata.approachFixes,
+    tmaFixes: navdata.tmaFixes,
     runwayInUse: applied.scenario.runwayInUse,
     sivigats: applied.scenario.sivigats,
     lvp: applied.scenario.weather.lvp,

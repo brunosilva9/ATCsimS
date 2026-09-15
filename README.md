@@ -5,8 +5,9 @@ posiciones APP y ACC. Reemplaza el ejercicio de papel que hoy prepara el instruc
 las fichas de progreso de vuelo, la planilla de horas de paso y la corrección.
 
 Prototipo. Corre entero en el navegador y se publica como sitio estático, sin servidor propio.
-El único punto que sale a la red es el login (Firebase Auth, para restringir quién entra); salvo
-por eso, ningún dato sale del equipo de quien lo usa.
+Hay login (Firebase Auth, para restringir quién entra) y la base de navegación vive en Firestore,
+así que la primera carga de cada sesión sí pasa por la red — pero nada del trabajo del alumno o
+del instructor (ejercicios, entregas) sale nunca de su propio equipo.
 
 ## Empezar
 
@@ -18,25 +19,30 @@ npm run dev -w @atcsims/web     # http://localhost:5173
 Otros comandos:
 
 ```bash
-npm test              # 191 pruebas: el motor contra los números de las planillas
+npm test              # 198 pruebas: el motor contra los números de las planillas
 npm run typecheck     # TypeScript estricto en los tres paquetes
 npm run data:build    # reimporta data/*.json desde basedatos/
 npm run data:validate # comprueba la integridad de la base
 npm run data:sqlite   # exporta data/*.json a SQLite, para explorarla con SQL (Node 22+)
-npm run data:firestore # sube data/*.json a Firestore como espejo de consulta (ver data/README.md)
+npm run data:firestore # sube data/*.json a Firestore — OJO, pisa lo editado desde /admin (ver data/README.md)
 ```
 
 ## Acceso
 
-La app pide login (Firebase Auth, email y contraseña) antes de mostrar cualquier pantalla. Es
-solo para restringir quién entra — todavía no distingue rol por cuenta, eso sigue siendo una
-elección de vista una vez adentro (ver más abajo).
+La app pide login (Firebase Auth, email y contraseña) antes de mostrar cualquier pantalla.
 
 No hay pantalla de registro propia: las cuentas se crean a mano desde **Consola Firebase >
 Authentication > Users > Add user**, con el proveedor **Email/Password** habilitado en
 **Authentication > Sign-in method**. Para desarrollar localmente hace falta copiar
 `apps/web/.env.example` a `apps/web/.env.local` con la config del proyecto (ver el comentario del
 propio archivo).
+
+Adentro, el **rol** sigue siendo mayormente una elección de vista libre (ver "Cómo se usa" abajo)
+— con una excepción: `/admin`, donde el instructor edita la base de navegación entera, sí exige un
+rol real (`admin`) guardado en la colección `users` de Firestore, y sin ese rol la app ni siquiera
+muestra el link. No hay pantalla para asignarlo todavía: el primer admin se crea a mano en
+Firestore (colección `users`, doc ID = el uid de la cuenta, `{ "role": "admin" }`) — el detalle
+completo, con las reglas de Firestore, está en [`data/README.md`](data/README.md).
 
 ## Cómo se usa
 
@@ -48,6 +54,7 @@ propio archivo).
 | `/runs` | Instructor | Cargar la entrega del alumno y corregirla |
 | `/navdata` | Ambos | Qué se importó de las planillas |
 | `/print` | Ambos | Las strips en A4 apaisado para escribir encima |
+| `/admin` | Admin | Editar toda la base de navegación, directo en Firestore |
 
 ### Dos modos, y son lo contrario el uno del otro
 
@@ -134,7 +141,8 @@ data/          La base de navegación en JSON. Generada, no editable a mano
 packages/core  El dominio: tipos, motor de horas de paso, perfil vertical, instrucciones,
                conflictos. Sin dependencias y sin saber que existe React
 packages/navdata  Carga y sanea data/*.json
-apps/web       Vite + React + TypeScript. Lo único que se despliega
+apps/web       Vite + React + TypeScript. Lo único que se despliega. Lee la base de un espejo
+               en Firestore (apps/web/src/state/navdata.ts), no de data/*.json directamente
 docs/          Modelo de datos y requisitos, escritos para discutirlos con ATC
 ```
 
@@ -144,6 +152,12 @@ docs/          Modelo de datos y requisitos, escritos para discutirlos con ATC
 calcular y dice por qué, en vez de rellenar el hueco con una deducción que produzca horas que
 parecen válidas. Lo mismo con lo que sí hay que suponer: se declara en el resultado y la interfaz
 lo muestra.
+
+**Única excepción, deliberada:** desde `/admin`, un usuario con rol `admin` puede agregar o
+cambiar datos directo en Firestore —un avión, un vuelo de ejemplo, un fix— sin pasar por el Excel.
+Antes de guardar en las 6 colecciones de las que depende el motor (fixes, procedimientos,
+aerovías, esperas, performance, espaciamiento) se comprueba que el cambio no rompa un cálculo —
+ver `packages/core/src/integrity.ts` y [`data/README.md`](data/README.md).
 
 Hay tres sitios donde eso es visible y conviene conocerlos antes de tocar nada:
 
@@ -183,8 +197,9 @@ Los assets se construyen con rutas relativas, así que el sitio funciona igual b
 
 ## Lo que este prototipo no es
 
-- **El login restringe el acceso, pero no distingue rol todavía.** Adentro, el rol sigue siendo
-  una elección de vista libre, no una propiedad de la cuenta — eso es lo próximo por agregar.
+- **El login distingue un solo rol real: `admin`.** Da acceso a `/admin`. El resto (instructor
+  vs. alumno) sigue siendo una elección de vista libre, no una propiedad de la cuenta — eso es lo
+  próximo por agregar.
 - **No hay estado compartido en vivo.** El instructor no ve al alumno trabajando; recibe su
   archivo al final.
 - **Genera tráfico, no didáctica.** El generador acierta el número de encuentros que se le pide,

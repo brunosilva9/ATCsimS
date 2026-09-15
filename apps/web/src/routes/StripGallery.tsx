@@ -11,6 +11,7 @@ import type { Flight, FlightLeg } from '@atcsims/core';
 import { FlightProgressStrip } from '../components/FlightProgressStrip.js';
 import type { StripLevel } from '../components/FlightProgressStrip.js';
 import { buildSampleScenario } from '../scenarios/sample.js';
+import { useBuildContext } from '../state/buildContext.js';
 import shared from './shared.module.css';
 import styles from './StripGallery.module.css';
 
@@ -23,7 +24,8 @@ function withRevisedEto(flight: Flight, fromSeq: number, delayMin: number): Flig
 }
 
 export function StripGallery() {
-  const { scenario } = buildSampleScenario();
+  const buildCtx = useBuildContext();
+  const { scenario } = buildSampleScenario(buildCtx);
   const flight = scenario.flights[0];
 
   if (!flight) {

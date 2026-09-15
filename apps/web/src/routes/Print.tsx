@@ -31,6 +31,7 @@ import { TimeFixDiagram } from '../components/TimeFixDiagram.js';
 import { decodePayload } from '../lib/share.js';
 import type { ExerciseMode } from '../lib/share.js';
 import { buildSampleScenario } from '../scenarios/sample.js';
+import { useBuildContext } from '../state/buildContext.js';
 import styles from './Print.module.css';
 
 /*
@@ -77,6 +78,7 @@ export function Print() {
   const [params] = useSearchParams();
   const encoded = params.get('e');
   const [includeSolution, setIncludeSolution] = useState(false);
+  const buildCtx = useBuildContext();
 
   const { scenario, mode } = useMemo(() => {
     if (encoded !== null) {
@@ -85,8 +87,8 @@ export function Print() {
         return { scenario: decoded.payload.scenario, mode: decoded.payload.mode ?? 'practice' };
       }
     }
-    return { scenario: buildSampleScenario().scenario, mode: 'practice' as ExerciseMode };
-  }, [encoded]);
+    return { scenario: buildSampleScenario(buildCtx).scenario, mode: 'practice' as ExerciseMode };
+  }, [encoded, buildCtx]);
 
   useEffect(() => {
     document.title = `${scenario.name} — strips`;

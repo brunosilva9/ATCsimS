@@ -137,3 +137,21 @@
   color: var(--text);
   background: var(--surface-sunken);
 }
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  color: var(--text-muted);
+  background: var(--bg);
+  text-align: center;
+}
+
+.loadingError {
+  font-weight: 600;
+  color: var(--danger);
+}

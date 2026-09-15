@@ -15,37 +15,11 @@ import { useMemo, useState } from 'react';
 
 import { formatHhmm, generateTraffic, parseHhmm } from '@atcsims/core';
 import type { ConflictKind, GeneratorRequest, GeneratorResult } from '@atcsims/core';
-import {
-  approachFixes,
-  holdings,
-  performance,
-  procedures,
-  sampleFlights,
-  separation,
-  ssrCodes,
-  tmaFixes,
-} from '@atcsims/navdata';
 
 import type { FlightDraft } from '../scenarios/build.js';
+import { useNavdataStore } from '../state/navdata.js';
 import shared from '../routes/shared.module.css';
 import styles from './TrafficGenerator.module.css';
-
-/** El catalogo es fijo: sale de la base y no cambia entre generaciones. */
-const usable = procedures.filter((p) => p.legs.every((l) => l.distToEndNm !== null));
-const CATALOGUE = {
-  stars: usable.filter((p) => p.type === 'STAR'),
-  sids: usable.filter((p) => p.type === 'SID'),
-  templates: sampleFlights,
-  ssrCodes,
-  performance,
-  holdings,
-};
-
-/** Solo se ofrecen puntos por los que pasa algo: pedir un encuentro en otro sitio es imposible. */
-const FOCUS_FIXES = [...new Set(usable.flatMap((p) => p.legs.map((l) => l.fix)))].sort();
-
-const ARRIVALS_AVAILABLE = sampleFlights.filter((f) => f.ades === 'SCEL').length;
-const DEPARTURES_AVAILABLE = sampleFlights.filter((f) => f.adep === 'SCEL').length;
 
 const GEOMETRY_LABEL: Record<ConflictKind, string> = {
   IN_TRAIL: 'En fila, por la misma ruta',
@@ -84,6 +58,15 @@ export function TrafficGenerator({
   onGenerate,
   previous,
 }: TrafficGeneratorProps) {
+  const procedures = useNavdataStore((s) => s.procedures);
+  const sampleFlights = useNavdataStore((s) => s.sampleFlights);
+  const ssrCodes = useNavdataStore((s) => s.ssrCodes);
+  const performance = useNavdataStore((s) => s.performance);
+  const holdings = useNavdataStore((s) => s.holdings);
+  const separation = useNavdataStore((s) => s.separation);
+  const approachFixes = useNavdataStore((s) => s.approachFixes);
+  const tmaFixes = useNavdataStore((s) => s.tmaFixes);
+
   const [request, setRequest] = useState<GeneratorRequest>(() => previous ?? defaults());
   const [result, setResult] = useState<GeneratorResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -92,9 +75,41 @@ export function TrafficGenerator({
   const set = <K extends keyof GeneratorRequest>(key: K, value: GeneratorRequest[K]) =>
     setRequest((r) => ({ ...r, [key]: value }));
 
+  /** El catalogo es el mismo mientras no cambie la base (recien cargada, o editada y refrescada). */
+  const usable = useMemo(
+    () => procedures.filter((p) => p.legs.every((l) => l.distToEndNm !== null)),
+    [procedures]
+  );
+  const CATALOGUE = useMemo(
+    () => ({
+      stars: usable.filter((p) => p.type === 'STAR'),
+      sids: usable.filter((p) => p.type === 'SID'),
+      templates: sampleFlights,
+      ssrCodes,
+      performance,
+      holdings,
+    }),
+    [usable, sampleFlights, ssrCodes, performance, holdings]
+  );
+
+  /** Solo se ofrecen puntos por los que pasa algo: pedir un encuentro en otro sitio es imposible. */
+  const FOCUS_FIXES = useMemo(
+    () => [...new Set(usable.flatMap((p) => p.legs.map((l) => l.fix)))].sort(),
+    [usable]
+  );
+
+  const ARRIVALS_AVAILABLE = useMemo(
+    () => sampleFlights.filter((f) => f.ades === 'SCEL').length,
+    [sampleFlights]
+  );
+  const DEPARTURES_AVAILABLE = useMemo(
+    () => sampleFlights.filter((f) => f.adep === 'SCEL').length,
+    [sampleFlights]
+  );
+
   const detect = useMemo(
     () => ({ separation, approachFixes, tmaFixes, runwayInUse, sivigats, lvp }),
-    [runwayInUse, sivigats, lvp]
+    [separation, approachFixes, tmaFixes, runwayInUse, sivigats, lvp]
   );
 
   const run = (overrideSeed?: string) => {

@@ -16,11 +16,13 @@ import { deleteDraft, listDrafts, newDraftId, saveDraft } from '../lib/storage.j
 import { buildScenario } from '../scenarios/build.js';
 import type { ScenarioDraft } from '../scenarios/build.js';
 import { SAMPLE_DRAFT } from '../scenarios/sample.js';
+import { useBuildContext } from '../state/buildContext.js';
 import shared from './shared.module.css';
 import styles from './Scenarios.module.css';
 
 export function Scenarios() {
   const navigate = useNavigate();
+  const buildCtx = useBuildContext();
   const [drafts, setDrafts] = useState<ScenarioDraft[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +35,7 @@ export function Scenarios() {
    * archivo — una prueba exportada asi se reabria como practica.
    */
   const payloadOf = (draft: ScenarioDraft) => {
-    const built = buildScenario(draft);
+    const built = buildScenario(draft, buildCtx);
     return {
       version: 1 as const,
       scenario: built.scenario,
@@ -140,7 +142,7 @@ export function Scenarios() {
       ) : (
         <ul className={styles.list}>
           {drafts.map((draft) => {
-            const built = buildScenario(draft);
+            const built = buildScenario(draft, buildCtx);
             // Reusa el `built` de arriba en vez de llamar a payloadOf: la lista ya recalcula
             // cada ejercicio para mostrar la ventana, y no hace falta hacerlo dos veces por fila
             // solo para armar el enlace de impresion.

@@ -14,7 +14,7 @@
 import { parseHhmm } from '@atcsims/core';
 
 import { buildScenario } from './build.js';
-import type { BuiltScenario, ScenarioDraft } from './build.js';
+import type { BuildContext, BuiltScenario, ScenarioDraft } from './build.js';
 
 export const SAMPLE_DRAFT: ScenarioDraft = {
   id: 'sample-tegeb',
@@ -63,8 +63,8 @@ export const SAMPLE_DRAFT: ScenarioDraft = {
   ],
 };
 
-export function buildSampleScenario(): BuiltScenario {
-  return buildScenario(SAMPLE_DRAFT);
+export function buildSampleScenario(ctx: BuildContext): BuiltScenario {
+  return buildScenario(SAMPLE_DRAFT, ctx);
 }
 
-export type { BuiltScenario, FlightAssumption, RejectedFlight } from './build.js';
+export type { BuildContext, BuiltScenario, FlightAssumption, RejectedFlight } from './build.js';

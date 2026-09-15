@@ -14,14 +14,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { detectConflicts, formatHhmm, parseHhmm, transitionLevelFor } from '@atcsims/core';
 import type { GeneratorRequest } from '@atcsims/core';
-import {
-  approachFixes,
-  procedures,
-  sampleFlights,
-  separation,
-  ssrCodes,
-  tmaFixes,
-} from '@atcsims/navdata';
 
 import { ConflictList } from '../components/ConflictList.js';
 import { FlightProgressStrip } from '../components/FlightProgressStrip.js';
@@ -32,13 +24,10 @@ import { encodePayload, exerciseLink } from '../lib/share.js';
 import { buildScenario } from '../scenarios/build.js';
 import type { FlightDraft, ScenarioDraft } from '../scenarios/build.js';
 import { SAMPLE_DRAFT } from '../scenarios/sample.js';
+import { useBuildContext } from '../state/buildContext.js';
+import { useNavdataStore } from '../state/navdata.js';
 import shared from './shared.module.css';
 import styles from './ScenarioEditor.module.css';
-
-/** Solo se ofrecen los procedimientos que el motor puede calcular de verdad. */
-const usable = procedures.filter((p) => p.legs.every((l) => l.distToEndNm !== null));
-const stars = usable.filter((p) => p.type === 'STAR');
-const sids = usable.filter((p) => p.type === 'SID');
 
 function emptyDraft(): ScenarioDraft {
   return {
@@ -61,7 +50,7 @@ function emptyDraft(): ScenarioDraft {
 }
 
 /** El primer codigo del pool que no esté ya en uso en este ejercicio. */
-function freeSsr(used: readonly string[]): string {
+function freeSsr(used: readonly string[], ssrCodes: readonly string[]): string {
   const taken = new Set(used);
   return ssrCodes.find((c) => !taken.has(c)) ?? '0000';
 }
@@ -152,6 +141,22 @@ export function ScenarioEditor() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const procedures = useNavdataStore((s) => s.procedures);
+  const sampleFlights = useNavdataStore((s) => s.sampleFlights);
+  const ssrCodes = useNavdataStore((s) => s.ssrCodes);
+  const separation = useNavdataStore((s) => s.separation);
+  const approachFixes = useNavdataStore((s) => s.approachFixes);
+  const tmaFixes = useNavdataStore((s) => s.tmaFixes);
+  const buildCtx = useBuildContext();
+
+  /** Solo se ofrecen los procedimientos que el motor puede calcular de verdad. */
+  const usable = useMemo(
+    () => procedures.filter((p) => p.legs.every((l) => l.distToEndNm !== null)),
+    [procedures]
+  );
+  const stars = useMemo(() => usable.filter((p) => p.type === 'STAR'), [usable]);
+  const sids = useMemo(() => usable.filter((p) => p.type === 'SID'), [usable]);
+
   const [draft, setDraft] = useState<ScenarioDraft>(emptyDraft);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -172,7 +177,7 @@ export function ScenarioEditor() {
   }, [id]);
 
   const mode = draft.mode ?? 'practice';
-  const built = useMemo(() => buildScenario(draft), [draft]);
+  const built = useMemo(() => buildScenario(draft, buildCtx), [draft, buildCtx]);
 
   const report = useMemo(
     () =>
@@ -184,7 +189,7 @@ export function ScenarioEditor() {
         sivigats: draft.sivigats,
         lvp: draft.weather.lvp,
       }),
-    [built.scenario, draft.runwayInUse, draft.sivigats, draft.weather.lvp]
+    [built.scenario, separation, approachFixes, tmaFixes, draft.runwayInUse, draft.sivigats, draft.weather.lvp]
   );
 
   const set = <K extends keyof ScenarioDraft>(key: K, value: ScenarioDraft[K]) =>
@@ -218,7 +223,10 @@ export function ScenarioEditor() {
         {
           id: crypto.randomUUID(),
           callsign: catalogue.callsign,
-          ssr: freeSsr(d.flights.map((f) => f.ssr)),
+          ssr: freeSsr(
+            d.flights.map((f) => f.ssr),
+            ssrCodes
+          ),
           icaoType: catalogue.icaoType,
           registration: null,
           tasKt: catalogue.tasKt,

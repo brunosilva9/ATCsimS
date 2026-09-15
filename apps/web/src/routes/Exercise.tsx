@@ -19,6 +19,7 @@ import { useSearchParams } from 'react-router-dom';
 
 import { decodePayload } from '../lib/share.js';
 import { buildSampleScenario } from '../scenarios/sample.js';
+import { useBuildContext } from '../state/buildContext.js';
 import { ExamSession } from './ExamSession.js';
 import { PracticeSession } from './PracticeSession.js';
 import shared from './shared.module.css';
@@ -26,6 +27,7 @@ import shared from './shared.module.css';
 export function Exercise() {
   const [params] = useSearchParams();
   const encoded = params.get('e');
+  const buildCtx = useBuildContext();
 
   const loaded = useMemo(() => {
     if (encoded === null) {
@@ -37,7 +39,7 @@ export function Exercise() {
       : { payload: null, error: decoded.message };
   }, [encoded]);
 
-  const fallback = useMemo(() => buildSampleScenario().scenario, []);
+  const fallback = useMemo(() => buildSampleScenario(buildCtx).scenario, [buildCtx]);
   const scenario = loaded.payload?.scenario ?? fallback;
   const instructions = loaded.payload?.instructions ?? [];
 

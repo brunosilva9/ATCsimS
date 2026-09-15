@@ -16,7 +16,6 @@ import {
   gradeExam,
 } from '@atcsims/core';
 import type { Conflict } from '@atcsims/core';
-import { approachFixes, coordinates, performance, separation, tmaFixes } from '@atcsims/navdata';
 
 import { ConflictList } from '../components/ConflictList.js';
 import { ExamReportTable } from '../components/ExamReportTable.js';
@@ -24,10 +23,17 @@ import { TimeFixDiagram } from '../components/TimeFixDiagram.js';
 import { describeInstruction } from '../lib/instructionText.js';
 import { parsePayload } from '../lib/share.js';
 import type { Payload } from '../lib/share.js';
+import { useNavdataStore } from '../state/navdata.js';
 import shared from './shared.module.css';
 import styles from './Runs.module.css';
 
 export function Runs() {
+  const approachFixes = useNavdataStore((s) => s.approachFixes);
+  const coordinates = useNavdataStore((s) => s.coordinates);
+  const performance = useNavdataStore((s) => s.performance);
+  const separation = useNavdataStore((s) => s.separation);
+  const tmaFixes = useNavdataStore((s) => s.tmaFixes);
+
   const [payload, setPayload] = useState<Payload | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,7 +88,7 @@ export function Runs() {
     );
 
     return { before, after, solved, introduced, scenario: applied.scenario } as const;
-  }, [payload]);
+  }, [payload, separation, approachFixes, tmaFixes, performance, coordinates]);
 
   const openFile = async (file: File) => {
     const parsed = parsePayload(await file.text());

@@ -7,17 +7,9 @@
 
 import { useMemo, useState } from 'react';
 
-import {
-  EXCLUSIONS,
-  aircraftTypes,
-  airways,
-  fixes,
-  holdings,
-  performance,
-  procedures,
-  separation,
-} from '@atcsims/navdata';
+import { EXCLUSIONS } from '@atcsims/navdata';
 
+import { useNavdataStore } from '../state/navdata.js';
 import shared from './shared.module.css';
 import styles from './NavdataExplorer.module.css';
 
@@ -30,25 +22,36 @@ type TabId =
   | 'separation'
   | 'types';
 
-const TABS: readonly { id: TabId; label: string; total: number }[] = [
-  { id: 'fixes', label: 'Fixes', total: fixes.length },
-  { id: 'procedures', label: 'Procedimientos', total: procedures.length },
-  { id: 'airways', label: 'Aerovías', total: airways.length },
-  { id: 'performance', label: 'Performance', total: performance.length },
-  { id: 'holdings', label: 'Esperas', total: holdings.length },
-  { id: 'separation', label: 'Espaciamiento', total: separation.length },
-  { id: 'types', label: 'Tipos', total: aircraftTypes.length },
-];
-
 const dash = (v: unknown) => (v === null || v === undefined || v === '' ? '—' : String(v));
 
 const fl = (ft: number | null) =>
   ft === null ? '—' : `FL${String(Math.round(ft / 100)).padStart(3, '0')}`;
 
 export function NavdataExplorer() {
+  const fixes = useNavdataStore((s) => s.fixes);
+  const procedures = useNavdataStore((s) => s.procedures);
+  const airways = useNavdataStore((s) => s.airways);
+  const performance = useNavdataStore((s) => s.performance);
+  const holdings = useNavdataStore((s) => s.holdings);
+  const separation = useNavdataStore((s) => s.separation);
+  const aircraftTypes = useNavdataStore((s) => s.aircraftTypes);
+
   const [tab, setTab] = useState<TabId>('fixes');
   const [query, setQuery] = useState('');
   const needle = query.trim().toUpperCase();
+
+  const TABS: readonly { id: TabId; label: string; total: number }[] = useMemo(
+    () => [
+      { id: 'fixes', label: 'Fixes', total: fixes.length },
+      { id: 'procedures', label: 'Procedimientos', total: procedures.length },
+      { id: 'airways', label: 'Aerovías', total: airways.length },
+      { id: 'performance', label: 'Performance', total: performance.length },
+      { id: 'holdings', label: 'Esperas', total: holdings.length },
+      { id: 'separation', label: 'Espaciamiento', total: separation.length },
+      { id: 'types', label: 'Tipos', total: aircraftTypes.length },
+    ],
+    [fixes, procedures, airways, performance, holdings, separation, aircraftTypes]
+  );
 
   const visible = useMemo(() => {
     const has = (...parts: readonly unknown[]) =>
@@ -65,7 +68,7 @@ export function NavdataExplorer() {
       separation: separation.filter((s) => has(s.runway, s.unit)),
       types: aircraftTypes.filter((t) => has(t.icao, t.name)),
     };
-  }, [needle]);
+  }, [needle, fixes, procedures, airways, performance, holdings, separation, aircraftTypes]);
 
   const active = TABS.find((t) => t.id === tab);
   const shown = visible[tab].length;

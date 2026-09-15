@@ -8,15 +8,18 @@
 import { describe, expect, it } from 'vitest';
 
 import { formatHhmm, gradeExam, parseHhmm } from '@atcsims/core';
-import { ssrCodes } from '@atcsims/navdata';
+import { findProcedure, holdings, performance, ssrCodes } from '@atcsims/navdata';
 
 import { decodePayload, encodePayload, parsePayload } from '../src/lib/share.js';
 import { buildScenario } from '../src/scenarios/build.js';
-import type { ScenarioDraft } from '../src/scenarios/build.js';
+import type { BuildContext, ScenarioDraft } from '../src/scenarios/build.js';
 import { SAMPLE_DRAFT, buildSampleScenario } from '../src/scenarios/sample.js';
 
+/** Los tests siguen usando @atcsims/navdata (los JSON estaticos), no Firestore: sin red. */
+const ctx: BuildContext = { findProcedure, holdings, performance };
+
 describe('de receta a ejercicio', () => {
-  const built = buildSampleScenario();
+  const built = buildSampleScenario(ctx);
 
   it('calcula los cinco vuelos del ejemplo', () => {
     expect(built.scenario.flights).toHaveLength(5);
@@ -45,7 +48,7 @@ describe('de receta a ejercicio', () => {
       ...SAMPLE_DRAFT,
       flights: [{ ...SAMPLE_DRAFT.flights[0]!, procedureIdent: 'NO_EXISTE' }],
     };
-    const result = buildScenario(broken);
+    const result = buildScenario(broken, ctx);
     expect(result.scenario.flights).toHaveLength(0);
     expect(result.rejected[0]?.reason).toBeTruthy();
   });
@@ -56,20 +59,20 @@ describe('de receta a ejercicio', () => {
       ...SAMPLE_DRAFT,
       flights: [{ ...SAMPLE_DRAFT.flights[0]!, procedureIdent: 'ASIMO7D' }],
     };
-    const result = buildScenario(withAsimo);
+    const result = buildScenario(withAsimo, ctx);
     expect(result.rejected).toHaveLength(0);
     expect(result.scenario.flights).toHaveLength(1);
   });
 
   it('un ejercicio sin trafico no revienta', () => {
-    const result = buildScenario({ ...SAMPLE_DRAFT, flights: [] });
+    const result = buildScenario({ ...SAMPLE_DRAFT, flights: [] }, ctx);
     expect(result.scenario.flights).toHaveLength(0);
     expect(result.scenario.durationMin).toBeGreaterThan(0);
   });
 });
 
 describe('el ejercicio viaja por enlace', () => {
-  const { scenario } = buildSampleScenario();
+  const { scenario } = buildSampleScenario(ctx);
   const payload = { version: 1 as const, scenario, instructions: [] };
 
   it('vuelve entero', () => {
@@ -103,7 +106,7 @@ describe('el ejercicio viaja por enlace', () => {
 
 describe('importar reconstruye la receta', () => {
   it('el viaje receta → ejercicio → archivo → receta conserva lo editable', () => {
-    const { scenario } = buildScenario(SAMPLE_DRAFT);
+    const { scenario } = buildScenario(SAMPLE_DRAFT, ctx);
     const reloaded = parsePayload(
       JSON.stringify({ version: 1, scenario, instructions: [] })
     );
@@ -129,7 +132,7 @@ describe('importar reconstruye la receta', () => {
     };
 
     // Recalcular la receta reconstruida tiene que dar el mismo ejercicio.
-    expect(buildScenario(rebuilt).scenario.flights).toEqual(scenario.flights);
+    expect(buildScenario(rebuilt, ctx).scenario.flights).toEqual(scenario.flights);
   });
 });
 
@@ -153,7 +156,7 @@ describe('horas', () => {
 });
 
 describe('modo prueba', () => {
-  const { scenario } = buildSampleScenario();
+  const { scenario } = buildSampleScenario(ctx);
 
   it('el modo viaja dentro del ejercicio, no como parametro de la URL', () => {
     const encoded = encodePayload({

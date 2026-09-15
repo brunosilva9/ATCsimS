@@ -12,11 +12,12 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
 import { formatHhmm } from '@atcsims/core';
+import { findProcedure, holdings, performance } from '@atcsims/navdata';
 
 import { FlightProgressStrip } from '../src/components/FlightProgressStrip.js';
 import { buildSampleScenario } from '../src/scenarios/sample.js';
 
-const { scenario } = buildSampleScenario();
+const { scenario } = buildSampleScenario({ findProcedure, holdings, performance });
 const flight = scenario.flights.find((f) => f.callsign === 'LAN705')!; // UMKAL7C
 
 const render = (f: typeof flight) =>
