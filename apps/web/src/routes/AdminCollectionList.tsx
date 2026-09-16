@@ -39,10 +39,26 @@ function summaryOf(schema: CollectionSchema, record: Draft): string {
   return parts.join(' · ');
 }
 
+/** Aplana cualquier valor (numero, booleano, array, array de arrays) a texto para buscar en el. */
+function flatten(value: unknown): string {
+  if (value === null || value === undefined) return '';
+  if (Array.isArray(value)) return value.map(flatten).join(' ');
+  if (typeof value === 'object') return Object.values(value).map(flatten).join(' ');
+  return String(value);
+}
+
+function matches(record: Draft, needle: string): boolean {
+  if (needle === '') return true;
+  return Object.values(record).some((v) => flatten(v).toUpperCase().includes(needle));
+}
+
 export function AdminCollectionList({ schema }: { readonly schema: CollectionSchema }) {
   const navdata = useNavdataStore();
   const rows = useMemo(() => rowsFor(schema, navdata), [schema, navdata]);
   const [editing, setEditing] = useState<Editing>({ kind: 'list' });
+  const [query, setQuery] = useState('');
+  const needle = query.trim().toUpperCase();
+  const visible = useMemo(() => rows.filter((r) => matches(r, needle)), [rows, needle]);
 
   if (editing.kind !== 'list') {
     return (
@@ -59,7 +75,16 @@ export function AdminCollectionList({ schema }: { readonly schema: CollectionSch
   return (
     <div className={styles.wrap}>
       <div className={shared.sectionHead}>
-        <p className={shared.note}>{rows.length} registros</p>
+        <label className={styles.search} htmlFor="admin-search">
+          <span className={styles.searchLabel}>Buscar</span>
+          <input
+            type="search"
+            id="admin-search"
+            value={query}
+            placeholder="Filtrar por cualquier valor…"
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </label>
         {canCreate ? (
           <button type="button" className={styles.primary} onClick={() => setEditing({ kind: 'new' })}>
             Nuevo
@@ -67,10 +92,15 @@ export function AdminCollectionList({ schema }: { readonly schema: CollectionSch
         ) : null}
       </div>
 
+      <p className={shared.note}>
+        {visible.length} de {rows.length} registros
+        {needle === '' ? '' : ` que contienen “${query.trim()}”`}.
+      </p>
+
       <div className={styles.tableWrap}>
         <table className={styles.table}>
           <tbody>
-            {rows.map((record) => {
+            {visible.map((record) => {
               const id = computeDocId(schema, record);
               return (
                 <tr key={id}>

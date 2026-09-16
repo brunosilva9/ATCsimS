@@ -57,7 +57,8 @@ export function Admin() {
         ))}
       </div>
 
-      <AdminCollectionList schema={schema} />
+      {/* key fuerza a reiniciar la busqueda y cerrar cualquier edicion abierta al cambiar de tab */}
+      <AdminCollectionList key={schema.collection} schema={schema} />
     </div>
   );
 }
