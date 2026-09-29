@@ -273,6 +273,8 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
       tx('adep', 'Origen'),
       tx('ades', 'Destino'),
       tx('ssr', 'SSR'),
+      // La planilla ACFT no trae matricula: queda vacia salvo que el instructor la cargue aca.
+      tx('registration', 'Matrícula', { nullable: true }),
     ],
   },
   {

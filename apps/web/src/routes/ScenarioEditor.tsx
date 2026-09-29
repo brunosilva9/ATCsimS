@@ -228,7 +228,7 @@ export function ScenarioEditor() {
             ssrCodes
           ),
           icaoType: catalogue.icaoType,
-          registration: null,
+          registration: catalogue.registration ?? null,
           tasKt: catalogue.tasKt,
           adep: catalogue.adep,
           ades: catalogue.ades,
@@ -552,6 +552,7 @@ export function ScenarioEditor() {
                     <tr>
                       <th>Indicativo</th>
                       <th>Tipo</th>
+                      <th>Matrícula</th>
                       <th>SSR</th>
                       <th>Procedimiento</th>
                       <th>Entrada</th>
@@ -569,6 +570,15 @@ export function ScenarioEditor() {
                           </span>
                         </td>
                         <td className={styles.mono}>{f.icaoType}</td>
+                        <td>
+                          <input
+                            className={styles.cellInput}
+                            value={f.registration ?? ''}
+                            placeholder="—"
+                            aria-label={`Matrícula de ${f.callsign}`}
+                            onChange={(e) => patchFlight(f.id, { registration: e.target.value || null })}
+                          />
+                        </td>
                         <td>
                           <input
                             className={styles.cellInput}

@@ -136,7 +136,7 @@ export function TrafficGenerator({
         callsign: f.callsign,
         ssr: f.ssr,
         icaoType: f.icaoType,
-        registration: null,
+        registration: f.registration,
         tasKt: f.tasKt,
         adep: f.adep,
         ades: f.ades,

@@ -68,6 +68,8 @@ export interface FlightTemplate {
   readonly tasKt: number;
   readonly adep: string;
   readonly ades: string;
+  /** Matricula, si el catalogo la trae. La mayoria de los vuelos comerciales no la tienen. */
+  readonly registration?: string | null;
 }
 
 /** Los parametros que toca el instructor. */
@@ -106,6 +108,7 @@ export interface GeneratedFlight {
   readonly tasKt: number;
   readonly adep: string;
   readonly ades: string;
+  readonly registration: string | null;
   readonly kind: FlightKind;
   readonly procedureIdent: string;
   readonly entryTime: UtcMinutes;
@@ -294,6 +297,7 @@ function buildCandidate(
       tasKt: template.tasKt,
       adep: template.adep,
       ades: template.ades,
+      registration: template.registration ?? null,
       kind,
       procedureIdent: procedure.ident,
       // La hora de entrada es el unico grado de libertad de verdad, y es donde se juega que
@@ -345,7 +349,7 @@ function computeCandidate(
       callsign: g.callsign,
       ssr: g.ssr,
       icaoType: g.icaoType,
-      registration: null,
+      registration: g.registration,
       tasKt: g.tasKt,
       adep: g.adep,
       ades: g.ades,

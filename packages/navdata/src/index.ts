@@ -97,6 +97,8 @@ export interface SampleFlight {
   readonly adep: string;
   readonly ades: string;
   readonly ssr: string;
+  /** Matricula, si se cargo una a mano desde /admin. La planilla ACFT no la trae. */
+  readonly registration?: string | null;
 }
 
 /** Vuelos comerciales reales de la hoja ACFT. Es de donde el instructor saca los indicativos. */
