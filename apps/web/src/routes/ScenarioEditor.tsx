@@ -548,277 +548,6 @@ export function ScenarioEditor() {
             previous={draft.generator}
             onGenerate={applyGenerated}
           />
-
-          <section className={shared.section}>
-            <div className={shared.sectionHead}>
-              <h3 className={shared.sectionTitle}>Tráfico ({draft.flights.length})</h3>
-              <div className={styles.addControls}>
-                <label className={styles.add}>
-                  <span className={styles.label}>Añadir del catálogo</span>
-                  <select
-                    id="add-flight"
-                    value=""
-                    onChange={(e) => {
-                      addFlight(e.target.value);
-                      e.target.value = '';
-                    }}
-                  >
-                    <option value="">Elegir vuelo…</option>
-                    {sampleFlights.map((f) => (
-                      <option key={f.callsign} value={f.callsign}>
-                        {f.callsign} · {f.icaoType} · {f.adep}→{f.ades}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <button
-                  type="button"
-                  className={styles.secondary}
-                  onClick={() => setShowNewFlightForm((v) => !v)}
-                >
-                  {showNewFlightForm ? 'Cancelar' : 'Vuelo nuevo'}
-                </button>
-              </div>
-            </div>
-
-            {showNewFlightForm ? (
-              <NewFlightForm
-                onAdd={(identity) => appendFlight(identity)}
-                onClose={() => setShowNewFlightForm(false)}
-              />
-            ) : null}
-
-            {draft.flights.length === 0 ? (
-              <p className={shared.note}>
-                Sin tráfico todavía. «Añadir del catálogo» toma vuelos ya armados de{' '}
-                <code>sampleFlights</code>; «Vuelo nuevo» arma uno desde tipo de aeronave,
-                operador y aeródromos.
-              </p>
-            ) : (
-              <div className={styles.tableWrap}>
-                <table className={styles.table}>
-                  <thead>
-                    <tr>
-                      <th>Indicativo</th>
-                      <th>Operador</th>
-                      <th>Tipo</th>
-                      <th>TAS</th>
-                      <th>Origen</th>
-                      <th>Destino</th>
-                      <th>Matrícula</th>
-                      <th>SSR</th>
-                      <th>Procedimiento</th>
-                      <th>Entrada</th>
-                      <th>Nivel</th>
-                      <th />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {draft.flights.map((f) => {
-                      // Un vuelo con operador tiene ruta FIJA (flightRoutes lo confirmó al
-                      // agregarlo): indicativo/origen/destino no se pueden tocar desde acá — en
-                      // la realidad ese numero de vuelo siempre es la misma ruta. Sin operador
-                      // (aviacion general/privado, o sin ruta registrada) siguen editables.
-                      const locked = f.operator !== null;
-                      const lockedTitle =
-                        'Vuelo comercial: ruta fija. Para cambiarla, quitá este vuelo y agregá otro.';
-                      return (
-                        <tr key={f.id}>
-                          <td>
-                            {locked ? (
-                              <span className={styles.readOnly} title={lockedTitle}>
-                                {f.callsign}
-                              </span>
-                            ) : (
-                              <input
-                                className={styles.cellInput}
-                                value={f.callsign}
-                                aria-label="Indicativo"
-                                onChange={(e) => patchFlight(f.id, { callsign: e.target.value.toUpperCase() })}
-                              />
-                            )}
-                          </td>
-                          <td>
-                            <span className={styles.readOnly}>{f.operator ?? '—'}</span>
-                          </td>
-                          <td>
-                            <select
-                              className={styles.cellSelect}
-                              value={f.icaoType}
-                              aria-label={`Tipo de aeronave de ${f.callsign}`}
-                              onChange={(e) => patchFlight(f.id, { icaoType: e.target.value })}
-                            >
-                              {withFallback(icaoTypeOptions, f.icaoType).map((icao) => (
-                                <option key={icao} value={icao}>
-                                  {icao}
-                                </option>
-                              ))}
-                            </select>
-                          </td>
-                          <td>
-                            <input
-                              className={styles.cellInput}
-                              type="number"
-                              value={f.tasKt}
-                              aria-label={`TAS de ${f.callsign}`}
-                              onChange={(e) => {
-                                const n = Number(e.target.value);
-                                if (Number.isFinite(n)) patchFlight(f.id, { tasKt: n });
-                              }}
-                            />
-                          </td>
-                          <td>
-                            {locked ? (
-                              <span className={styles.readOnly} title={lockedTitle}>
-                                {f.adep}
-                              </span>
-                            ) : (
-                              <select
-                                className={styles.cellSelect}
-                                value={f.adep}
-                                aria-label={`Origen de ${f.callsign}`}
-                                onChange={(e) => patchFlight(f.id, { adep: e.target.value })}
-                              >
-                                {withFallback(aerodromeOptions, f.adep).map((icao) => (
-                                  <option key={icao} value={icao}>
-                                    {icao}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                          </td>
-                          <td>
-                            {locked ? (
-                              <span className={styles.readOnly} title={lockedTitle}>
-                                {f.ades}
-                              </span>
-                            ) : (
-                              <select
-                                className={styles.cellSelect}
-                                value={f.ades}
-                                aria-label={`Destino de ${f.callsign}`}
-                                onChange={(e) => patchFlight(f.id, { ades: e.target.value })}
-                              >
-                                {withFallback(aerodromeOptions, f.ades).map((icao) => (
-                                  <option key={icao} value={icao}>
-                                    {icao}
-                                  </option>
-                                ))}
-                              </select>
-                            )}
-                          </td>
-                          <td>
-                            <input
-                              className={styles.cellInput}
-                              value={f.registration ?? ''}
-                              placeholder="—"
-                              aria-label={`Matrícula de ${f.callsign}`}
-                              onChange={(e) => patchFlight(f.id, { registration: e.target.value || null })}
-                            />
-                          </td>
-                          <td>
-                            <input
-                              className={styles.cellInput}
-                              value={f.ssr}
-                              aria-label={`Código SSR de ${f.callsign}`}
-                              onChange={(e) => patchFlight(f.id, { ssr: e.target.value })}
-                            />
-                          </td>
-                          <td>
-                            <select
-                              className={styles.cellSelect}
-                              value={f.procedureIdent}
-                              aria-label={`Procedimiento de ${f.callsign}`}
-                              onChange={(e) => {
-                                // El tipo de vuelo lo decide el procedimiento: cambiar a una SID
-                                // convierte la llegada en salida, o el motor calcularia un
-                                // descenso sobre una trayectoria de ascenso.
-                                const chosen = usable.find((p) => p.ident === e.target.value);
-                                patchFlight(f.id, {
-                                  procedureIdent: e.target.value,
-                                  ...(chosen
-                                    ? { kind: chosen.type === 'SID' ? 'DEPARTURE' : 'ARRIVAL' }
-                                    : {}),
-                                });
-                              }}
-                            >
-                              <optgroup label="Llegadas">
-                                {stars.map((p) => (
-                                  <option key={p.ident} value={p.ident}>
-                                    {p.ident}
-                                  </option>
-                                ))}
-                              </optgroup>
-                              <optgroup label="Salidas">
-                                {sids.map((p) => (
-                                  <option key={p.ident} value={p.ident}>
-                                    {p.ident}
-                                  </option>
-                                ))}
-                              </optgroup>
-                            </select>
-                          </td>
-                          <td>
-                            <BufferedField
-                              id={`entry-${f.id}`}
-                              className={styles.cellInput}
-                              ariaLabel={`Hora de entrada de ${f.callsign}`}
-                              value={f.entryTime}
-                              format={formatHhmm}
-                              parse={parseHhmmOrNull}
-                              onCommit={(entryTime) => patchFlight(f.id, { entryTime })}
-                            />
-                          </td>
-                          <td>
-                            <BufferedField
-                              id={`level-${f.id}`}
-                              className={styles.cellInput}
-                              ariaLabel={`Nivel de ${f.callsign}`}
-                              value={f.levelFl}
-                              format={formatLevel}
-                              parse={parseLevelOrNull}
-                              onCommit={(levelFl) => patchFlight(f.id, { levelFl })}
-                            />
-                          </td>
-                          <td>
-                            <button
-                              type="button"
-                              className={styles.remove}
-                              aria-label={`Quitar ${f.callsign}`}
-                              onClick={() => removeFlight(f.id)}
-                            >
-                              ✕
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-
-            {duplicateSsr.length > 0 ? (
-              <div className={shared.notice} role="alert">
-                <strong>Códigos SSR repetidos.</strong> {duplicateSsr.map((f) => f.callsign).join(', ')}{' '}
-                comparten código con otro vuelo. En el aire, dos aeronaves con el mismo código no
-                se distinguen en pantalla.
-              </div>
-            ) : null}
-
-            {built.rejected.length > 0 ? (
-              <div className={shared.notice} role="alert">
-                <strong>Vuelos que no se pueden calcular.</strong>
-                <ul>
-                  {built.rejected.map((r) => (
-                    <li key={r.callsign}>
-                      <code>{r.callsign}</code> por <code>{r.procedureIdent}</code> — {r.reason}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-          </section>
         </div>
 
         <aside className={styles.right}>
@@ -858,6 +587,281 @@ export function ScenarioEditor() {
           ) : null}
         </aside>
       </div>
+
+      {/*
+        Full ancho, fuera del grid de dos columnas: la tabla de vuelos tiene muchas columnas y
+        necesitaba todo el espacio para no quedar apretada contra la columna de "Cómo queda".
+      */}
+      <section className={shared.section}>
+        <div className={shared.sectionHead}>
+          <h3 className={shared.sectionTitle}>Tráfico ({draft.flights.length})</h3>
+          <div className={styles.addControls}>
+            <label className={styles.add}>
+              <span className={styles.label}>Añadir del catálogo</span>
+              <select
+                id="add-flight"
+                value=""
+                onChange={(e) => {
+                  addFlight(e.target.value);
+                  e.target.value = '';
+                }}
+              >
+                <option value="">Elegir vuelo…</option>
+                {sampleFlights.map((f) => (
+                  <option key={f.callsign} value={f.callsign}>
+                    {f.callsign} · {f.icaoType} · {f.adep}→{f.ades}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="button"
+              className={styles.secondary}
+              onClick={() => setShowNewFlightForm((v) => !v)}
+            >
+              {showNewFlightForm ? 'Cancelar' : 'Vuelo nuevo'}
+            </button>
+          </div>
+        </div>
+
+        {showNewFlightForm ? (
+          <NewFlightForm
+            onAdd={(identity) => appendFlight(identity)}
+            onClose={() => setShowNewFlightForm(false)}
+          />
+        ) : null}
+
+        {draft.flights.length === 0 ? (
+          <p className={shared.note}>
+            Sin tráfico todavía. «Añadir del catálogo» toma vuelos ya armados de{' '}
+            <code>sampleFlights</code>; «Vuelo nuevo» arma uno desde tipo de aeronave,
+            operador y aeródromos.
+          </p>
+        ) : (
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Indicativo</th>
+                  <th>Operador</th>
+                  <th>Tipo</th>
+                  <th>TAS</th>
+                  <th>Origen</th>
+                  <th>Destino</th>
+                  <th>Matrícula</th>
+                  <th>SSR</th>
+                  <th>Procedimiento</th>
+                  <th>Entrada</th>
+                  <th>Nivel</th>
+                  <th />
+                </tr>
+              </thead>
+              <tbody>
+                {draft.flights.map((f) => {
+                  // Un vuelo con operador tiene ruta FIJA (flightRoutes lo confirmó al
+                  // agregarlo): indicativo/origen/destino no se pueden tocar desde acá — en
+                  // la realidad ese numero de vuelo siempre es la misma ruta. Sin operador
+                  // (aviacion general/privado, o sin ruta registrada) siguen editables.
+                  const locked = f.operator !== null;
+                  const lockedTitle =
+                    'Vuelo comercial: ruta fija. Para cambiarla, quitá este vuelo y agregá otro.';
+                  return (
+                    <tr key={f.id}>
+                      <td>
+                        {locked ? (
+                          <span className={styles.readOnly} title={lockedTitle}>
+                            {f.callsign}
+                          </span>
+                        ) : (
+                          <input
+                            className={styles.cellInput}
+                            value={f.callsign}
+                            aria-label="Indicativo"
+                            onChange={(e) => patchFlight(f.id, { callsign: e.target.value.toUpperCase() })}
+                          />
+                        )}
+                      </td>
+                      <td>
+                        <span className={styles.readOnly}>{f.operator ?? '—'}</span>
+                      </td>
+                      <td>
+                        <select
+                          className={styles.cellSelect}
+                          value={f.icaoType}
+                          aria-label={`Tipo de aeronave de ${f.callsign}`}
+                          onChange={(e) => patchFlight(f.id, { icaoType: e.target.value })}
+                        >
+                          {withFallback(icaoTypeOptions, f.icaoType).map((icao) => (
+                            <option key={icao} value={icao}>
+                              {icao}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td>
+                        <input
+                          className={styles.cellInput}
+                          type="number"
+                          value={f.tasKt}
+                          aria-label={`TAS de ${f.callsign}`}
+                          onChange={(e) => {
+                            const n = Number(e.target.value);
+                            if (Number.isFinite(n)) patchFlight(f.id, { tasKt: n });
+                          }}
+                        />
+                      </td>
+                      <td>
+                        {locked ? (
+                          <span className={styles.readOnly} title={lockedTitle}>
+                            {f.adep}
+                          </span>
+                        ) : (
+                          <select
+                            className={styles.cellSelect}
+                            value={f.adep}
+                            aria-label={`Origen de ${f.callsign}`}
+                            onChange={(e) => patchFlight(f.id, { adep: e.target.value })}
+                          >
+                            {withFallback(aerodromeOptions, f.adep).map((icao) => (
+                              <option key={icao} value={icao}>
+                                {icao}
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      </td>
+                      <td>
+                        {locked ? (
+                          <span className={styles.readOnly} title={lockedTitle}>
+                            {f.ades}
+                          </span>
+                        ) : (
+                          <select
+                            className={styles.cellSelect}
+                            value={f.ades}
+                            aria-label={`Destino de ${f.callsign}`}
+                            onChange={(e) => patchFlight(f.id, { ades: e.target.value })}
+                          >
+                            {withFallback(aerodromeOptions, f.ades).map((icao) => (
+                              <option key={icao} value={icao}>
+                                {icao}
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      </td>
+                      <td>
+                        <input
+                          className={styles.cellInput}
+                          value={f.registration ?? ''}
+                          placeholder="—"
+                          aria-label={`Matrícula de ${f.callsign}`}
+                          onChange={(e) => patchFlight(f.id, { registration: e.target.value || null })}
+                        />
+                      </td>
+                      <td>
+                        <input
+                          className={styles.cellInput}
+                          value={f.ssr}
+                          aria-label={`Código SSR de ${f.callsign}`}
+                          onChange={(e) => patchFlight(f.id, { ssr: e.target.value })}
+                        />
+                      </td>
+                      <td>
+                        <select
+                          className={styles.cellSelect}
+                          value={f.procedureIdent}
+                          aria-label={`Procedimiento de ${f.callsign}`}
+                          onChange={(e) => {
+                            // El tipo de vuelo lo decide el procedimiento: cambiar a una SID
+                            // convierte la llegada en salida, o el motor calcularia un
+                            // descenso sobre una trayectoria de ascenso.
+                            const chosen = usable.find((p) => p.ident === e.target.value);
+                            patchFlight(f.id, {
+                              procedureIdent: e.target.value,
+                              ...(chosen
+                                ? { kind: chosen.type === 'SID' ? 'DEPARTURE' : 'ARRIVAL' }
+                                : {}),
+                            });
+                          }}
+                        >
+                          <optgroup label="Llegadas">
+                            {stars.map((p) => (
+                              <option key={p.ident} value={p.ident}>
+                                {p.ident}
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="Salidas">
+                            {sids.map((p) => (
+                              <option key={p.ident} value={p.ident}>
+                                {p.ident}
+                              </option>
+                            ))}
+                          </optgroup>
+                        </select>
+                      </td>
+                      <td>
+                        <BufferedField
+                          id={`entry-${f.id}`}
+                          className={styles.cellInput}
+                          ariaLabel={`Hora de entrada de ${f.callsign}`}
+                          value={f.entryTime}
+                          format={formatHhmm}
+                          parse={parseHhmmOrNull}
+                          onCommit={(entryTime) => patchFlight(f.id, { entryTime })}
+                        />
+                      </td>
+                      <td>
+                        <BufferedField
+                          id={`level-${f.id}`}
+                          className={styles.cellInput}
+                          ariaLabel={`Nivel de ${f.callsign}`}
+                          value={f.levelFl}
+                          format={formatLevel}
+                          parse={parseLevelOrNull}
+                          onCommit={(levelFl) => patchFlight(f.id, { levelFl })}
+                        />
+                      </td>
+                      <td>
+                        <button
+                          type="button"
+                          className={styles.remove}
+                          aria-label={`Quitar ${f.callsign}`}
+                          onClick={() => removeFlight(f.id)}
+                        >
+                          ✕
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {duplicateSsr.length > 0 ? (
+          <div className={shared.notice} role="alert">
+            <strong>Códigos SSR repetidos.</strong> {duplicateSsr.map((f) => f.callsign).join(', ')}{' '}
+            comparten código con otro vuelo. En el aire, dos aeronaves con el mismo código no
+            se distinguen en pantalla.
+          </div>
+        ) : null}
+
+        {built.rejected.length > 0 ? (
+          <div className={shared.notice} role="alert">
+            <strong>Vuelos que no se pueden calcular.</strong>
+            <ul>
+              {built.rejected.map((r) => (
+                <li key={r.callsign}>
+                  <code>{r.callsign}</code> por <code>{r.procedureIdent}</code> — {r.reason}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </section>
 
       {built.scenario.flights.length > 0 ? (
         // Antes estaba arriba, junto a "Guardar": se podia apretar con el ejercicio todavia

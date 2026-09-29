@@ -36,12 +36,6 @@ export function Admin() {
         </div>
       </header>
 
-      <div className={shared.notice}>
-        <strong>Esto reemplaza al Excel para lo que edites acá.</strong> Si más tarde alguien
-        vuelve a correr <code>npm run data:firestore</code>, pisa cualquier cambio hecho desde
-        este panel — ver <code>data/README.md</code>.
-      </div>
-
       <div className={styles.tabs} role="tablist">
         {ADMIN_SCHEMAS.map((s) => (
           <button
