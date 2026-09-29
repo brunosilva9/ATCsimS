@@ -61,8 +61,13 @@ Firestore al estado que dice el Excel (por ejemplo, tras corregir algo ahí y re
 `tools/build-db.js`).
 
 ```bash
-npm run data:firestore   # sube data/*.json a Firestore (ver tools/upload-firestore.js)
+npm run data:firestore                    # sube las 17 colecciones (ver tools/upload-firestore.js)
+npm run data:firestore -- aerodromes      # sube SOLO esa, deja las demas (ya editadas) intactas
+npm run data:firestore -- aerodromes fixes  # varias a la vez, separadas por espacio
 ```
+
+La segunda forma es la que conviene una vez que ya se editó algo desde `/admin` en otras
+colecciones: solo pisa la que se nombra, no las 17.
 
 Requiere una service account key propia (`tools/serviceAccountKey.json`, gitignored — se baja de
 Consola Firebase › Configuración del proyecto › Cuentas de servicio) y `firebase-admin` instalado.

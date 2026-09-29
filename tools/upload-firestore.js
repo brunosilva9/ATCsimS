@@ -2,17 +2,23 @@
 /**
  * upload-firestore.js — espeja data/*.json en 17 colecciones de Firestore, una por archivo.
  *
- *   node tools/upload-firestore.js
+ *   node tools/upload-firestore.js                  # las 17
+ *   node tools/upload-firestore.js aerodromes        # solo esa
+ *   node tools/upload-firestore.js aerodromes fixes  # varias, separadas por espacio
+ *
+ * Sin argumentos sube las 17. Con uno o mas nombres de coleccion, sube SOLO esas y deja las demas
+ * intactas — para cuando ya se edito algo desde /admin en otras colecciones y correr el mirror
+ * completo pisaria esas ediciones (el mirror completo sigue borrando y reescribiendo TODO).
  *
  * Es un ESPEJO, no una migracion todavia: la app sigue leyendo unicamente data/*.json (que sigue
  * siendo la unica fuente de verdad, generada desde las planillas por tools/build-db.js). Este
  * script solo sube una copia de consulta a un proyecto de Firebase — pensado para cuando la app
  * empiece a leer de Firestore en vez de los JSON empaquetados, un paso aparte y posterior.
  *
- * Cada corrida BORRA y vuelve a escribir cada coleccion entera (mirror exacto, no merge), mismo
- * espiritu que "data/*.json no se edita a mano, se regenera": si algo se borro de un JSON, se
- * borra tambien de Firestore. Los anidados (legs de un procedimiento, fixes de una aerovia)
- * quedan EMBEBIDOS en el documento, igual forma que hoy en el JSON — no hay subcolecciones.
+ * Cada colección que se sube BORRA y vuelve a escribir esa coleccion entera (mirror exacto, no
+ * merge), mismo espiritu que "data/*.json no se edita a mano, se regenera": si algo se borro de
+ * un JSON, se borra tambien de Firestore. Los anidados (legs de un procedimiento, fixes de una
+ * aerovia) quedan EMBEBIDOS en el documento, igual forma que hoy en el JSON — no hay subcolecciones.
  *
  * Requiere:
  *  - `firebase-admin` instalado (devDependency del repo).
@@ -122,64 +128,105 @@ async function mirror(collectionName, records, idFn, meta) {
   console.log(`  ${collectionName.padEnd(20)} ${docs.size} documentos`);
 }
 
+const only = new Set(process.argv.slice(2));
+const wants = (collectionName) => only.size === 0 || only.has(collectionName);
+
 async function main() {
-  console.log(`Subiendo data/*.json a Firestore...\n`);
-
-  const fixes = read('fixes.json');
-  await mirror('fixes', fixes.fixes, (r) => r.ident, fixes._meta);
-
-  const procedures = read('procedures.json');
-  await mirror('procedures', procedures.procedures, (r) => r.ident, procedures._meta);
-
-  const airways = read('airways.json');
-  await mirror('airways', airways.airways, (r) => r.ident, airways._meta);
-
-  const runways = read('runways.json');
-  await mirror('runways', runways.runways, (r) => r.ident, runways._meta);
-
-  const approaches = read('approaches.json');
-  await mirror('approaches', approaches.approaches, (r) => r.code, approaches._meta);
-
-  const holdings = read('holdings.json');
-  await mirror('holdings', holdings.holdings, (r) => r.fix, holdings._meta);
-
-  const performance = read('performance.json');
-  await mirror('performance', performance.performance, (r) => r.level, performance._meta);
-
-  const aircraftTypes = read('aircraft-types.json');
-  await mirror('aircraftTypes', aircraftTypes.aircraftTypes, (r) => r.icao, aircraftTypes._meta);
-
-  const fleet = read('fleet.json');
-  await mirror('fleet', fleet.fleet, (r) => r.registration, fleet._meta);
-
-  const operators = read('operators.json');
-  await mirror('operators', operators.operators, (r) => r.icaoPrefix, operators._meta);
-
-  const sampleFlights = read('sample-flights.json');
-  await mirror('sampleFlights', sampleFlights.sampleFlights, (r) => r.callsign, sampleFlights._meta);
-
-  const ssr = read('ssr.json');
-  await mirror('ssrBlocks', ssr.blocks, (r) => r.base, ssr._meta);
-
-  const units = read('units.json');
-  await mirror('units', units.units, (r) => r.id, units._meta);
-
-  const radars = read('radars.json');
-  await mirror('radars', radars.radars, (r) => slugify(r.equipment), radars._meta);
-
-  const separation = read('separation.json');
-  await mirror(
-    'separation',
-    separation.separation,
-    (r) => `${r.runway}-dep${r.withDepartures}-sivigats${r.sivigats}-lvp${r.lvp}`,
-    separation._meta
+  console.log(
+    only.size === 0
+      ? `Subiendo data/*.json a Firestore (las 17 colecciones)...\n`
+      : `Subiendo solo: ${[...only].join(', ')}...\n`
   );
 
-  const tma = read('tma.json');
-  await mirror('tma', [tma.tma], () => 'scel', tma._meta);
+  if (wants('fixes')) {
+    const fixes = read('fixes.json');
+    await mirror('fixes', fixes.fixes, (r) => r.ident, fixes._meta);
+  }
 
-  const aerodromes = read('aerodromes.json');
-  await mirror('aerodromes', aerodromes.aerodromes, (r) => r.icao, aerodromes._meta);
+  if (wants('procedures')) {
+    const procedures = read('procedures.json');
+    await mirror('procedures', procedures.procedures, (r) => r.ident, procedures._meta);
+  }
+
+  if (wants('airways')) {
+    const airways = read('airways.json');
+    await mirror('airways', airways.airways, (r) => r.ident, airways._meta);
+  }
+
+  if (wants('runways')) {
+    const runways = read('runways.json');
+    await mirror('runways', runways.runways, (r) => r.ident, runways._meta);
+  }
+
+  if (wants('approaches')) {
+    const approaches = read('approaches.json');
+    await mirror('approaches', approaches.approaches, (r) => r.code, approaches._meta);
+  }
+
+  if (wants('holdings')) {
+    const holdings = read('holdings.json');
+    await mirror('holdings', holdings.holdings, (r) => r.fix, holdings._meta);
+  }
+
+  if (wants('performance')) {
+    const performance = read('performance.json');
+    await mirror('performance', performance.performance, (r) => r.level, performance._meta);
+  }
+
+  if (wants('aircraftTypes')) {
+    const aircraftTypes = read('aircraft-types.json');
+    await mirror('aircraftTypes', aircraftTypes.aircraftTypes, (r) => r.icao, aircraftTypes._meta);
+  }
+
+  if (wants('fleet')) {
+    const fleet = read('fleet.json');
+    await mirror('fleet', fleet.fleet, (r) => r.registration, fleet._meta);
+  }
+
+  if (wants('operators')) {
+    const operators = read('operators.json');
+    await mirror('operators', operators.operators, (r) => r.icaoPrefix, operators._meta);
+  }
+
+  if (wants('sampleFlights')) {
+    const sampleFlights = read('sample-flights.json');
+    await mirror('sampleFlights', sampleFlights.sampleFlights, (r) => r.callsign, sampleFlights._meta);
+  }
+
+  if (wants('ssrBlocks')) {
+    const ssr = read('ssr.json');
+    await mirror('ssrBlocks', ssr.blocks, (r) => r.base, ssr._meta);
+  }
+
+  if (wants('units')) {
+    const units = read('units.json');
+    await mirror('units', units.units, (r) => r.id, units._meta);
+  }
+
+  if (wants('radars')) {
+    const radars = read('radars.json');
+    await mirror('radars', radars.radars, (r) => slugify(r.equipment), radars._meta);
+  }
+
+  if (wants('separation')) {
+    const separation = read('separation.json');
+    await mirror(
+      'separation',
+      separation.separation,
+      (r) => `${r.runway}-dep${r.withDepartures}-sivigats${r.sivigats}-lvp${r.lvp}`,
+      separation._meta
+    );
+  }
+
+  if (wants('tma')) {
+    const tma = read('tma.json');
+    await mirror('tma', [tma.tma], () => 'scel', tma._meta);
+  }
+
+  if (wants('aerodromes')) {
+    const aerodromes = read('aerodromes.json');
+    await mirror('aerodromes', aerodromes.aerodromes, (r) => r.icao, aerodromes._meta);
+  }
 
   console.log(`\nListo.`);
 }
