@@ -350,14 +350,6 @@ export function ScenarioEditor() {
           >
             {copied ? 'Enlace copiado' : 'Copiar enlace'}
           </button>
-          <a
-            className={styles.secondary}
-            href={`#/print?e=${encodePayload(payload)}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Imprimir
-          </a>
           <button type="button" className={styles.danger} onClick={remove}>
             Borrar
           </button>
@@ -701,6 +693,19 @@ export function ScenarioEditor() {
                     <dd>{built.scenario.durationMin} min</dd>
                   </div>
                 </dl>
+                {/*
+                  Antes estaba arriba, junto a "Guardar": se podia apretar con el ejercicio
+                  todavia vacio. Aca abajo solo aparece una vez que hay trafico calculado, que es
+                  cuando de verdad hay algo que imprimir.
+                */}
+                <a
+                  className={styles.printLink}
+                  href={`#/print?e=${encodePayload(payload)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Imprimir
+                </a>
                 <ConflictList report={report} scenario={built.scenario} />
               </>
             )}

@@ -287,6 +287,19 @@
   font-variant-numeric: tabular-nums;
 }
 
+.printLink {
+  display: inline-block;
+  margin: 0 0 14px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+
 .assumptions {
   margin: 0;
   padding-left: 18px;

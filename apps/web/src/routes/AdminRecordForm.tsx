@@ -241,10 +241,14 @@ export function AdminRecordForm({ schema, initial, onClose }: AdminRecordFormPro
       return;
     }
 
+    const originalId = initial !== null ? computeDocId(schema, initial) : null;
+
     if (isIntegritySlot(schema.collection)) {
       const navdata = useNavdataStore.getState();
       const before = checkIntegrity(datasetFrom(navdata));
-      const after = checkIntegrity(datasetWithEdit(datasetFrom(navdata), schema.collection, docId, draft));
+      const after = checkIntegrity(
+        datasetWithEdit(datasetFrom(navdata), schema.collection, docId, draft, originalId)
+      );
       const fails = newIssues(before, after, 'fail');
       if (fails.length > 0) {
         setBlocking(fails);
@@ -258,6 +262,13 @@ export function AdminRecordForm({ schema, initial, onClose }: AdminRecordFormPro
     setSaving(true);
     try {
       await setDoc(doc(db, schema.collection, docId), draft);
+      // Si el campo que identifica al documento (ident, callsign, icao...) cambio durante la
+      // edicion, el id nuevo es un documento DISTINTO en Firestore: sin este borrado, el
+      // original se quedaba huerfano y la coleccion terminaba con el vuelo/fix viejo y el
+      // nuevo a la vez.
+      if (originalId !== null && originalId !== docId) {
+        await deleteDoc(doc(db, schema.collection, originalId));
+      }
       await useNavdataStore.getState().loadAll();
       onClose();
     } catch (err) {

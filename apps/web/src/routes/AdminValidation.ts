@@ -32,18 +32,27 @@ export function datasetFrom(navdata: NavdataState): IntegrityDataset {
  * El dataset como quedaria si se guardara `edited` (o se borrara, si es null) en `docId` de
  * `collection`. Se identifica el registro reemplazado por el mismo ID que usaria Firestore, asi
  * que sirve igual para las colecciones con clave natural y para `separation` (clave compuesta).
+ *
+ * `originalId` es el id del documento ANTES de esta edicion (null si es uno nuevo). Cuando el
+ * campo que arma el id cambia (renombrar un ident, un fix), el guardado real borra el documento
+ * viejo — asi que hay que sacarlo tambien del dataset hipotetico, o la validacion revisaria
+ * referencias contra un fix/ident que en los hechos ya no va a existir.
  */
 export function datasetWithEdit(
   base: IntegrityDataset,
   collection: IntegritySlot,
   docId: string,
-  edited: Record<string, unknown> | null
+  edited: Record<string, unknown> | null,
+  originalId: string | null = null
 ): IntegrityDataset {
   const schema = schemaFor(collection);
   if (!schema) return base;
 
   const arr = base[collection] as unknown as readonly Record<string, unknown>[];
-  const filtered = arr.filter((r) => computeDocId(schema, r) !== docId);
+  const filtered = arr.filter((r) => {
+    const id = computeDocId(schema, r);
+    return id !== docId && id !== originalId;
+  });
   const next = edited === null ? filtered : [...filtered, edited];
   return { ...base, [collection]: next };
 }
