@@ -44,7 +44,7 @@ cachea localmente (IndexedDB), así que puede seguir sirviendo datos sin conexi�
 primera sincronización.
 
 **Desde que existe `/admin`, Firestore dejó de ser solo un espejo de consulta: es la base que la
-app corriendo realmente lee** (`apps/web/src/state/navdata.ts` trae las 16 colecciones una vez al
+app corriendo realmente lee** (`apps/web/src/state/navdata.ts` trae las 17 colecciones una vez al
 iniciar sesión). `data/*.json` y el Excel siguen siendo el import original — y lo que siguen
 usando los tests y las herramientas, que no dependen de un proyecto de Firebase real — pero ya
 **no se mantienen sincronizados automáticamente** con lo que ve el alumno.
@@ -85,7 +85,14 @@ sube cada tramo envuelto como `{ values: [...] }` en vez de `string[][]` — ver
 | `approaches` | `code` | `radars` | slug de `equipment` |
 | `holdings` | `fix` | `separation` | `runway`+`withDepartures`+`sivigats`+`lvp` |
 | `performance` | `level` | `tma` | doc único `scel` (es un objeto, no un array) |
-| `aircraftTypes` | `icao` | | |
+| `aircraftTypes` | `icao` | `aerodromes` | `icao` |
+
+**`aerodromes` no sale de ninguna planilla** (única excepción junto con los datos que agregue el
+instructor desde `/admin`, ver `README.md` § "La regla que gobierna el proyecto"): es la lista de
+códigos OACI que ya aparecen como `adep`/`ades` en `sample-flights.json`, para que el editor de
+ejercicios pueda elegir origen/destino de una lista en vez de escribirlos a mano
+(`data/aerodromes.json`). El nombre de cada aeródromo queda en `null` hasta que alguien lo
+confirme — no se completó a mano para no inventar un dato sin revisar.
 
 ## Quién puede editar: la colección `users`
 
@@ -127,6 +134,7 @@ service cloud.firestore {
     match /units/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /radars/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /tma/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /aerodromes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
 
     match /users/{uid} {
       allow read: if request.auth.uid == uid;
@@ -138,6 +146,10 @@ service cloud.firestore {
 
 Lo que de verdad impide que alguien sin rol `admin` escriba es esto, no el panel: `/admin` en la
 app solo evita mostrarle el panel a quien no lo va a poder usar.
+
+**Si ya pegaste una versión anterior de estas reglas en Consola Firebase** (antes de que existiera
+`aerodromes`), hace falta agregar la línea de `aerodromes` de arriba a mano — las reglas viven en
+la consola, no en el repositorio, así que este archivo documenta el texto pero no lo aplica solo.
 
 ## Convención
 
@@ -179,7 +191,13 @@ Unidades: NM, pies, nudos, minutos, grados decimales (negativo S/W).
 | `operators.json` | 25 | extraído | Prefijos de indicativo |
 | `sample-flights.json` | 90 | extraído | Catálogo de vuelos comerciales para armar ejercicios |
 | `ssr.json` | 45 bloques | extraído | Pool de 360 códigos transpondedor, en bloques de 8 |
+| `aerodromes.json` | 32 | derivado | Códigos OACI de origen/destino, para elegir en el editor (no es de planilla, ver § Firestore) |
 | `index.json` | — | — | Manifiesto |
+
+`sample-flights.json` trae un campo `ssr` por vuelo que hoy no usa nada: ni el editor de
+ejercicios ni el generador automático de tráfico lo leen — el código SSR de cada vuelo se asigna
+siempre al agregarlo, del pool de `ssr.json`. Queda anotado por si alguien lo busca y no lo
+encuentra en uso; no es un bug, es un campo que dejó de hacer falta.
 
 ## Cómo leer un procedimiento
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * upload-firestore.js — espeja data/*.json en 16 colecciones de Firestore, una por archivo.
+ * upload-firestore.js — espeja data/*.json en 17 colecciones de Firestore, una por archivo.
  *
  *   node tools/upload-firestore.js
  *
@@ -177,6 +177,9 @@ async function main() {
 
   const tma = read('tma.json');
   await mirror('tma', [tma.tma], () => 'scel', tma._meta);
+
+  const aerodromes = read('aerodromes.json');
+  await mirror('aerodromes', aerodromes.aerodromes, (r) => r.icao, aerodromes._meta);
 
   console.log(`\nListo.`);
 }

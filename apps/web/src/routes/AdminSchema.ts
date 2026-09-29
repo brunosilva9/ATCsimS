@@ -331,6 +331,18 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
       tx('_reviewTransitionLevel', 'Aviso sobre el nivel de transición', { nullable: true }),
     ],
   },
+  {
+    collection: 'aerodromes',
+    label: 'Aeródromos',
+    docId: { kind: 'field', field: 'icao' },
+    fields: [
+      tx('icao', 'OACI'),
+      // No sale de ninguna planilla: son los codigos que aparecen como origen/destino en los
+      // vuelos de ejemplo, para elegirlos de una lista en el editor de ejercicios en vez de
+      // escribirlos a mano. El nombre queda en null hasta que alguien lo confirme.
+      tx('name', 'Nombre', { nullable: true }),
+    ],
+  },
 ];
 
 export function schemaFor(collection: string): CollectionSchema | undefined {

@@ -157,7 +157,10 @@ lo muestra.
 cambiar datos directo en Firestore —un avión, un vuelo de ejemplo, un fix— sin pasar por el Excel.
 Antes de guardar en las 6 colecciones de las que depende el motor (fixes, procedimientos,
 aerovías, esperas, performance, espaciamiento) se comprueba que el cambio no rompa un cálculo —
-ver `packages/core/src/integrity.ts` y [`data/README.md`](data/README.md).
+ver `packages/core/src/integrity.ts` y [`data/README.md`](data/README.md). La colección
+`aerodromes` (origen/destino elegibles al armar un vuelo) es la misma excepción llevada un paso
+más allá: no viene de ninguna planilla, ni siquiera como semilla — son solo los códigos OACI ya
+usados en `sample-flights.json`, sin nombre hasta que alguien lo confirme.
 
 Hay tres sitios donde eso es visible y conviene conocerlos antes de tocar nada:
 

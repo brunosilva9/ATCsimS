@@ -1,0 +1,41 @@
+{
+  "_meta": {
+    "source": "data/sample-flights.json (adep/ades)",
+    "method": "derived",
+    "note": "No es una planilla: son los codigos OACI que ya aparecen como origen/destino en sample-flights.json, para que el editor de ejercicios pueda elegirlos de una lista en vez de escribirlos a mano. name queda en null a proposito -- no se inventan nombres de aerodromo sin confirmar, se completan desde /admin cuando alguien los tenga a mano. Se excluyeron dos valores basura de un registro ya corrupto de origen (callsign DHC6: adep \"C212\", ades \"160-180 kt\", que no son codigos OACI)."
+  },
+  "aerodromes": [
+    { "icao": "CYYZ", "name": null },
+    { "icao": "EDDF", "name": null },
+    { "icao": "EGLL", "name": null },
+    { "icao": "EHAM", "name": null },
+    { "icao": "KATL", "name": null },
+    { "icao": "KIAH", "name": null },
+    { "icao": "KJFK", "name": null },
+    { "icao": "KMIA", "name": null },
+    { "icao": "LEMD", "name": null },
+    { "icao": "LFPG", "name": null },
+    { "icao": "MMMX", "name": null },
+    { "icao": "MPTO", "name": null },
+    { "icao": "OMDB", "name": null },
+    { "icao": "SAEZ", "name": null },
+    { "icao": "SBGL", "name": null },
+    { "icao": "SBGR", "name": null },
+    { "icao": "SBSP", "name": null },
+    { "icao": "SCAR", "name": null },
+    { "icao": "SCBA", "name": null },
+    { "icao": "SCCF", "name": null },
+    { "icao": "SCCI", "name": null },
+    { "icao": "SCDA", "name": null },
+    { "icao": "SCEL", "name": null },
+    { "icao": "SCFA", "name": null },
+    { "icao": "SCIE", "name": null },
+    { "icao": "SCQP", "name": null },
+    { "icao": "SCSE", "name": null },
+    { "icao": "SCTE", "name": null },
+    { "icao": "SCVD", "name": null },
+    { "icao": "SKBO", "name": null },
+    { "icao": "SPJC", "name": null },
+    { "icao": "YSSY", "name": null }
+  ]
+}

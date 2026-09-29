@@ -88,6 +88,12 @@ export interface Tma {
   readonly _reviewTransitionLevel?: string;
 }
 
+/** No sale de ninguna planilla: los codigos OACI de origen/destino de los vuelos de ejemplo. */
+export interface Aerodrome {
+  readonly icao: string;
+  readonly name: string | null;
+}
+
 // ------------------------------------------------------------------------- lectura de Firestore
 
 /** Cada doc trae `_meta` inyectado por upload-firestore.js; no es parte del registro en si. */
@@ -140,6 +146,7 @@ export interface NavdataState {
   readonly units: readonly Unit[];
   readonly radars: readonly Radar[];
   readonly tma: Tma | null;
+  readonly aerodromes: readonly Aerodrome[];
 
   // derivados, mismo criterio que packages/navdata/src/index.ts
   readonly coordinates: ReadonlyMap<string, Coordinates>;
@@ -172,6 +179,7 @@ const EMPTY: Pick<
   | 'units'
   | 'radars'
   | 'tma'
+  | 'aerodromes'
   | 'coordinates'
   | 'tmaFixes'
   | 'approachFixes'
@@ -193,6 +201,7 @@ const EMPTY: Pick<
   units: [],
   radars: [],
   tma: null,
+  aerodromes: [],
   coordinates: new Map(),
   tmaFixes: [],
   approachFixes: [],
@@ -223,6 +232,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
         units,
         radars,
         tmaSnap,
+        aerodromes,
       ] = await Promise.all([
         fetchCollection<Fix>('fixes'),
         fetchCollection<Procedure>('procedures'),
@@ -240,6 +250,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
         fetchCollection<Unit>('units'),
         fetchCollection<Radar>('radars'),
         getDoc(doc(db, 'tma', 'scel')),
+        fetchCollection<Aerodrome>('aerodromes'),
       ]);
 
       const fixes = rawFixes.filter((f) => !EXCLUDED_FIXES.has(f.ident));
@@ -275,6 +286,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
         units,
         radars,
         tma,
+        aerodromes,
         coordinates,
         tmaFixes,
         approachFixes,

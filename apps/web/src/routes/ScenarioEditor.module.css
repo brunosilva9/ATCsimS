@@ -173,6 +173,13 @@
   color: var(--text-muted);
 }
 
+.addControls {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .add {
   display: flex;
   flex-direction: column;
@@ -215,25 +222,6 @@
   padding: 5px 10px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
-}
-
-.callsign {
-  display: block;
-  font-family: var(--font-data);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-.route,
-.mono {
-  font-family: var(--font-data);
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.mono {
-  font-size: 13px;
-  color: var(--text);
 }
 
 .cellInput,

@@ -17,6 +17,8 @@ import type { GeneratorRequest } from '@atcsims/core';
 
 import { ConflictList } from '../components/ConflictList.js';
 import { FlightProgressStrip } from '../components/FlightProgressStrip.js';
+import { NewFlightForm } from '../components/NewFlightForm.js';
+import type { NewFlightIdentity } from '../components/NewFlightForm.js';
 import { TimeFixDiagram } from '../components/TimeFixDiagram.js';
 import { TrafficGenerator } from '../components/TrafficGenerator.js';
 import { deleteDraft, getDraft, newDraftId, saveDraft } from '../lib/storage.js';
@@ -53,6 +55,14 @@ function emptyDraft(): ScenarioDraft {
 function freeSsr(used: readonly string[], ssrCodes: readonly string[]): string {
   const taken = new Set(used);
   return ssrCodes.find((c) => !taken.has(c)) ?? '0000';
+}
+
+/**
+ * Las opciones de un <select>, mas el valor actual si no esta en la lista — para no dejar en
+ * blanco un vuelo cuyo tipo/aerodromo es de antes de que existiera esa entrada en la coleccion.
+ */
+function withFallback(options: readonly string[], current: string): readonly string[] {
+  return options.includes(current) ? options : [current, ...options];
 }
 
 function parseHhmmOrNull(text: string): number | null {
@@ -143,6 +153,8 @@ export function ScenarioEditor() {
 
   const procedures = useNavdataStore((s) => s.procedures);
   const sampleFlights = useNavdataStore((s) => s.sampleFlights);
+  const aircraftTypes = useNavdataStore((s) => s.aircraftTypes);
+  const aerodromes = useNavdataStore((s) => s.aerodromes);
   const ssrCodes = useNavdataStore((s) => s.ssrCodes);
   const separation = useNavdataStore((s) => s.separation);
   const approachFixes = useNavdataStore((s) => s.approachFixes);
@@ -156,6 +168,8 @@ export function ScenarioEditor() {
   );
   const stars = useMemo(() => usable.filter((p) => p.type === 'STAR'), [usable]);
   const sids = useMemo(() => usable.filter((p) => p.type === 'SID'), [usable]);
+  const icaoTypeOptions = useMemo(() => aircraftTypes.map((t) => t.icao), [aircraftTypes]);
+  const aerodromeOptions = useMemo(() => aerodromes.map((a) => a.icao), [aerodromes]);
 
   const [draft, setDraft] = useState<ScenarioDraft>(emptyDraft);
   const [saved, setSaved] = useState(false);
@@ -206,12 +220,14 @@ export function ScenarioEditor() {
       flights: d.flights.map((f) => (f.id === flightId ? { ...f, ...patch } : f)),
     }));
 
-  const addFlight = (callsign: string) => {
-    const catalogue = sampleFlights.find((f) => f.callsign === callsign);
-    if (!catalogue) return;
-
+  /**
+   * Lo comun a cualquier vuelo nuevo, venga del catalogo o armado pieza por pieza en
+   * NewFlightForm: solo la identidad (indicativo, tipo, matricula, ruta) cambia segun el origen;
+   * SSR, procedimiento por defecto, hora de entrada y nivel se deciden siempre igual.
+   */
+  const appendFlight = (identity: NewFlightIdentity) => {
     // Llegada o salida se deduce del propio vuelo: si sale de SCEL, es una salida.
-    const isDeparture = catalogue.adep === 'SCEL';
+    const isDeparture = identity.adep === 'SCEL';
     const procedure = isDeparture ? sids[0] : stars[0];
     if (!procedure) return;
 
@@ -222,16 +238,11 @@ export function ScenarioEditor() {
         ...d.flights,
         {
           id: crypto.randomUUID(),
-          callsign: catalogue.callsign,
+          ...identity,
           ssr: freeSsr(
             d.flights.map((f) => f.ssr),
             ssrCodes
           ),
-          icaoType: catalogue.icaoType,
-          registration: catalogue.registration ?? null,
-          tasKt: catalogue.tasKt,
-          adep: catalogue.adep,
-          ades: catalogue.ades,
           kind: isDeparture ? 'DEPARTURE' : 'ARRIVAL',
           procedureIdent: procedure.ident,
           // Cada vuelo nuevo entra tres minutos después del anterior: un punto de partida
@@ -242,6 +253,21 @@ export function ScenarioEditor() {
       ],
     }));
   };
+
+  const addFlight = (callsign: string) => {
+    const catalogue = sampleFlights.find((f) => f.callsign === callsign);
+    if (!catalogue) return;
+    appendFlight({
+      callsign: catalogue.callsign,
+      icaoType: catalogue.icaoType,
+      registration: catalogue.registration ?? null,
+      tasKt: catalogue.tasKt,
+      adep: catalogue.adep,
+      ades: catalogue.ades,
+    });
+  };
+
+  const [showNewFlightForm, setShowNewFlightForm] = useState(false);
 
   const removeFlight = (flightId: string) =>
     setDraft((d) => ({ ...d, flights: d.flights.filter((f) => f.id !== flightId) }));
@@ -520,30 +546,47 @@ export function ScenarioEditor() {
           <section className={shared.section}>
             <div className={shared.sectionHead}>
               <h3 className={shared.sectionTitle}>Tráfico ({draft.flights.length})</h3>
-              <label className={styles.add}>
-                <span className={styles.label}>Añadir del catálogo</span>
-                <select
-                  id="add-flight"
-                  value=""
-                  onChange={(e) => {
-                    addFlight(e.target.value);
-                    e.target.value = '';
-                  }}
+              <div className={styles.addControls}>
+                <label className={styles.add}>
+                  <span className={styles.label}>Añadir del catálogo</span>
+                  <select
+                    id="add-flight"
+                    value=""
+                    onChange={(e) => {
+                      addFlight(e.target.value);
+                      e.target.value = '';
+                    }}
+                  >
+                    <option value="">Elegir vuelo…</option>
+                    {sampleFlights.map((f) => (
+                      <option key={f.callsign} value={f.callsign}>
+                        {f.callsign} · {f.icaoType} · {f.adep}→{f.ades}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button
+                  type="button"
+                  className={styles.secondary}
+                  onClick={() => setShowNewFlightForm((v) => !v)}
                 >
-                  <option value="">Elegir vuelo…</option>
-                  {sampleFlights.map((f) => (
-                    <option key={f.callsign} value={f.callsign}>
-                      {f.callsign} · {f.icaoType} · {f.adep}→{f.ades}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  {showNewFlightForm ? 'Cancelar' : 'Vuelo nuevo'}
+                </button>
+              </div>
             </div>
+
+            {showNewFlightForm ? (
+              <NewFlightForm
+                onAdd={(identity) => appendFlight(identity)}
+                onClose={() => setShowNewFlightForm(false)}
+              />
+            ) : null}
 
             {draft.flights.length === 0 ? (
               <p className={shared.note}>
-                Sin tráfico todavía. Los indicativos del selector salen de{' '}
-                <code>data/sample-flights.json</code>, que es el catálogo de la hoja ACFT.
+                Sin tráfico todavía. «Añadir del catálogo» toma vuelos ya armados de{' '}
+                <code>sampleFlights</code>; «Vuelo nuevo» arma uno desde tipo de aeronave,
+                operador y aeródromos.
               </p>
             ) : (
               <div className={styles.tableWrap}>
@@ -552,6 +595,9 @@ export function ScenarioEditor() {
                     <tr>
                       <th>Indicativo</th>
                       <th>Tipo</th>
+                      <th>TAS</th>
+                      <th>Origen</th>
+                      <th>Destino</th>
                       <th>Matrícula</th>
                       <th>SSR</th>
                       <th>Procedimiento</th>
@@ -564,12 +610,67 @@ export function ScenarioEditor() {
                     {draft.flights.map((f) => (
                       <tr key={f.id}>
                         <td>
-                          <span className={styles.callsign}>{f.callsign}</span>
-                          <span className={styles.route}>
-                            {f.adep}→{f.ades}
-                          </span>
+                          <input
+                            className={styles.cellInput}
+                            value={f.callsign}
+                            aria-label="Indicativo"
+                            onChange={(e) => patchFlight(f.id, { callsign: e.target.value.toUpperCase() })}
+                          />
                         </td>
-                        <td className={styles.mono}>{f.icaoType}</td>
+                        <td>
+                          <select
+                            className={styles.cellSelect}
+                            value={f.icaoType}
+                            aria-label={`Tipo de aeronave de ${f.callsign}`}
+                            onChange={(e) => patchFlight(f.id, { icaoType: e.target.value })}
+                          >
+                            {withFallback(icaoTypeOptions, f.icaoType).map((icao) => (
+                              <option key={icao} value={icao}>
+                                {icao}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            className={styles.cellInput}
+                            type="number"
+                            value={f.tasKt}
+                            aria-label={`TAS de ${f.callsign}`}
+                            onChange={(e) => {
+                              const n = Number(e.target.value);
+                              if (Number.isFinite(n)) patchFlight(f.id, { tasKt: n });
+                            }}
+                          />
+                        </td>
+                        <td>
+                          <select
+                            className={styles.cellSelect}
+                            value={f.adep}
+                            aria-label={`Origen de ${f.callsign}`}
+                            onChange={(e) => patchFlight(f.id, { adep: e.target.value })}
+                          >
+                            {withFallback(aerodromeOptions, f.adep).map((icao) => (
+                              <option key={icao} value={icao}>
+                                {icao}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td>
+                          <select
+                            className={styles.cellSelect}
+                            value={f.ades}
+                            aria-label={`Destino de ${f.callsign}`}
+                            onChange={(e) => patchFlight(f.id, { ades: e.target.value })}
+                          >
+                            {withFallback(aerodromeOptions, f.ades).map((icao) => (
+                              <option key={icao} value={icao}>
+                                {icao}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
                         <td>
                           <input
                             className={styles.cellInput}
