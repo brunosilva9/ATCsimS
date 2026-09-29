@@ -1,7 +1,7 @@
 /*
- * Pie del sitio. Tres columnas que no compiten: el titulo de cada una es pequeno y en
- * mayusculas, y lo que pesa es el texto. Un pie con tres encabezados grandes discute con el
- * contenido de la pagina, que es lo que el usuario vino a leer.
+ * Pie del sitio. Columnas que no compiten: el titulo de cada una es pequeno y en mayusculas, y
+ * lo que pesa es el texto. Un pie con encabezados grandes discute con el contenido de la
+ * pagina, que es lo que el usuario vino a leer.
  */
 
 .footer {
@@ -28,10 +28,9 @@
 
 /*
  * La regla va en la COLUMNA, no debajo del texto del titulo. Puesta como border-bottom de un
- * inline-block del propio titulo, su largo dependia de cuanto medía cada uno: "ATCsimS" daba
- * un trazo corto y "Colegio de Controladores de Transito Aereo de Chile" uno enorme, y la fila
- * de las tres arriba salia despareja. Como border-top de la columna entera, las tres quedan del
- * mismo largo pase lo que pase, sin importar cuanto texto lleve el titulo debajo.
+ * inline-block del propio titulo, su largo dependia de cuanto medía cada uno, y la fila de
+ * arriba salia despareja. Como border-top de la columna entera, quedan del mismo largo pase lo
+ * que pase, sin importar cuanto texto lleve el titulo debajo.
  */
 .column {
   min-width: 0;
@@ -120,46 +119,6 @@
 
 .warnLine strong {
   color: inherit;
-}
-
-/* --------------------------------------------------------------------------- el Colegio */
-
-.address {
-  margin: 0;
-  font-style: normal;
-  line-height: 1.8;
-}
-
-.social {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 12px;
-}
-
-/*
- * Enlaces de texto con icono, no botones. Un pie con cuatro botones pide que lo pulses, y lo
- * que uno viene a hacer aqui es leer una direccion o buscar un telefono. El nombre de la red va
- * escrito ademas del glifo: esto se proyecta en sala y un icono suelto a cinco metros no se lee.
- */
-.socialLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.socialLink svg {
-  width: 15px;
-  height: 15px;
-  fill: currentColor;
-  flex-shrink: 0;
-  opacity: 0.85;
-}
-
-.socialLink:hover svg {
-  opacity: 1;
 }
 
 /* ------------------------------------------------------------------------------- el aviso */
