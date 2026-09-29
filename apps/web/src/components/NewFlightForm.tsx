@@ -25,6 +25,8 @@ export interface NewFlightIdentity {
   readonly tasKt: number;
   readonly adep: string;
   readonly ades: string;
+  /** Prefijo del operador. null = sin ruta fija (aviación general/privado). */
+  readonly operator: string | null;
 }
 
 export interface NewFlightFormProps {
@@ -75,6 +77,7 @@ export function NewFlightForm({ onAdd, onClose }: NewFlightFormProps) {
       tasKt: tas,
       adep,
       ades,
+      operator: operatorPrefix === '' ? null : operatorPrefix,
     };
 
     onAdd(identity);
@@ -91,6 +94,15 @@ export function NewFlightForm({ onAdd, onClose }: NewFlightFormProps) {
           ades,
           ssr: '',
           registration: identity.registration,
+        });
+        // La identidad FIJA (operador+ruta) va aparte, en flightRoutes: es lo que despues
+        // bloquea origen/destino cuando se vuelve a usar este indicativo.
+        await setDoc(doc(db, 'flightRoutes', callsign), {
+          callsign,
+          operator: operatorPrefix,
+          adep,
+          ades,
+          category: operatorPrefix === '' ? 'privado' : 'comercial',
         });
         await useNavdataStore.getState().loadAll();
       } catch (err) {
@@ -192,7 +204,9 @@ export function NewFlightForm({ onAdd, onClose }: NewFlightFormProps) {
           <span>
             Guardar como vuelo de ejemplo
             <em className={styles.hint}>
-              Queda disponible en «Añadir del catálogo» la próxima vez, sin tener que rearmarlo.
+              Queda disponible en «Añadir del catálogo» la próxima vez
+              {operatorPrefix !== '' ? ' y su ruta queda fija para este indicativo' : ''}, sin
+              tener que rearmarlo.
             </em>
           </span>
         </label>

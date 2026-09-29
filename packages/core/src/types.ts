@@ -199,6 +199,8 @@ export interface Flight {
   readonly tasKt: number;
   readonly adep: string;
   readonly ades: string;
+  /** Prefijo del operador (ej. "LAN"). null si no tiene uno asignado (aviacion general/privado). */
+  readonly operator: string | null;
   readonly kind: FlightKind;
   readonly procedureIdent: string | null;
   readonly airway: string | null;

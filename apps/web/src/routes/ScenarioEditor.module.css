@@ -242,6 +242,16 @@
   min-width: 130px;
 }
 
+/* Indicativo/origen/destino de un vuelo comercial: se ven, pero no tienen control de edicion. */
+.readOnly {
+  display: inline-block;
+  padding: 4px 7px;
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  cursor: help;
+}
+
 .remove {
   font: inherit;
   padding: 2px 6px;

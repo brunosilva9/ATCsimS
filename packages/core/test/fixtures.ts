@@ -75,6 +75,7 @@ export function makeFlight(
     tasKt: 440,
     adep: 'SCFA',
     ades: 'SCEL',
+    operator: null,
     kind: 'ARRIVAL',
     procedureIdent,
     airway: null,

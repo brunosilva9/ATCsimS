@@ -94,6 +94,18 @@ export interface Aerodrome {
   readonly name: string | null;
 }
 
+/**
+ * La identidad FIJA de un indicativo comercial (operador+ruta) — separada de sampleFlights, que
+ * es solo el tipo de aeronave de ejemplo. Ver AdminSchema.ts y data/README.md.
+ */
+export interface FlightRoute {
+  readonly callsign: string;
+  readonly operator: string;
+  readonly adep: string;
+  readonly ades: string;
+  readonly category: 'comercial' | 'privado';
+}
+
 // ------------------------------------------------------------------------- lectura de Firestore
 
 /** Cada doc trae `_meta` inyectado por upload-firestore.js; no es parte del registro en si. */
@@ -147,6 +159,7 @@ export interface NavdataState {
   readonly radars: readonly Radar[];
   readonly tma: Tma | null;
   readonly aerodromes: readonly Aerodrome[];
+  readonly flightRoutes: readonly FlightRoute[];
 
   // derivados, mismo criterio que packages/navdata/src/index.ts
   readonly coordinates: ReadonlyMap<string, Coordinates>;
@@ -156,6 +169,7 @@ export interface NavdataState {
   readonly loadAll: () => Promise<void>;
   readonly findFix: (ident: string) => Fix | undefined;
   readonly findProcedure: (ident: string) => Procedure | undefined;
+  readonly findRoute: (callsign: string) => FlightRoute | undefined;
   readonly proceduresOfType: (type: 'STAR' | 'SID') => Procedure[];
   readonly usableProcedures: () => Procedure[];
 }
@@ -180,6 +194,7 @@ const EMPTY: Pick<
   | 'radars'
   | 'tma'
   | 'aerodromes'
+  | 'flightRoutes'
   | 'coordinates'
   | 'tmaFixes'
   | 'approachFixes'
@@ -202,6 +217,7 @@ const EMPTY: Pick<
   radars: [],
   tma: null,
   aerodromes: [],
+  flightRoutes: [],
   coordinates: new Map(),
   tmaFixes: [],
   approachFixes: [],
@@ -233,6 +249,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
         radars,
         tmaSnap,
         aerodromes,
+        flightRoutes,
       ] = await Promise.all([
         fetchCollection<Fix>('fixes'),
         fetchCollection<Procedure>('procedures'),
@@ -251,6 +268,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
         fetchCollection<Radar>('radars'),
         getDoc(doc(db, 'tma', 'scel')),
         fetchCollection<Aerodrome>('aerodromes'),
+        fetchCollection<FlightRoute>('flightRoutes'),
       ]);
 
       const fixes = rawFixes.filter((f) => !EXCLUDED_FIXES.has(f.ident));
@@ -287,6 +305,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
         radars,
         tma,
         aerodromes,
+        flightRoutes,
         coordinates,
         tmaFixes,
         approachFixes,
@@ -301,6 +320,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
 
   findFix: (ident) => get().fixes.find((f) => f.ident === ident),
   findProcedure: (ident) => get().procedures.find((p) => p.ident === ident),
+  findRoute: (callsign) => get().flightRoutes.find((r) => r.callsign === callsign),
   proceduresOfType: (type) => get().procedures.filter((p) => p.type === type),
   usableProcedures: () => get().procedures.filter((p) => p.legs.every((l) => l.distToEndNm !== null)),
 }));

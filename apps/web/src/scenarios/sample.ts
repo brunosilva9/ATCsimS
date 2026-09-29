@@ -37,27 +37,27 @@ export const SAMPLE_DRAFT: ScenarioDraft = {
   flights: [
     {
       id: 'f1', callsign: 'LAN705', ssr: '2506', icaoType: 'A320', registration: null,
-      tasKt: 440, adep: 'SCFA', ades: 'SCEL', kind: 'ARRIVAL',
+      tasKt: 440, adep: 'SCFA', ades: 'SCEL', operator: null, kind: 'ARRIVAL',
       procedureIdent: 'UMKAL7C', entryTime: parseHhmm('1100'), levelFl: 240,
     },
     {
       id: 'f2', callsign: 'LXP903', ssr: '4341', icaoType: 'A321', registration: null,
-      tasKt: 450, adep: 'SCIE', ades: 'SCEL', kind: 'ARRIVAL',
+      tasKt: 450, adep: 'SCIE', ades: 'SCEL', operator: null, kind: 'ARRIVAL',
       procedureIdent: 'SIMOK7B', entryTime: parseHhmm('1050'), levelFl: 260,
     },
     {
       id: 'f3', callsign: 'CCPVE', ssr: '5060', icaoType: 'B738', registration: null,
-      tasKt: 450, adep: 'SAEZ', ades: 'SCEL', kind: 'ARRIVAL',
+      tasKt: 450, adep: 'SAEZ', ades: 'SCEL', operator: null, kind: 'ARRIVAL',
       procedureIdent: 'EROLO7F', entryTime: parseHhmm('1050'), levelFl: 280,
     },
     {
       id: 'f4', callsign: 'SKU621', ssr: '3355', icaoType: 'A319', registration: null,
-      tasKt: 430, adep: 'SCVM', ades: 'SCEL', kind: 'ARRIVAL',
+      tasKt: 430, adep: 'SCVM', ades: 'SCEL', operator: null, kind: 'ARRIVAL',
       procedureIdent: 'VENTANAS1D', entryTime: parseHhmm('1103'), levelFl: 200,
     },
     {
       id: 'f5', callsign: 'DSM142', ssr: '5427', icaoType: 'DH8D', registration: null,
-      tasKt: 360, adep: 'SCEL', ades: 'SCSE', kind: 'DEPARTURE',
+      tasKt: 360, adep: 'SCEL', ades: 'SCSE', operator: null, kind: 'DEPARTURE',
       procedureIdent: 'ANGOD8B', entryTime: parseHhmm('1105'), levelFl: 230,
     },
   ],

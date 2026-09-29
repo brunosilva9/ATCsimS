@@ -41,6 +41,8 @@ export interface FlightDraft {
   readonly tasKt: number;
   readonly adep: string;
   readonly ades: string;
+  /** Prefijo del operador. null = sin ruta fija (aviacion general/privado, o vuelo sin catalogar). */
+  readonly operator: string | null;
   readonly kind: FlightKind;
   readonly procedureIdent: string;
   readonly entryTime: UtcMinutes;
@@ -136,6 +138,7 @@ export function buildFlight(draft: FlightDraft, ctx: BuildContext): BuiltFlight 
       tasKt: draft.tasKt,
       adep: draft.adep,
       ades: draft.ades,
+      operator: draft.operator,
       kind: draft.kind,
       procedureIdent: draft.procedureIdent,
       airway: null,

@@ -60,6 +60,7 @@ export function TrafficGenerator({
 }: TrafficGeneratorProps) {
   const procedures = useNavdataStore((s) => s.procedures);
   const sampleFlights = useNavdataStore((s) => s.sampleFlights);
+  const findRoute = useNavdataStore((s) => s.findRoute);
   const ssrCodes = useNavdataStore((s) => s.ssrCodes);
   const performance = useNavdataStore((s) => s.performance);
   const holdings = useNavdataStore((s) => s.holdings);
@@ -131,20 +132,27 @@ export function TrafficGenerator({
     setRequest(used);
 
     onGenerate(
-      outcome.flights.map((f) => ({
-        id: crypto.randomUUID(),
-        callsign: f.callsign,
-        ssr: f.ssr,
-        icaoType: f.icaoType,
-        registration: f.registration,
-        tasKt: f.tasKt,
-        adep: f.adep,
-        ades: f.ades,
-        kind: f.kind,
-        procedureIdent: f.procedureIdent,
-        entryTime: f.entryTime,
-        levelFl: f.levelFl,
-      })),
+      outcome.flights.map((f) => {
+        // Mismo cruce que addFlight en ScenarioEditor.tsx: si el indicativo tiene ruta fija
+        // registrada, el tráfico generado también la trae bloqueada.
+        const route = findRoute(f.callsign);
+        const locked = route?.category === 'comercial';
+        return {
+          id: crypto.randomUUID(),
+          callsign: f.callsign,
+          ssr: f.ssr,
+          icaoType: f.icaoType,
+          registration: f.registration,
+          tasKt: f.tasKt,
+          adep: locked ? route.adep : f.adep,
+          ades: locked ? route.ades : f.ades,
+          operator: locked ? route.operator : null,
+          kind: f.kind,
+          procedureIdent: f.procedureIdent,
+          entryTime: f.entryTime,
+          levelFl: f.levelFl,
+        };
+      }),
       used
     );
   };

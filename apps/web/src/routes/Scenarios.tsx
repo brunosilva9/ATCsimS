@@ -76,6 +76,7 @@ export function Scenarios() {
         tasKt: f.tasKt,
         adep: f.adep,
         ades: f.ades,
+        operator: f.operator,
         kind: f.kind,
         procedureIdent: f.procedureIdent ?? '',
         entryTime: f.entryTime,

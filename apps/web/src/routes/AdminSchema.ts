@@ -343,6 +343,20 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
       tx('name', 'Nombre', { nullable: true }),
     ],
   },
+  {
+    collection: 'flightRoutes',
+    label: 'Rutas de vuelo',
+    docId: { kind: 'field', field: 'callsign' },
+    // La identidad FIJA de un indicativo comercial (LAN601 siempre es la misma ruta): separado
+    // de sampleFlights, que es solo el tipo de aeronave de ejemplo — eso si varia vuelo a vuelo.
+    fields: [
+      tx('callsign', 'Indicativo'),
+      tx('operator', 'Operador'),
+      tx('adep', 'Origen'),
+      tx('ades', 'Destino'),
+      sel('category', 'Categoría', ['comercial', 'privado']),
+    ],
+  },
 ];
 
 export function schemaFor(collection: string): CollectionSchema | undefined {

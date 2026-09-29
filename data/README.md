@@ -44,7 +44,7 @@ cachea localmente (IndexedDB), así que puede seguir sirviendo datos sin conexi�
 primera sincronización.
 
 **Desde que existe `/admin`, Firestore dejó de ser solo un espejo de consulta: es la base que la
-app corriendo realmente lee** (`apps/web/src/state/navdata.ts` trae las 17 colecciones una vez al
+app corriendo realmente lee** (`apps/web/src/state/navdata.ts` trae las 18 colecciones una vez al
 iniciar sesión). `data/*.json` y el Excel siguen siendo el import original — y lo que siguen
 usando los tests y las herramientas, que no dependen de un proyecto de Firebase real — pero ya
 **no se mantienen sincronizados automáticamente** con lo que ve el alumno.
@@ -61,7 +61,7 @@ Firestore al estado que dice el Excel (por ejemplo, tras corregir algo ahí y re
 `tools/build-db.js`).
 
 ```bash
-npm run data:firestore                    # sube las 17 colecciones (ver tools/upload-firestore.js)
+npm run data:firestore                    # sube las 18 colecciones (ver tools/upload-firestore.js)
 npm run data:firestore -- aerodromes      # sube SOLO esa, deja las demas (ya editadas) intactas
 npm run data:firestore -- aerodromes fixes  # varias a la vez, separadas por espacio
 ```
@@ -91,6 +91,7 @@ sube cada tramo envuelto como `{ values: [...] }` en vez de `string[][]` — ver
 | `holdings` | `fix` | `separation` | `runway`+`withDepartures`+`sivigats`+`lvp` |
 | `performance` | `level` | `tma` | doc único `scel` (es un objeto, no un array) |
 | `aircraftTypes` | `icao` | `aerodromes` | `icao` |
+| `flightRoutes` | `callsign` | | |
 
 **`aerodromes` no sale de ninguna planilla** (única excepción junto con los datos que agregue el
 instructor desde `/admin`, ver `README.md` § "La regla que gobierna el proyecto"): es la lista de
@@ -98,6 +99,19 @@ códigos OACI que ya aparecen como `adep`/`ades` en `sample-flights.json`, para 
 ejercicios pueda elegir origen/destino de una lista en vez de escribirlos a mano
 (`data/aerodromes.json`). El nombre de cada aeródromo queda en `null` hasta que alguien lo
 confirme — no se completó a mano para no inventar un dato sin revisar.
+
+**`flightRoutes` es la identidad FIJA de un indicativo comercial** (`{ callsign, operator, adep,
+ades, category: 'comercial'|'privado' }`), separada a propósito de `sampleFlights` (que sigue
+siendo solo el tipo de aeronave/TAS/matrícula de ejemplo — eso sí varía vuelo a vuelo aunque el
+número sea el mismo). Sembrada desde `sample-flights.json` (`data/flight-routes.json`, derivado,
+no es un archivo nuevo de la planilla). Cuando el editor de ejercicios agrega un vuelo cuyo
+indicativo tiene una fila `category: 'comercial'` acá, esa fila manda sobre lo que traiga
+`sampleFlights`: indicativo, operador, origen y destino quedan de solo lectura en ese ejercicio —
+en la realidad ese número de vuelo siempre es la misma ruta. Sin fila (o `category: 'privado'`,
+aviación general/militar), esos campos siguen editables. `sampleFlights` y `flightRoutes` **no se
+mantienen sincronizadas automáticamente entre sí**: si alguien edita el origen/destino de un vuelo
+directo en `sampleFlights` desde `/admin` sin tocar también su fila en `flightRoutes`, quedan
+desalineadas — el editor de ejercicios sigue confiando en `flightRoutes` como la autoridad.
 
 ## Quién puede editar: la colección `users`
 
@@ -140,6 +154,7 @@ service cloud.firestore {
     match /radars/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /tma/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /aerodromes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /flightRoutes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
 
     match /users/{uid} {
       allow read: if request.auth.uid == uid;
@@ -152,8 +167,8 @@ service cloud.firestore {
 Lo que de verdad impide que alguien sin rol `admin` escriba es esto, no el panel: `/admin` en la
 app solo evita mostrarle el panel a quien no lo va a poder usar.
 
-**Si ya pegaste una versión anterior de estas reglas en Consola Firebase** (antes de que existiera
-`aerodromes`), hace falta agregar la línea de `aerodromes` de arriba a mano — las reglas viven en
+**Si ya pegaste una versión anterior de estas reglas en Consola Firebase** (antes de que existieran
+`aerodromes`/`flightRoutes`), hace falta agregar esas líneas de arriba a mano — las reglas viven en
 la consola, no en el repositorio, así que este archivo documenta el texto pero no lo aplica solo.
 
 ## Convención
@@ -197,6 +212,7 @@ Unidades: NM, pies, nudos, minutos, grados decimales (negativo S/W).
 | `sample-flights.json` | 90 | extraído | Catálogo de vuelos comerciales para armar ejercicios |
 | `ssr.json` | 45 bloques | extraído | Pool de 360 códigos transpondedor, en bloques de 8 |
 | `aerodromes.json` | 32 | derivado | Códigos OACI de origen/destino, para elegir en el editor (no es de planilla, ver § Firestore) |
+| `flight-routes.json` | 89 | derivado | Indicativo→operador+ruta fija, separado del tipo de aeronave de ejemplo (ver § Firestore) |
 | `index.json` | — | — | Manifiesto |
 
 `sample-flights.json` trae un campo `ssr` por vuelo que hoy no usa nada: ni el editor de

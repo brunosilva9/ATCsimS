@@ -353,6 +353,9 @@ function computeCandidate(
       tasKt: g.tasKt,
       adep: g.adep,
       ades: g.ades,
+      // Este Flight es interno, solo para puntuar el candidato con detectConflicts — nunca sale
+      // de generator.ts, asi que operator no hace falta calcularlo aca (ver TrafficGenerator.tsx).
+      operator: null,
       kind: g.kind,
       procedureIdent: g.procedureIdent,
       airway: null,

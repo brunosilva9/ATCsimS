@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * upload-firestore.js — espeja data/*.json en 17 colecciones de Firestore, una por archivo.
+ * upload-firestore.js — espeja data/*.json en 18 colecciones de Firestore, una por archivo.
  *
- *   node tools/upload-firestore.js                  # las 17
+ *   node tools/upload-firestore.js                  # las 18
  *   node tools/upload-firestore.js aerodromes        # solo esa
  *   node tools/upload-firestore.js aerodromes fixes  # varias, separadas por espacio
  *
- * Sin argumentos sube las 17. Con uno o mas nombres de coleccion, sube SOLO esas y deja las demas
+ * Sin argumentos sube las 18. Con uno o mas nombres de coleccion, sube SOLO esas y deja las demas
  * intactas — para cuando ya se edito algo desde /admin en otras colecciones y correr el mirror
  * completo pisaria esas ediciones (el mirror completo sigue borrando y reescribiendo TODO).
  *
@@ -134,7 +134,7 @@ const wants = (collectionName) => only.size === 0 || only.has(collectionName);
 async function main() {
   console.log(
     only.size === 0
-      ? `Subiendo data/*.json a Firestore (las 17 colecciones)...\n`
+      ? `Subiendo data/*.json a Firestore (las 18 colecciones)...\n`
       : `Subiendo solo: ${[...only].join(', ')}...\n`
   );
 
@@ -226,6 +226,11 @@ async function main() {
   if (wants('aerodromes')) {
     const aerodromes = read('aerodromes.json');
     await mirror('aerodromes', aerodromes.aerodromes, (r) => r.icao, aerodromes._meta);
+  }
+
+  if (wants('flightRoutes')) {
+    const flightRoutes = read('flight-routes.json');
+    await mirror('flightRoutes', flightRoutes.flightRoutes, (r) => r.callsign, flightRoutes._meta);
   }
 
   console.log(`\nListo.`);

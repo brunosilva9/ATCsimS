@@ -1,0 +1,632 @@
+{
+  "_meta": {
+    "source": "data/sample-flights.json",
+    "method": "derived",
+    "note": "Indicativo, operador, origen y destino ya extraidos en sample-flights.json, reordenados en su propia coleccion porque esa parte de un vuelo comercial es fija (LAN601 siempre es la misma ruta) mientras que el tipo de aeronave/TAS/matricula de sample-flights.json son solo un ejemplo tipico, no un dato fijo. Se excluyo 1 registro (callsign DHC6): fila ya corrupta de origen, sin ruta real que copiar (ver data/README.md)."
+  },
+  "flightRoutes": [
+    {
+      "callsign": "LAN123",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCFA",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN800",
+      "operator": "LAN",
+      "adep": "SCFA",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKY456",
+      "operator": "SKY",
+      "adep": "SCEL",
+      "ades": "SCCF",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKY901",
+      "operator": "SKY",
+      "adep": "SCCF",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT789",
+      "operator": "JAT",
+      "adep": "SCEL",
+      "ades": "SCIE",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT550",
+      "operator": "JAT",
+      "adep": "SCIE",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN234",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SAEZ",
+      "category": "comercial"
+    },
+    {
+      "callsign": "DAL220",
+      "operator": "DAL",
+      "adep": "KATL",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "DAL112",
+      "operator": "DAL",
+      "adep": "SCEL",
+      "ades": "KATL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "AAL300",
+      "operator": "AAL",
+      "adep": "KMIA",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "AAL778",
+      "operator": "AAL",
+      "adep": "SCEL",
+      "ades": "KMIA",
+      "category": "comercial"
+    },
+    {
+      "callsign": "UAL401",
+      "operator": "UAL",
+      "adep": "KIAH",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "UAL990",
+      "operator": "UAL",
+      "adep": "SCEL",
+      "ades": "KIAH",
+      "category": "comercial"
+    },
+    {
+      "callsign": "IBE700",
+      "operator": "IBE",
+      "adep": "LEMD",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "IBE640",
+      "operator": "IBE",
+      "adep": "SCEL",
+      "ades": "LEMD",
+      "category": "comercial"
+    },
+    {
+      "callsign": "AFR222",
+      "operator": "AFR",
+      "adep": "LFPG",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "AFR401",
+      "operator": "AFR",
+      "adep": "SCEL",
+      "ades": "LFPG",
+      "category": "comercial"
+    },
+    {
+      "callsign": "KLM800",
+      "operator": "KLM",
+      "adep": "EHAM",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "KLM702",
+      "operator": "KLM",
+      "adep": "SCEL",
+      "ades": "EHAM",
+      "category": "comercial"
+    },
+    {
+      "callsign": "ARG990",
+      "operator": "ARG",
+      "adep": "SAEZ",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LPE301",
+      "operator": "LPE",
+      "adep": "SCEL",
+      "ades": "SPJC",
+      "category": "comercial"
+    },
+    {
+      "callsign": "AZU101",
+      "operator": "AZU",
+      "adep": "SBGR",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "ARG1351",
+      "operator": "ARG",
+      "adep": "SCEL",
+      "ades": "SAEZ",
+      "category": "comercial"
+    },
+    {
+      "callsign": "GOL202",
+      "operator": "GOL",
+      "adep": "SBSP",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "AZU221",
+      "operator": "AZU",
+      "adep": "SCEL",
+      "ades": "SBGR",
+      "category": "comercial"
+    },
+    {
+      "callsign": "ACA303",
+      "operator": "ACA",
+      "adep": "CYYZ",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "GOL889",
+      "operator": "GOL",
+      "adep": "SCEL",
+      "ades": "SBSP",
+      "category": "comercial"
+    },
+    {
+      "callsign": "BAW404",
+      "operator": "BAW",
+      "adep": "EGLL",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "ACA910",
+      "operator": "ACA",
+      "adep": "SCEL",
+      "ades": "CYYZ",
+      "category": "comercial"
+    },
+    {
+      "callsign": "DLH505",
+      "operator": "DLH",
+      "adep": "EDDF",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "QFA12",
+      "operator": "QFA",
+      "adep": "SCEL",
+      "ades": "YSSY",
+      "category": "comercial"
+    },
+    {
+      "callsign": "UAE606",
+      "operator": "UAE",
+      "adep": "OMDB",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "BAW251",
+      "operator": "BAW",
+      "adep": "SCEL",
+      "ades": "EGLL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "CMP707",
+      "operator": "CMP",
+      "adep": "MPTO",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "AVA808",
+      "operator": "AVA",
+      "adep": "SKBO",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "UAE247",
+      "operator": "UAE",
+      "adep": "SCEL",
+      "ades": "OMDB",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JBU909",
+      "operator": "JBU",
+      "adep": "KJFK",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "TAM654",
+      "operator": "TAM",
+      "adep": "SCEL",
+      "ades": "SBGL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "VOI010",
+      "operator": "VOI",
+      "adep": "MMMX",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN140",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCAR",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN141",
+      "operator": "LAN",
+      "adep": "SCAR",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN242",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCDA",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN243",
+      "operator": "LAN",
+      "adep": "SCDA",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN312",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCFA",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN313",
+      "operator": "LAN",
+      "adep": "SCFA",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN346",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCCF",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN347",
+      "operator": "LAN",
+      "adep": "SCCF",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN502",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCSE",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN503",
+      "operator": "LAN",
+      "adep": "SCSE",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN600",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCIE",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN601",
+      "operator": "LAN",
+      "adep": "SCIE",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN678",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCQP",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN679",
+      "operator": "LAN",
+      "adep": "SCQP",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN710",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCVD",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN711",
+      "operator": "LAN",
+      "adep": "SCVD",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN756",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCTE",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN757",
+      "operator": "LAN",
+      "adep": "SCTE",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN890",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCBA",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN891",
+      "operator": "LAN",
+      "adep": "SCBA",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN898",
+      "operator": "LAN",
+      "adep": "SCEL",
+      "ades": "SCCI",
+      "category": "comercial"
+    },
+    {
+      "callsign": "LAN899",
+      "operator": "LAN",
+      "adep": "SCCI",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU200",
+      "operator": "SKU",
+      "adep": "SCEL",
+      "ades": "SCAR",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU201",
+      "operator": "SKU",
+      "adep": "SCAR",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU252",
+      "operator": "SKU",
+      "adep": "SCEL",
+      "ades": "SCDA",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU253",
+      "operator": "SKU",
+      "adep": "SCDA",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU304",
+      "operator": "SKU",
+      "adep": "SCEL",
+      "ades": "SCFA",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU305",
+      "operator": "SKU",
+      "adep": "SCFA",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU336",
+      "operator": "SKU",
+      "adep": "SCEL",
+      "ades": "SCCF",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU337",
+      "operator": "SKU",
+      "adep": "SCCF",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU400",
+      "operator": "SKU",
+      "adep": "SCEL",
+      "ades": "SCIE",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU401",
+      "operator": "SKU",
+      "adep": "SCIE",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU450",
+      "operator": "SKU",
+      "adep": "SCEL",
+      "ades": "SCTE",
+      "category": "comercial"
+    },
+    {
+      "callsign": "SKU451",
+      "operator": "SKU",
+      "adep": "SCTE",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT100",
+      "operator": "JAT",
+      "adep": "SCEL",
+      "ades": "SCAR",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT101",
+      "operator": "JAT",
+      "adep": "SCAR",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT122",
+      "operator": "JAT",
+      "adep": "SCEL",
+      "ades": "SCDA",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT123",
+      "operator": "JAT",
+      "adep": "SCDA",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT150",
+      "operator": "JAT",
+      "adep": "SCEL",
+      "ades": "SCFA",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT151",
+      "operator": "JAT",
+      "adep": "SCFA",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT180",
+      "operator": "JAT",
+      "adep": "SCEL",
+      "ades": "SCCF",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT181",
+      "operator": "JAT",
+      "adep": "SCCF",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT210",
+      "operator": "JAT",
+      "adep": "SCEL",
+      "ades": "SCIE",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT211",
+      "operator": "JAT",
+      "adep": "SCIE",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT250",
+      "operator": "JAT",
+      "adep": "SCEL",
+      "ades": "SCTE",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT251",
+      "operator": "JAT",
+      "adep": "SCTE",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT300",
+      "operator": "JAT",
+      "adep": "SCEL",
+      "ades": "SCQP",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT301",
+      "operator": "JAT",
+      "adep": "SCQP",
+      "ades": "SCEL",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT330",
+      "operator": "JAT",
+      "adep": "SCEL",
+      "ades": "SCVD",
+      "category": "comercial"
+    },
+    {
+      "callsign": "JAT331",
+      "operator": "JAT",
+      "adep": "SCVD",
+      "ades": "SCEL",
+      "category": "comercial"
+    }
+  ]
+}
