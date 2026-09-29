@@ -18,7 +18,8 @@
   color: var(--text-muted);
 }
 
-.search input {
+.search input,
+.search select {
   font: inherit;
   font-family: var(--font-data);
   min-width: 240px;

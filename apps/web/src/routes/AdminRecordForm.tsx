@@ -16,7 +16,7 @@ import type { IntegrityIssue } from '@atcsims/core';
 import { db } from '../lib/firebase.js';
 import { useNavdataStore } from '../state/navdata.js';
 import type { CollectionSchema, FieldSchema } from './AdminSchema.js';
-import { computeDocId } from './AdminSchema.js';
+import { computeDocId, formatUpdatedAt } from './AdminSchema.js';
 import { datasetFrom, datasetWithEdit, isIntegritySlot } from './AdminValidation.js';
 import shared from './shared.module.css';
 import styles from './AdminRecordForm.module.css';
@@ -259,9 +259,13 @@ export function AdminRecordForm({ schema, initial, onClose }: AdminRecordFormPro
       setWarnings(newIssues(before, after, 'warn'));
     }
 
+    // Se sella al guardar, no al abrir el formulario: si se cancela la edicion no cuenta como
+    // modificacion.
+    const toSave = schema.trackModified ? { ...draft, updatedAt: Date.now() } : draft;
+
     setSaving(true);
     try {
-      await setDoc(doc(db, schema.collection, docId), draft);
+      await setDoc(doc(db, schema.collection, docId), toSave);
       // Si el campo que identifica al documento (ident, callsign, icao...) cambio durante la
       // edicion, el id nuevo es un documento DISTINTO en Firestore: sin este borrado, el
       // original se quedaba huerfano y la coleccion terminaba con el vuelo/fix viejo y el
@@ -297,6 +301,10 @@ export function AdminRecordForm({ schema, initial, onClose }: AdminRecordFormPro
 
   return (
     <form className={styles.form} onSubmit={(e) => void handleSubmit(e)}>
+      {schema.trackModified && initial !== null ? (
+        <p className={shared.note}>Última modificación: {formatUpdatedAt(initial.updatedAt)}</p>
+      ) : null}
+
       <div className={styles.grid}>
         {schema.fields.map((field) => (
           <label

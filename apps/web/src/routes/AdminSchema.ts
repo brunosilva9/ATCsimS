@@ -50,6 +50,8 @@ export interface CollectionSchema {
   readonly label: string;
   readonly docId: DocIdSpec;
   readonly fields: readonly FieldSchema[];
+  /** Si guarda `updatedAt` (epoch ms) solo en cada edicion, para mostrarlo y poder ordenar por el. */
+  readonly trackModified?: boolean;
 }
 
 /** Igual que tools/upload-firestore.js: para radars, que no trae una clave corta propia. */
@@ -60,6 +62,19 @@ export function slugify(text: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-+|-+$)/g, '');
+}
+
+/** Epoch ms (guardado por trackModified) a texto legible, en hora de Chile. */
+export function formatUpdatedAt(value: unknown): string {
+  if (typeof value !== 'number') return '—';
+  return new Date(value).toLocaleString('es-CL', {
+    timeZone: 'America/Santiago',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 export function computeDocId(schema: CollectionSchema, record: Record<string, unknown>): string {
@@ -265,6 +280,7 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
     collection: 'sampleFlights',
     label: 'Vuelos de ejemplo',
     docId: { kind: 'field', field: 'callsign' },
+    trackModified: true,
     fields: [
       tx('callsign', 'Indicativo'),
       tx('operator', 'Operador'),

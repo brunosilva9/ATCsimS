@@ -9,7 +9,7 @@ import { useNavdataStore } from '../state/navdata.js';
 import type { NavdataState } from '../state/navdata.js';
 import { AdminRecordForm } from './AdminRecordForm.js';
 import type { CollectionSchema } from './AdminSchema.js';
-import { computeDocId } from './AdminSchema.js';
+import { computeDocId, formatUpdatedAt } from './AdminSchema.js';
 import shared from './shared.module.css';
 import styles from './AdminCollectionList.module.css';
 
@@ -52,13 +52,23 @@ function matches(record: Draft, needle: string): boolean {
   return Object.values(record).some((v) => flatten(v).toUpperCase().includes(needle));
 }
 
+type Sort = 'default' | 'recent' | 'oldest';
+
 export function AdminCollectionList({ schema }: { readonly schema: CollectionSchema }) {
   const navdata = useNavdataStore();
   const rows = useMemo(() => rowsFor(schema, navdata), [schema, navdata]);
   const [editing, setEditing] = useState<Editing>({ kind: 'list' });
   const [query, setQuery] = useState('');
+  const [sort, setSort] = useState<Sort>('default');
   const needle = query.trim().toUpperCase();
-  const visible = useMemo(() => rows.filter((r) => matches(r, needle)), [rows, needle]);
+  const filtered = useMemo(() => rows.filter((r) => matches(r, needle)), [rows, needle]);
+  const visible = useMemo(() => {
+    if (sort === 'default') return filtered;
+    // Sin `updatedAt` (nunca se edito desde /admin) cuenta como lo mas antiguo posible.
+    const withTime = filtered.map((r) => ({ r, t: typeof r.updatedAt === 'number' ? r.updatedAt : 0 }));
+    withTime.sort((a, b) => (sort === 'recent' ? b.t - a.t : a.t - b.t));
+    return withTime.map(({ r }) => r);
+  }, [filtered, sort]);
 
   if (editing.kind !== 'list') {
     return (
@@ -85,6 +95,16 @@ export function AdminCollectionList({ schema }: { readonly schema: CollectionSch
             onChange={(e) => setQuery(e.target.value)}
           />
         </label>
+        {schema.trackModified ? (
+          <label className={styles.search} htmlFor="admin-sort">
+            <span className={styles.searchLabel}>Ordenar</span>
+            <select id="admin-sort" value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+              <option value="default">Como están</option>
+              <option value="recent">Modificado más reciente</option>
+              <option value="oldest">Modificado más antiguo</option>
+            </select>
+          </label>
+        ) : null}
         {canCreate ? (
           <button type="button" className={styles.primary} onClick={() => setEditing({ kind: 'new' })}>
             Nuevo
@@ -106,6 +126,9 @@ export function AdminCollectionList({ schema }: { readonly schema: CollectionSch
                 <tr key={id}>
                   <td className={styles.ident}>{id}</td>
                   <td className={styles.summary}>{summaryOf(schema, record)}</td>
+                  {schema.trackModified ? (
+                    <td className={styles.summary}>{formatUpdatedAt(record.updatedAt)}</td>
+                  ) : null}
                   <td className={styles.actionCell}>
                     <button
                       type="button"
