@@ -1,33 +1,62 @@
 /**
- * El banco de ejercicios del instructor.
+ * El banco de ejercicios de los instructores.
  *
- * Vive en este navegador y en ningun otro sitio. Eso no es una limitacion que haya que
- * disimular: es la consecuencia de no tener servidor, y el instructor tiene que saberlo para
- * no perder el trabajo. Por eso la pagina lo dice y ofrece exportar.
+ * Vive en Firestore y es uno solo para todos los instructores (ver lib/storage.ts): lo que guarda
+ * uno lo ven y lo pueden editar los demas. Al alumno el ejercicio le llega por enlace o archivo.
+ *
+ * Si en este navegador quedaron ejercicios del banco anterior (localStorage), la pagina lo dice
+ * y ofrece subirlos: no se suben solos, porque pasan a verlos todos los instructores.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { formatHhmm } from '@atcsims/core';
 
+import { OriginTag } from '../components/OriginTag.js';
 import { downloadPayload, encodePayload, parsePayload } from '../lib/share.js';
-import { deleteDraft, listDrafts, newDraftId, saveDraft } from '../lib/storage.js';
+import {
+  deleteDraft,
+  listDrafts,
+  localDrafts,
+  newDraftId,
+  saveDraft,
+  uploadLocalDrafts,
+} from '../lib/storage.js';
+import type { StoredDraft } from '../lib/storage.js';
 import { buildScenario } from '../scenarios/build.js';
 import type { ScenarioDraft } from '../scenarios/build.js';
-import { SAMPLE_DRAFT } from '../scenarios/sample.js';
+import { draftOrigin } from '../scenarios/origin.js';
 import { useBuildContext } from '../state/buildContext.js';
+import { useNavdataStore } from '../state/navdata.js';
+import { formatUpdatedAt } from './AdminSchema.js';
 import shared from './shared.module.css';
 import styles from './Scenarios.module.css';
 
 export function Scenarios() {
   const navigate = useNavigate();
   const buildCtx = useBuildContext();
-  const [drafts, setDrafts] = useState<ScenarioDraft[]>([]);
+  const sampleFlights = useNavdataStore((s) => s.sampleFlights);
+  /** Los indicativos del catalogo: para deducir el origen de los vuelos guardados sin `source`. */
+  const catalogue = useMemo(() => new Set(sampleFlights.map((f) => f.callsign)), [sampleFlights]);
+  const [drafts, setDrafts] = useState<StoredDraft[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pendingLocal, setPendingLocal] = useState(() => localDrafts().length);
+  const [uploading, setUploading] = useState(false);
+  const [uploadedNote, setUploadedNote] = useState<string | null>(null);
 
-  const refresh = () => setDrafts(listDrafts());
-  useEffect(refresh, []);
+  const refresh = async () => {
+    try {
+      setDrafts(await listDrafts());
+      setLoadError(null);
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : 'No se pudo leer el banco.');
+    }
+  };
+  useEffect(() => {
+    void refresh();
+  }, []);
 
   /**
    * El mismo payload para exportar y para imprimir, con el modo incluido: exportar sin el modo
@@ -83,14 +112,43 @@ export function Scenarios() {
         levelFl: Math.round(f.cruiseLevelFt / 100),
       })),
     };
-    setError(null);
-    saveDraft(draft);
-    navigate(`/scenarios/${draft.id}`);
+    try {
+      await saveDraft(draft);
+      setError(null);
+      navigate(`/scenarios/${draft.id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo guardar en el banco.');
+    }
   };
 
-  const remove = (id: string) => {
-    deleteDraft(id);
-    refresh();
+  // El banco es de todos los instructores: borrar uno lo borra para los demas.
+  const remove = async (draft: StoredDraft) => {
+    if (!window.confirm(`¿Borrar "${draft.name}" del banco? Lo deja de ver todo instructor.`)) return;
+    try {
+      await deleteDraft(draft.id);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo borrar.');
+    }
+    await refresh();
+  };
+
+  const uploadLocal = async () => {
+    setUploading(true);
+    try {
+      const n = await uploadLocalDrafts();
+      setPendingLocal(localDrafts().length);
+      setUploadedNote(
+        n === 0
+          ? 'Ya estaban todos en el banco.'
+          : `Se ${n === 1 ? 'subió 1 ejercicio' : `subieron ${n} ejercicios`} al banco.`
+      );
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudieron subir.');
+    }
+    setUploading(false);
+    await refresh();
   };
 
   return (
@@ -100,8 +158,9 @@ export function Scenarios() {
           <p className={shared.eyebrow}>Instructor</p>
           <h2 className={shared.pageTitle}>Banco de ejercicios</h2>
           <p className={shared.lead}>
-            Se guardan en este navegador. No hay servidor, así que no se sincronizan con otro
-            equipo ni los ve nadie más: para que un ejercicio viaje, expórtalo o copia su enlace.
+            Un solo banco para todos los instructores: lo que guardas aquí lo ven y lo pueden editar
+            los demás, desde cualquier equipo. Al alumno le llega por enlace o archivo, no ve el
+            banco.
           </p>
         </div>
         <div className={styles.actions}>
@@ -126,15 +185,46 @@ export function Scenarios() {
         </div>
       </header>
 
-      {error !== null ? (
-        <div className={shared.notice} role="alert">
-          <strong>No se pudo importar.</strong> {error}
+      {pendingLocal > 0 ? (
+        <div className={shared.notice}>
+          <strong>
+            {pendingLocal === 1
+              ? 'Hay 1 ejercicio guardado solo en este navegador'
+              : `Hay ${pendingLocal} ejercicios guardados solo en este navegador`}
+          </strong>{' '}
+          (del banco anterior, que no salía de cada equipo). Súbelos para que queden en el banco
+          compartido; la copia local no se borra.{' '}
+          <button
+            type="button"
+            className={styles.link}
+            onClick={() => void uploadLocal()}
+            disabled={uploading}
+          >
+            {uploading ? 'Subiendo…' : 'Subir al banco'}
+          </button>
         </div>
       ) : null}
 
-      {drafts.length === 0 ? (
+      {uploadedNote !== null ? <p className={shared.note}>{uploadedNote}</p> : null}
+
+      {error !== null ? (
+        <div className={shared.notice} role="alert">
+          <strong>No se pudo completar.</strong> {error}
+        </div>
+      ) : null}
+
+      {loadError !== null ? (
+        <div className={shared.notice} role="alert">
+          <strong>No se pudo leer el banco.</strong> {loadError}{' '}
+          <button type="button" className={styles.link} onClick={() => void refresh()}>
+            Reintentar
+          </button>
+        </div>
+      ) : drafts === null ? (
+        <p className={shared.note}>Cargando el banco…</p>
+      ) : drafts.length === 0 ? (
         <div className={styles.empty}>
-          <p>No hay ejercicios guardados en este navegador.</p>
+          <p>Todavía no hay ejercicios en el banco.</p>
           <p className={shared.note}>
             <Link to="/scenarios/ejemplo">Parte del ejemplo</Link> si quieres ver cómo se arma
             uno: cuatro llegadas que confluyen en TEGEB, con un conflicto puesto a propósito.
@@ -144,6 +234,7 @@ export function Scenarios() {
         <ul className={styles.list}>
           {drafts.map((draft) => {
             const built = buildScenario(draft, buildCtx);
+            const origin = draftOrigin(draft, catalogue);
             // Reusa el `built` de arriba en vez de llamar a payloadOf: la lista ya recalcula
             // cada ejercicio para mostrar la ventana, y no hace falta hacerlo dos veces por fila
             // solo para armar el enlace de impresion.
@@ -158,9 +249,14 @@ export function Scenarios() {
             return (
               <li key={draft.id} className={styles.item}>
                 <div className={styles.itemMain}>
-                  <Link to={`/scenarios/${draft.id}`} className={styles.itemName}>
-                    {draft.name}
-                  </Link>
+                  <div className={styles.itemTitle}>
+                    <Link to={`/scenarios/${draft.id}`} className={styles.itemName}>
+                      {draft.name}
+                    </Link>
+                    <OriginTag kind={origin.kind} title={origin.detail}>
+                      {origin.label}
+                    </OriginTag>
+                  </div>
                   <p className={styles.itemMeta}>
                     {draft.flights.length} vuelo{draft.flights.length === 1 ? '' : 's'} ·{' '}
                     {draft.configuration} RWY {draft.runwayInUse} ·{' '}
@@ -173,6 +269,12 @@ export function Scenarios() {
                       ? ` · ${built.rejected.length} sin calcular`
                       : ''}
                   </p>
+                  {draft.updatedAt !== undefined ? (
+                    <p className={styles.itemMeta}>
+                      Guardado {formatUpdatedAt(draft.updatedAt)}
+                      {draft.updatedBy ? ` por ${draft.updatedBy}` : ''}
+                    </p>
+                  ) : null}
                 </div>
                 <div className={styles.itemActions}>
                   <a
@@ -186,7 +288,7 @@ export function Scenarios() {
                   <button type="button" className={styles.link} onClick={() => exportOne(draft)}>
                     Exportar
                   </button>
-                  <button type="button" className={styles.link} onClick={() => remove(draft.id)}>
+                  <button type="button" className={styles.link} onClick={() => void remove(draft)}>
                     Borrar
                   </button>
                 </div>

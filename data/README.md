@@ -117,9 +117,9 @@ desalineadas — el editor de ejercicios sigue confiando en `flightRoutes` como 
 
 Desde que `/admin` permite escribir, ya no alcanza con "solo lectura pública" — hace falta saber
 quién tiene permiso de editar. Hay una colección más, `users`, doc ID = uid de Firebase Auth,
-`{ email, role: "admin" | "instructor" | "student" }`. Hoy **solo el rol `admin` tiene función
-real**; `instructor`/`student` quedan en el esquema para cuando la app distinga esas dos vistas
-por cuenta y no solo por elección de menú (ver `README.md` § Acceso).
+`{ email, role: "admin" | "instructor" | "student" }`. `admin` edita la base desde `/admin`;
+`instructor` y `admin` leen y escriben el banco de ejercicios (colección `scenarios`, ver abajo);
+`student` (o no tener documento) deja el resto de la app (ver `README.md` § Acceso).
 
 **No hay pantalla para asignar el rol todavía.** El primer admin se crea a mano: Consola Firebase
 › Authentication › Users para encontrar el uid, y Firestore Database › colección `users` ›
@@ -135,6 +135,10 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    function isInstructor() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['instructor', 'admin'];
     }
 
     match /fixes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
@@ -156,6 +160,9 @@ service cloud.firestore {
     match /aerodromes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /flightRoutes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
 
+    // El banco de ejercicios: compartido entre instructores, invisible para el alumno.
+    match /scenarios/{doc} { allow read, write: if isInstructor(); }
+
     match /users/{uid} {
       allow read: if request.auth.uid == uid;
       allow write: if false; // el rol se asigna a mano en consola, por ahora
@@ -168,7 +175,7 @@ Lo que de verdad impide que alguien sin rol `admin` escriba es esto, no el panel
 app solo evita mostrarle el panel a quien no lo va a poder usar.
 
 **Si ya pegaste una versión anterior de estas reglas en Consola Firebase** (antes de que existieran
-`aerodromes`/`flightRoutes`), hace falta agregar esas líneas de arriba a mano — las reglas viven en
+`aerodromes`/`flightRoutes`, o `isInstructor`/`scenarios`), hace falta agregar esas líneas de arriba a mano — las reglas viven en
 la consola, no en el repositorio, así que este archivo documenta el texto pero no lo aplica solo.
 
 ## Convención

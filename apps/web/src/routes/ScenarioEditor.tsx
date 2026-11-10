@@ -5,8 +5,8 @@
  * cuantos conflictos salen, donde, y con que minima se midieron. Es lo que hoy hace sobre la
  * planilla de horas a mano, y es la parte lenta de preparar una clase.
  *
- * Nada se guarda solo. El boton de guardar escribe en el navegador; el de enlace produce el
- * ejercicio que se le pasa al alumno.
+ * Nada se guarda solo. El boton de guardar escribe en el banco compartido (Firestore, ver
+ * lib/storage.ts); el de enlace produce el ejercicio que se le pasa al alumno.
  */
 
 import { useEffect, useMemo, useState } from 'react';
@@ -19,12 +19,14 @@ import { ConflictList } from '../components/ConflictList.js';
 import { FlightProgressStrip } from '../components/FlightProgressStrip.js';
 import { NewFlightForm } from '../components/NewFlightForm.js';
 import type { NewFlightIdentity } from '../components/NewFlightForm.js';
+import { OriginTag } from '../components/OriginTag.js';
 import { TimeFixDiagram } from '../components/TimeFixDiagram.js';
 import { TrafficGenerator } from '../components/TrafficGenerator.js';
 import { deleteDraft, getDraft, newDraftId, saveDraft } from '../lib/storage.js';
 import { encodePayload, exerciseLink } from '../lib/share.js';
 import { buildScenario } from '../scenarios/build.js';
-import type { FlightDraft, ScenarioDraft } from '../scenarios/build.js';
+import type { FlightDraft, FlightSource, ScenarioDraft } from '../scenarios/build.js';
+import { SOURCE_LABEL, draftOrigin, flightSource } from '../scenarios/origin.js';
 import { SAMPLE_DRAFT } from '../scenarios/sample.js';
 import { useBuildContext } from '../state/buildContext.js';
 import { useNavdataStore } from '../state/navdata.js';
@@ -174,8 +176,12 @@ export function ScenarioEditor() {
 
   const [draft, setDraft] = useState<ScenarioDraft>(emptyDraft);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [storageFailed, setStorageFailed] = useState(false);
+  const [storageError, setStorageError] = useState<string | null>(null);
+  /** Leyendo del banco: no se muestra el editor vacio, que se podria guardar encima del real. */
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     if (id === undefined) return;
@@ -184,11 +190,32 @@ export function ScenarioEditor() {
       return;
     }
     if (id === 'ejemplo') {
-      setDraft({ ...SAMPLE_DRAFT, id: newDraftId(), name: `${SAMPLE_DRAFT.name} (copia)` });
+      setDraft({
+        ...SAMPLE_DRAFT,
+        id: newDraftId(),
+        name: `${SAMPLE_DRAFT.name} (copia)`,
+        flights: SAMPLE_DRAFT.flights.map((f) => ({ ...f, source: 'sample' as const })),
+      });
       return;
     }
-    const stored = getDraft(id);
-    if (stored) setDraft(stored);
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(null);
+    getDraft(id)
+      .then((stored) => {
+        if (cancelled) return;
+        if (stored) setDraft(stored);
+        else setLoadError(`No hay un ejercicio "${id}" en el banco.`);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setLoadError(err instanceof Error ? err.message : 'No se pudo leer el banco.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   const mode = draft.mode ?? 'practice';
@@ -226,7 +253,7 @@ export function ScenarioEditor() {
    * NewFlightForm: solo la identidad (indicativo, tipo, matricula, ruta) cambia segun el origen;
    * SSR, procedimiento por defecto, hora de entrada y nivel se deciden siempre igual.
    */
-  const appendFlight = (identity: NewFlightIdentity) => {
+  const appendFlight = (identity: NewFlightIdentity, source: FlightSource) => {
     // Llegada o salida se deduce del propio vuelo: si sale de SCEL, es una salida.
     const isDeparture = identity.adep === 'SCEL';
     const procedure = isDeparture ? sids[0] : stars[0];
@@ -250,6 +277,7 @@ export function ScenarioEditor() {
           // razonable que el instructor ajusta, no una decisión oculta.
           entryTime: last !== undefined ? last.entryTime + 3 : parseHhmm('1100'),
           levelFl: isDeparture ? 230 : 240,
+          source,
         },
       ],
     }));
@@ -270,7 +298,7 @@ export function ScenarioEditor() {
       adep: locked && route ? route.adep : catalogue.adep,
       ades: locked && route ? route.ades : catalogue.ades,
       operator: locked && route ? route.operator : null,
-    });
+    }, 'catalogue');
   };
 
   const [showNewFlightForm, setShowNewFlightForm] = useState(false);
@@ -297,12 +325,20 @@ export function ScenarioEditor() {
           : d.name,
     }));
 
-  const save = () => {
-    const ok = saveDraft(draft);
-    setStorageFailed(!ok);
-    if (ok) {
+  const save = async () => {
+    setSaving(true);
+    try {
+      await saveDraft(draft);
+      setStorageError(null);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
+      // Un ejercicio nuevo (o copia del ejemplo) pasa a tener su URL propia: recargar la pagina
+      // ya no lo pierde.
+      if (id !== draft.id) navigate(`/scenarios/${draft.id}`, { replace: true });
+    } catch (err) {
+      setStorageError(err instanceof Error ? err.message : 'No se pudo guardar.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -324,15 +360,42 @@ export function ScenarioEditor() {
     });
   };
 
-  const remove = () => {
-    deleteDraft(draft.id);
-    navigate('/scenarios');
+  // El banco es de todos los instructores: borrar uno lo borra para los demas.
+  const remove = async () => {
+    if (!window.confirm(`¿Borrar "${draft.name}" del banco? Lo deja de ver todo instructor.`)) return;
+    try {
+      await deleteDraft(draft.id);
+      navigate('/scenarios');
+    } catch (err) {
+      setStorageError(err instanceof Error ? err.message : 'No se pudo borrar.');
+    }
   };
+
+  /** Los indicativos del catalogo: para deducir el origen de los vuelos guardados sin `source`. */
+  const catalogue = useMemo(() => new Set(sampleFlights.map((f) => f.callsign)), [sampleFlights]);
+  const origin = useMemo(() => draftOrigin(draft, catalogue), [draft, catalogue]);
 
   const duplicateSsr = useMemo(() => {
     const seen = new Set<string>();
     return draft.flights.filter((f) => (seen.has(f.ssr) ? true : (seen.add(f.ssr), false)));
   }, [draft.flights]);
+
+  if (loading || loadError !== null) {
+    return (
+      <div className={shared.page}>
+        <Link to="/scenarios" className={styles.back}>
+          ← Ejercicios
+        </Link>
+        {loadError !== null ? (
+          <div className={shared.notice} role="alert">
+            <strong>No se pudo abrir el ejercicio.</strong> {loadError}
+          </div>
+        ) : (
+          <p className={shared.note}>Cargando el ejercicio…</p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className={shared.page}>
@@ -355,10 +418,19 @@ export function ScenarioEditor() {
             onChange={(e) => set('name', e.target.value)}
             aria-label="Nombre del ejercicio"
           />
+          <p className={styles.origin}>
+            <OriginTag kind={origin.kind}>{origin.label}</OriginTag>
+            {origin.detail !== '' ? <span>{origin.detail}</span> : null}
+          </p>
         </div>
         <div className={styles.actions}>
-          <button type="button" className={styles.primary} onClick={save}>
-            {saved ? 'Guardado' : 'Guardar'}
+          <button
+            type="button"
+            className={styles.primary}
+            onClick={() => void save()}
+            disabled={saving}
+          >
+            {saving ? 'Guardando…' : saved ? 'Guardado' : 'Guardar'}
           </button>
           {/*
             Abre el ejercicio en una pestaña nueva de esta misma app, sin copiar ni pegar nada
@@ -382,17 +454,17 @@ export function ScenarioEditor() {
           >
             {copied ? 'Enlace copiado' : 'Copiar enlace'}
           </button>
-          <button type="button" className={styles.danger} onClick={remove}>
+          <button type="button" className={styles.danger} onClick={() => void remove()}>
             Borrar
           </button>
         </div>
       </header>
 
-      {storageFailed ? (
+      {storageError !== null ? (
         <div className={shared.notice} role="alert">
-          <strong>No se pudo guardar en este navegador.</strong> Puede ser una ventana privada o
-          tener el almacenamiento bloqueado. Usa «Copiar enlace» o «Imprimir»: ese contenido no
-          depende del navegador.
+          <strong>No se pudo guardar en el banco.</strong> {storageError}. Si dice «permission»,
+          tu cuenta no tiene rol de instructor. Mientras tanto, «Copiar enlace» no depende del
+          banco.
         </div>
       ) : null}
 
@@ -626,7 +698,7 @@ export function ScenarioEditor() {
 
         {showNewFlightForm ? (
           <NewFlightForm
-            onAdd={(identity) => appendFlight(identity)}
+            onAdd={(identity) => appendFlight(identity, 'manual')}
             onClose={() => setShowNewFlightForm(false)}
           />
         ) : null}
@@ -642,6 +714,7 @@ export function ScenarioEditor() {
             <table className={styles.table}>
               <thead>
                 <tr>
+                  <th>Fuente</th>
                   <th>Indicativo</th>
                   <th>Operador</th>
                   <th>Tipo</th>
@@ -665,8 +738,21 @@ export function ScenarioEditor() {
                   const locked = f.operator !== null;
                   const lockedTitle =
                     'Vuelo comercial: ruta fija. Para cambiarla, quitá este vuelo y agregá otro.';
+                  const source = flightSource(f, draft, catalogue);
                   return (
                     <tr key={f.id}>
+                      <td>
+                        <OriginTag
+                          kind={source === 'generator' ? 'generated' : 'hand'}
+                          title={
+                            f.source === undefined
+                              ? 'Deducido: el ejercicio se guardó antes de que se registrara el origen de cada vuelo.'
+                              : undefined
+                          }
+                        >
+                          {SOURCE_LABEL[source]}
+                        </OriginTag>
+                      </td>
                       <td>
                         {locked ? (
                           <span className={styles.readOnly} title={lockedTitle}>

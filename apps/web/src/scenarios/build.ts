@@ -47,7 +47,20 @@ export interface FlightDraft {
   readonly procedureIdent: string;
   readonly entryTime: UtcMinutes;
   readonly levelFl: number;
+  /**
+   * De donde salio el vuelo. Es solo para el instructor (no viaja al alumno: buildFlight no lo
+   * copia). Ausente en las recetas guardadas antes de que existiera: scenarios/origin.ts lo deduce.
+   */
+  readonly source?: FlightSource;
 }
+
+/**
+ * - `catalogue`: «Añadir del catálogo», un vuelo ya armado de Vuelos de ejemplo (sampleFlights).
+ * - `manual`: «Vuelo nuevo», armado pieza por pieza en NewFlightForm.
+ * - `generator`: sorteado por el generador de trafico.
+ * - `sample`: viene del ejercicio de ejemplo («Partir del ejemplo»).
+ */
+export type FlightSource = 'catalogue' | 'manual' | 'generator' | 'sample';
 
 /** Como se trabaja el ejercicio. Lo elige el instructor al armarlo. */
 export type ExerciseMode = 'practice' | 'exam';

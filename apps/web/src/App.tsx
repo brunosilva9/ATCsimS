@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { type ReactElement, useEffect } from 'react';
 import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { SiteFooter } from './components/SiteFooter.js';
@@ -13,7 +13,7 @@ import { Scenarios } from './routes/Scenarios.js';
 import { StripGallery } from './routes/StripGallery.js';
 import { useAuthStore } from './state/auth.js';
 import { useNavdataStore } from './state/navdata.js';
-import { useRoleStore } from './state/role.js';
+import { canUseBank, useRoleStore } from './state/role.js';
 import styles from './App.module.css';
 
 /** Las dos columnas del menu son los dos roles del documento funcional. */
@@ -40,6 +40,10 @@ export function App() {
     if (user) void loadRole(user.uid);
     else clearRole();
   }, [user, loadRole, clearRole]);
+
+  // El banco de ejercicios es compartido entre instructores: sin el rol, ni el link ni la ruta.
+  const bank = (element: ReactElement) =>
+    roleLoading ? null : canUseBank(role) ? element : <Navigate to="/exercise" replace />;
 
   // La vista de impresion es papel: no lleva ni cabecera ni pie.
   const bare = pathname.startsWith('/print');
@@ -90,7 +94,11 @@ export function App() {
           </div>
         </div>
         <nav className={styles.nav}>
-          {LINKS.filter((link) => link.to !== '/admin' || role === 'admin').map((link) => (
+          {LINKS.filter(
+            (link) =>
+              (link.to !== '/admin' || role === 'admin') &&
+              (link.to !== '/scenarios' || canUseBank(role))
+          ).map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -114,8 +122,8 @@ export function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/exercise" replace />} />
           <Route path="/exercise" element={<Exercise />} />
-          <Route path="/scenarios" element={<Scenarios />} />
-          <Route path="/scenarios/:id" element={<ScenarioEditor />} />
+          <Route path="/scenarios" element={bank(<Scenarios />)} />
+          <Route path="/scenarios/:id" element={bank(<ScenarioEditor />)} />
           <Route path="/runs" element={<Runs />} />
           <Route path="/navdata" element={<NavdataExplorer />} />
           <Route path="/strips" element={<StripGallery />} />

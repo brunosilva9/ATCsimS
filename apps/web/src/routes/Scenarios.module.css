@@ -71,6 +71,14 @@
   min-width: 0;
 }
 
+/* El nombre y, al lado, de donde salio el trafico (OriginTag). */
+.itemTitle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+
 .itemName {
   font-size: 15px;
   font-weight: 600;

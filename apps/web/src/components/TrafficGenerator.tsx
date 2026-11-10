@@ -151,6 +151,7 @@ export function TrafficGenerator({
           procedureIdent: f.procedureIdent,
           entryTime: f.entryTime,
           levelFl: f.levelFl,
+          source: 'generator' as const,
         };
       }),
       used

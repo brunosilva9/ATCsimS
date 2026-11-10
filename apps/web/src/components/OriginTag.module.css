@@ -1,0 +1,36 @@
+.generated,
+.hand,
+.mixed {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* Lo sorteo el generador: un borrador para revisar. El color de acento, no de alerta. */
+.generated {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* Lo eligio un instructor. Neutro: es el caso de siempre. */
+.hand {
+  color: var(--text-muted);
+  background: var(--surface-sunken);
+  border-color: var(--border);
+}
+
+/* Generado y despues tocado a mano: ya no se reproduce solo con su semilla. */
+.mixed {
+  color: var(--warn);
+  background: var(--warn-soft);
+  border-color: var(--warn);
+}

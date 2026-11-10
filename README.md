@@ -5,9 +5,10 @@ posiciones APP y ACC. Reemplaza el ejercicio de papel que hoy prepara el instruc
 las fichas de progreso de vuelo, la planilla de horas de paso y la corrección.
 
 Prototipo. Corre entero en el navegador y se publica como sitio estático, sin servidor propio.
-Hay login (Firebase Auth, para restringir quién entra) y la base de navegación vive en Firestore,
-así que la primera carga de cada sesión sí pasa por la red — pero nada del trabajo del alumno o
-del instructor (ejercicios, entregas) sale nunca de su propio equipo.
+Hay login (Firebase Auth, para restringir quién entra) y en Firestore viven la base de
+navegación y el banco de ejercicios de los instructores, así que la primera carga de cada sesión
+sí pasa por la red. El trabajo del alumno (sus entregas) no sale de su equipo: viaja como
+archivo.
 
 ## Empezar
 
@@ -40,15 +41,18 @@ propio archivo).
 Adentro, el **rol** sigue siendo mayormente una elección de vista libre (ver "Cómo se usa" abajo)
 — con una excepción: `/admin`, donde el instructor edita la base de navegación entera, sí exige un
 rol real (`admin`) guardado en la colección `users` de Firestore, y sin ese rol la app ni siquiera
-muestra el link. No hay pantalla para asignarlo todavía: el primer admin se crea a mano en
-Firestore (colección `users`, doc ID = el uid de la cuenta, `{ "role": "admin" }`) — el detalle
-completo, con las reglas de Firestore, está en [`data/README.md`](data/README.md).
+muestra el link. Lo mismo el banco de ejercicios (`/scenarios`): es compartido entre
+instructores y lo ven solo las cuentas con rol `instructor` o `admin`, para que el alumno no
+conozca la prueba antes. No hay pantalla para asignar roles todavía: se crean a mano en Firestore
+(colección `users`, doc ID = el uid de la cuenta, `{ "role": "admin" }` o
+`{ "role": "instructor" }`) — el detalle completo, con las reglas de Firestore, está en
+[`data/README.md`](data/README.md).
 
 ## Cómo se usa
 
 | Vista | Rol | Qué hace |
 |---|---|---|
-| `/scenarios` | Instructor | Banco de ejercicios guardados en este navegador |
+| `/scenarios` | Instructor | Banco de ejercicios compartido entre instructores (Firestore) |
 | `/scenarios/:id` | Instructor | Armar el ejercicio y ver los conflictos que genera |
 | `/exercise` | Alumno | Trabajar el ejercicio, en práctica o en prueba |
 | `/runs` | Instructor | Cargar la entrega del alumno y corregirla |
@@ -200,9 +204,9 @@ Los assets se construyen con rutas relativas, así que el sitio funciona igual b
 
 ## Lo que este prototipo no es
 
-- **El login distingue un solo rol real: `admin`.** Da acceso a `/admin`. El resto (instructor
-  vs. alumno) sigue siendo una elección de vista libre, no una propiedad de la cuenta — eso es lo
-  próximo por agregar.
+- **El login distingue dos roles reales: `admin` e `instructor`.** `admin` da acceso a `/admin`;
+  `instructor` (y `admin`) al banco de ejercicios. El resto de las vistas sigue siendo una
+  elección libre: un instructor también puede abrir `/exercise` como alumno.
 - **No hay estado compartido en vivo.** El instructor no ve al alumno trabajando; recibe su
   archivo al final.
 - **Genera tráfico, no didáctica.** El generador acierta el número de encuentros que se le pide,

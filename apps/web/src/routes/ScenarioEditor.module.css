@@ -31,6 +31,18 @@
   min-width: 260px;
 }
 
+/* De donde salio el trafico, justo bajo el nombre: es lo primero que conviene saber al abrirlo. */
+.origin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 0;
+  font-size: 12px;
+  font-family: var(--font-data);
+  color: var(--text-muted);
+}
+
 /* El nombre se edita en el sitio donde se lee: no hay un campo "nombre" aparte. */
 .titleInput {
   width: 100%;
