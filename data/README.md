@@ -118,65 +118,20 @@ desalineadas — el editor de ejercicios sigue confiando en `flightRoutes` como 
 Desde que `/admin` permite escribir, ya no alcanza con "solo lectura pública" — hace falta saber
 quién tiene permiso de editar. Hay una colección más, `users`, doc ID = uid de Firebase Auth,
 `{ email, role: "admin" | "instructor" | "student" }`. `admin` edita la base desde `/admin`;
-`instructor` y `admin` leen y escriben el banco de ejercicios (colección `scenarios`, ver abajo);
+`instructor` y `admin` leen y escriben el banco de ejercicios (colección `scenarios`);
 `student` (o no tener documento) deja el resto de la app (ver `README.md` § Acceso).
 
 **No hay pantalla para asignar el rol todavía.** El primer admin se crea a mano: Consola Firebase
 › Authentication › Users para encontrar el uid, y Firestore Database › colección `users` ›
 documento nuevo con ese ID y `{ "role": "admin" }`.
 
-Reglas de Firestore (se pegan a mano en Consola Firebase › Firestore Database › Reglas; las
-escrituras de `tools/upload-firestore.js` usan la service account, que las ignora):
+Las reglas de Firestore están en [`firestore.rules`](../firestore.rules), en la raíz del repo. Se
+copia el archivo entero y se pega en Consola Firebase › Firestore Database › Reglas, reemplazando
+lo que haya: las reglas viven en la consola, así que cada vez que cambie el archivo hay que volver
+a pegarlo. Las escrituras de `tools/upload-firestore.js` usan la service account, que las ignora.
 
-```
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    function isAdmin() {
-      return request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-    function isInstructor() {
-      return request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['instructor', 'admin'];
-    }
-
-    match /fixes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /procedures/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /airways/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /runways/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /approaches/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /holdings/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /performance/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /separation/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /aircraftTypes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /fleet/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /operators/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /sampleFlights/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /ssrBlocks/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /units/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /radars/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /tma/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /aerodromes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-    match /flightRoutes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
-
-    // El banco de ejercicios: compartido entre instructores, invisible para el alumno.
-    match /scenarios/{doc} { allow read, write: if isInstructor(); }
-
-    match /users/{uid} {
-      allow read: if request.auth.uid == uid;
-      allow write: if false; // el rol se asigna a mano en consola, por ahora
-    }
-  }
-}
-```
-
-Lo que de verdad impide que alguien sin rol `admin` escriba es esto, no el panel: `/admin` en la
+Lo que de verdad impide que alguien sin rol `admin` escriba es eso, no el panel: `/admin` en la
 app solo evita mostrarle el panel a quien no lo va a poder usar.
-
-**Si ya pegaste una versión anterior de estas reglas en Consola Firebase** (antes de que existieran
-`aerodromes`/`flightRoutes`, o `isInstructor`/`scenarios`), hace falta agregar esas líneas de arriba a mano — las reglas viven en
-la consola, no en el repositorio, así que este archivo documenta el texto pero no lo aplica solo.
 
 ## Convención
 

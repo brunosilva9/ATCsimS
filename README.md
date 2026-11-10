@@ -45,8 +45,8 @@ muestra el link. Lo mismo el banco de ejercicios (`/scenarios`): es compartido e
 instructores y lo ven solo las cuentas con rol `instructor` o `admin`, para que el alumno no
 conozca la prueba antes. No hay pantalla para asignar roles todavía: se crean a mano en Firestore
 (colección `users`, doc ID = el uid de la cuenta, `{ "role": "admin" }` o
-`{ "role": "instructor" }`) — el detalle completo, con las reglas de Firestore, está en
-[`data/README.md`](data/README.md).
+`{ "role": "instructor" }`) — el detalle está en [`data/README.md`](data/README.md) y las reglas de
+Firestore, en [`firestore.rules`](firestore.rules).
 
 ## Cómo se usa
 

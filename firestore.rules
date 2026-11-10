@@ -1,0 +1,51 @@
+// Reglas de seguridad de Firestore para ATCsimS.
+//
+// Este archivo es la fuente: se copia ENTERO y se pega en Consola Firebase › Firestore Database ›
+// Reglas, reemplazando lo que haya (las reglas viven en la consola; el repo no las aplica solo).
+// Las escrituras de tools/upload-firestore.js usan la service account, que las ignora.
+//
+// Quién es quién (colección `users`, doc ID = uid): ver data/README.md § "Quién puede editar".
+// Lo que de verdad impide escribir sin rol es esto, no la app: /admin y /scenarios en la app solo
+// evitan mostrarle una pantalla a quien no la va a poder usar.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    function isInstructor() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['instructor', 'admin'];
+    }
+
+    // La base de navegación: la lee cualquier cuenta, la edita solo admin desde /admin.
+    match /fixes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /procedures/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /airways/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /runways/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /approaches/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /holdings/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /performance/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /separation/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /aircraftTypes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /fleet/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /operators/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /sampleFlights/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /ssrBlocks/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /units/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /radars/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /tma/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /aerodromes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /flightRoutes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+
+    // El banco de ejercicios: compartido entre instructores, invisible para el alumno.
+    match /scenarios/{doc} { allow read, write: if isInstructor(); }
+
+    match /users/{uid} {
+      allow read: if request.auth.uid == uid;
+      allow write: if false; // el rol se asigna a mano en consola, por ahora
+    }
+  }
+}

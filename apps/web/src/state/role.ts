@@ -17,7 +17,7 @@ import { db } from '../lib/firebase.js';
 
 export type Role = 'admin' | 'instructor' | 'student';
 
-/** Quien puede leer y escribir el banco de ejercicios. Mismo criterio que las reglas de Firestore. */
+/** Quien puede leer y escribir el banco de ejercicios. Mismo criterio que isInstructor() en firestore.rules. */
 export const canUseBank = (role: Role | null): boolean => role === 'instructor' || role === 'admin';
 
 export interface RoleState {

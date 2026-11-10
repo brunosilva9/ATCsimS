@@ -2,7 +2,7 @@
  * El banco de ejercicios, en Firestore (coleccion `scenarios`, doc ID = `draft.id`).
  *
  * Es UN banco compartido entre instructores: lo leen y lo escriben las cuentas con rol
- * `instructor` o `admin` en `users` (reglas en data/README.md). Un alumno no lo ve, para que no
+ * `instructor` o `admin` en `users` (reglas en firestore.rules). Un alumno no lo ve, para que no
  * conozca la prueba antes de rendirla. Al alumno el ejercicio le sigue llegando por enlace o por
  * archivo, igual que antes.
  *
