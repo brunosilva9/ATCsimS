@@ -16,7 +16,7 @@ import type { IntegrityIssue } from '@atcsims/core';
 import { db } from '../lib/firebase.js';
 import { useNavdataStore } from '../state/navdata.js';
 import type { CollectionSchema, FieldSchema } from './AdminSchema.js';
-import { computeDocId, formatUpdatedAt } from './AdminSchema.js';
+import { computeDocId, formatUpdatedAt, omitEmptyOptionals } from './AdminSchema.js';
 import { datasetFrom, datasetWithEdit, isIntegritySlot } from './AdminValidation.js';
 import shared from './shared.module.css';
 import styles from './AdminRecordForm.module.css';
@@ -243,11 +243,15 @@ export function AdminRecordForm({ schema, initial, onClose }: AdminRecordFormPro
 
     const originalId = initial !== null ? computeDocId(schema, initial) : null;
 
+    // Lo que de verdad se escribe: sin los campos opcionales vacios (ver omitEmptyOptionals).
+    // La validacion mira este mismo registro, no el borrador con sus null.
+    const clean = omitEmptyOptionals(schema.fields, draft);
+
     if (isIntegritySlot(schema.collection)) {
       const navdata = useNavdataStore.getState();
       const before = checkIntegrity(datasetFrom(navdata));
       const after = checkIntegrity(
-        datasetWithEdit(datasetFrom(navdata), schema.collection, docId, draft, originalId)
+        datasetWithEdit(datasetFrom(navdata), schema.collection, docId, clean, originalId)
       );
       const fails = newIssues(before, after, 'fail');
       if (fails.length > 0) {
@@ -261,7 +265,7 @@ export function AdminRecordForm({ schema, initial, onClose }: AdminRecordFormPro
 
     // Se sella al guardar, no al abrir el formulario: si se cancela la edicion no cuenta como
     // modificacion.
-    const toSave = schema.trackModified ? { ...draft, updatedAt: Date.now() } : draft;
+    const toSave = schema.trackModified ? { ...clean, updatedAt: Date.now() } : clean;
 
     setSaving(true);
     try {

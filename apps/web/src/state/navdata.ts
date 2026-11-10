@@ -29,6 +29,7 @@ import { EXCLUDED_AIRWAYS, EXCLUDED_FIXES, EXCLUDED_PROCEDURES } from '@atcsims/
 import type { SampleFlight } from '@atcsims/navdata';
 
 import { db } from '../lib/firebase.js';
+import { omitEmptyOptionals, schemaFor } from '../routes/AdminSchema.js';
 
 // ------------------------------------------------------- formas sin tipo propio en @atcsims/core
 // Estos 7 archivos no los usa el motor de calculo, asi que nunca necesitaron un tipo en el
@@ -108,12 +109,20 @@ export interface FlightRoute {
 
 // ------------------------------------------------------------------------- lectura de Firestore
 
-/** Cada doc trae `_meta` inyectado por upload-firestore.js; no es parte del registro en si. */
+/**
+ * Cada doc trae `_meta` inyectado por upload-firestore.js; no es parte del registro en si.
+ *
+ * Ademas se sacan los campos opcionales que vienen en null: /admin los guardaba asi hasta que
+ * existio `optional` en AdminSchema, y en Firestore quedaron docs con `sourceTotalTimeMin: null`
+ * (hacia caer la pestaña Procedimientos de /navdata) o `maxAltFt: null` en un tramo (eto.ts lo
+ * tomaba como techo de 0 ft).
+ */
 async function fetchCollection<T>(name: string): Promise<T[]> {
   const snap = await getDocs(collection(db, name));
+  const schema = schemaFor(name);
   return snap.docs.map((d) => {
     const { _meta, ...rest } = d.data() as Record<string, unknown>;
-    return rest as T;
+    return (schema ? omitEmptyOptionals(schema.fields, rest) : rest) as T;
   });
 }
 
@@ -276,7 +285,12 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
       const airways = rawAirways.filter((a) => !EXCLUDED_AIRWAYS.has(a.ident)).map(unwrapAirway);
 
       const tmaData = tmaSnap.exists() ? (tmaSnap.data() as Record<string, unknown>) : null;
-      const tma = tmaData ? ((({ _meta, ...rest }) => rest)(tmaData) as unknown as Tma) : null;
+      const tmaSchema = schemaFor('tma');
+      const tma = tmaData
+        ? ((({ _meta, ...rest }) => (tmaSchema ? omitEmptyOptionals(tmaSchema.fields, rest) : rest))(
+            tmaData
+          ) as unknown as Tma)
+        : null;
 
       const coordinates = new Map(fixes.map((f) => [f.ident, { lat: f.lat, lon: f.lon }]));
       const tmaFixes = fixes.filter((f) => f.scope === 'TMA').map((f) => f.ident);

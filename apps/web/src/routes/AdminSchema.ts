@@ -24,6 +24,12 @@ export interface FieldSchemaBase {
   readonly type: FieldType;
   /** Vacio se guarda como null en vez de string vacio / 0. */
   readonly nullable?: boolean;
+  /**
+   * El campo es `?:` en el tipo del dominio: vacio se OMITE del documento, no se guarda null.
+   * No es lo mismo que `nullable`: `entryFix: string | null` vacio es null a proposito, pero
+   * `maxAltFt?: number` en null lo lee eto.ts como techo de 0 ft (pregunta `!== undefined`).
+   */
+  readonly optional?: boolean;
   /** Solo stringArray: cada línea se guarda como number en vez de string (ej. frequencies). */
   readonly numericArray?: boolean;
 }
@@ -88,6 +94,36 @@ export function computeDocId(schema: CollectionSchema, record: Record<string, un
   }
 }
 
+const isEmpty = (value: unknown) =>
+  value === null || value === undefined || (Array.isArray(value) && value.length === 0);
+
+/**
+ * Saca los campos `optional` vacios del registro, tambien dentro de cada fila de un nestedArray
+ * (los tramos de un procedimiento). Se usa en los dos sentidos: al guardar desde /admin, para no
+ * escribir el null, y al leer de Firestore (state/navdata.ts), para que lo que ya quedo grabado
+ * con null antes de este arreglo no rompa nada aunque nadie lo vuelva a guardar.
+ */
+export function omitEmptyOptionals(
+  fields: readonly FieldSchema[],
+  record: Record<string, unknown>
+): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...record };
+  for (const field of fields) {
+    const value = out[field.key];
+    if (field.optional === true && isEmpty(value)) {
+      delete out[field.key];
+    } else if (field.type === 'nestedArray' && Array.isArray(value)) {
+      const { itemFields } = field as NestedArrayFieldSchema;
+      out[field.key] = value.map((row: unknown) =>
+        row !== null && typeof row === 'object'
+          ? omitEmptyOptionals(itemFields, row as Record<string, unknown>)
+          : row
+      );
+    }
+  }
+  return out;
+}
+
 const nm = (key: string, label: string, opts: Partial<FieldSchemaBase> = {}): FieldSchema => ({
   key,
   label,
@@ -145,9 +181,9 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
       tx('entryFix', 'Fix de entrada', { nullable: true }),
       tx('exitFix', 'Fix de salida'),
       nm('totalDistNm', 'Distancia total (NM)', { nullable: true }),
-      nm('sourceTotalTimeMin', 'Tiempo de la planilla (min)', { nullable: true }),
-      sa('entryAirways', 'Aerovías de entrada', { nullable: true }),
-      tx('_review', 'Aviso de revisión', { nullable: true }),
+      nm('sourceTotalTimeMin', 'Tiempo de la planilla (min)', { nullable: true, optional: true }),
+      sa('entryAirways', 'Aerovías de entrada', { nullable: true, optional: true }),
+      tx('_review', 'Aviso de revisión', { nullable: true, optional: true }),
       {
         key: 'legs',
         label: 'Tramos',
@@ -158,13 +194,13 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
           nm('distToEndNm', 'Dist. restante (NM)', { nullable: true }),
           nm('legDistNm', 'Dist. del tramo (NM)', { nullable: true }),
           nm('distFromOriginNm', 'Dist. desde origen (NM)', { nullable: true }),
-          nm('sourceTimeMin', 'Tiempo planilla (min)', { nullable: true }),
-          nm('sourceGsKt', 'GS planilla (kt)', { nullable: true }),
-          nm('minAltFt', 'Alt. mín (ft)', { nullable: true }),
-          nm('maxAltFt', 'Alt. máx (ft)', { nullable: true }),
-          nm('maxSpeedKt', 'Vel. máx (kt)', { nullable: true }),
-          tx('atcRestriction', 'Restricción ATC', { nullable: true }),
-          tx('navaid', 'Navaid', { nullable: true }),
+          nm('sourceTimeMin', 'Tiempo planilla (min)', { nullable: true, optional: true }),
+          nm('sourceGsKt', 'GS planilla (kt)', { nullable: true, optional: true }),
+          nm('minAltFt', 'Alt. mín (ft)', { nullable: true, optional: true }),
+          nm('maxAltFt', 'Alt. máx (ft)', { nullable: true, optional: true }),
+          nm('maxSpeedKt', 'Vel. máx (kt)', { nullable: true, optional: true }),
+          tx('atcRestriction', 'Restricción ATC', { nullable: true, optional: true }),
+          tx('navaid', 'Navaid', { nullable: true, optional: true }),
         ],
       },
     ],
@@ -177,7 +213,7 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
       tx('ident', 'Ident'),
       sel('levels', 'Niveles', ['upper', 'lower', 'both']),
       sa('fixes', 'Fixes en orden', { nullable: true }),
-      { key: 'segments', label: 'Segmentos (una línea por tramo, fixes separados por coma)', type: 'segments', nullable: true },
+      { key: 'segments', label: 'Segmentos (una línea por tramo, fixes separados por coma)', type: 'segments', nullable: true, optional: true },
     ],
   },
   {
@@ -307,7 +343,7 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
       tx('id', 'ID'),
       tx('name', 'Nombre'),
       sa('frequencies', 'Frecuencias', { numericArray: true }),
-      tx('_review', 'Aviso de revisión', { nullable: true }),
+      tx('_review', 'Aviso de revisión', { nullable: true, optional: true }),
     ],
   },
   {
@@ -327,8 +363,8 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
       tx('transitionLevel', 'Nivel de transición (informativo)'),
       sa('configurations', 'Configuraciones'),
       { key: 'runwaysByConfiguration', label: 'Pistas por configuración (una línea "CONFIG: pista, pista")', type: 'stringArrayMap' },
-      tx('_review', 'Aviso de revisión', { nullable: true }),
-      tx('_reviewTransitionLevel', 'Aviso sobre el nivel de transición', { nullable: true }),
+      tx('_review', 'Aviso de revisión', { nullable: true, optional: true }),
+      tx('_reviewTransitionLevel', 'Aviso sobre el nivel de transición', { nullable: true, optional: true }),
     ],
   },
   {
