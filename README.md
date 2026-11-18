@@ -217,4 +217,5 @@ Los assets se construyen con rutas relativas, así que el sitio funciona igual b
 - **Solo configuración SUR / pista 17L**, que es de lo único que hay procedimientos con detalle.
 
 Detalle de lo que falta o hay que confirmar con ATC en
-[`docs/MODELO_DATOS.md`](docs/MODELO_DATOS.md) §6.
+[`docs/MODELO_DATOS.md`](docs/MODELO_DATOS.md) §6. Las mejoras planificadas están en
+[`docs/BACKLOG.md`](docs/BACKLOG.md).
