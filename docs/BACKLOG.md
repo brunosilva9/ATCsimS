@@ -121,10 +121,15 @@ o la integridad de la base.
 | Registro | Problema | Efecto |
 |---|---|---|
 | ASIMO7D, fix VULBI | Alt. mín 170 y Alt. máx 210; el valor esperado es 21000 / 24000 ft | El perfil se recorta a 210 ft |
-| Fixes DEP y TEGEB2 | Sin tipo ni alcance | El fix no cuenta como parte del TMA |
-| DONTI5B, fix DONTI | Sin número de secuencia | Orden del tramo indefinido |
+| Fixes DEP y TEGEB2 | Latitud positiva (33,40 y 33,20); en el hemisferio sur debe ser negativa | Ubicados en el hemisferio norte: un directo hacia ellos da una distancia errónea, y en el mapa (N-05) aparecerían fuera de Chile |
+| Fix DEP | Elevación 1,551 ft; probable error de unidades | Dato de elevación inválido |
+| Fixes DEP, TEGEB2 y D43AMB | Sin tipo ni alcance | El fix no cuenta como parte del TMA |
+| Fix VANIL | Sin tipo | Clasificación incompleta |
+| DONTI5B, fix DONTI, y EROLO6E, fix TEGEB | Sin número de secuencia | Orden del tramo indefinido |
 
-**Criterios de aceptación.** Los tres registros corregidos y verificados en Navegación.
+**Criterios de aceptación.** Todos los registros de la tabla corregidos y verificados en Navegación,
+y una nueva auditoría (skill `firestore-auditoria`) sin campos obligatorios vacíos en `fixes` ni en
+`procedures`.
 
 ### N-04 · Consistencia de los datos editados desde /admin
 
