@@ -95,16 +95,14 @@ export function AdminCollectionList({ schema }: { readonly schema: CollectionSch
             onChange={(e) => setQuery(e.target.value)}
           />
         </label>
-        {schema.trackModified ? (
-          <label className={styles.search} htmlFor="admin-sort">
-            <span className={styles.searchLabel}>Ordenar</span>
-            <select id="admin-sort" value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
-              <option value="default">Como están</option>
-              <option value="recent">Modificado más reciente</option>
-              <option value="oldest">Modificado más antiguo</option>
-            </select>
-          </label>
-        ) : null}
+        <label className={styles.search} htmlFor="admin-sort">
+          <span className={styles.searchLabel}>Ordenar</span>
+          <select id="admin-sort" value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
+            <option value="default">Como están</option>
+            <option value="recent">Modificado más reciente</option>
+            <option value="oldest">Modificado más antiguo</option>
+          </select>
+        </label>
         {canCreate ? (
           <button type="button" className={styles.primary} onClick={() => setEditing({ kind: 'new' })}>
             Nuevo
@@ -126,9 +124,7 @@ export function AdminCollectionList({ schema }: { readonly schema: CollectionSch
                 <tr key={id}>
                   <td className={styles.ident}>{id}</td>
                   <td className={styles.summary}>{summaryOf(schema, record)}</td>
-                  {schema.trackModified ? (
-                    <td className={styles.summary}>{formatUpdatedAt(record.updatedAt)}</td>
-                  ) : null}
+                  <td className={styles.summary}>{formatUpdatedAt(record.updatedAt)}</td>
                   <td className={styles.actionCell}>
                     <button
                       type="button"

@@ -13,6 +13,10 @@
  *      Reproduce la planilla exactamente, que es el criterio de aceptacion del proyecto.
  *   2. Si no, se lee la GS del nivel al que empieza el tramo.
  *
+ * Las dos describen un jet. Si la aeronave tiene tope (`speedCapKt`: la menor entre su TAS de
+ * plan y la maxima de su tipo, ver performance.ts) y la GS del perfil lo supera, se usa el tope.
+ * Solo recorta: un jet sigue reproduciendo la planilla exacta.
+ *
  * -------------------------------------------------------------------------------------------
  * El perfil vertical
  *
@@ -52,7 +56,7 @@ import type {
   ProcedureLeg,
   UtcMinutes,
 } from './types.js';
-import { groundSpeedAt, verticalRateAt } from './performance.js';
+import { capGroundSpeed, groundSpeedAt, verticalRateAt } from './performance.js';
 import { minutesFor, normalize } from './time.js';
 
 export interface ComputeOptions {
@@ -67,6 +71,11 @@ export interface ComputeOptions {
   readonly holdings?: readonly HoldingPattern[];
   /** Nivel sobre el fix final. Si no se indica, se usa el MCL de ese fix. */
   readonly finalLevelFt?: number;
+  /**
+   * Tope de GS de la aeronave (ver `aircraftSpeedCap`). La GS de cada tramo es la del perfil,
+   * recortada a este valor si lo supera. Sin tope, la GS es la del perfil.
+   */
+  readonly speedCapKt?: number;
 }
 
 export interface FlightPlan {
@@ -229,7 +238,7 @@ function arrivalProfile(
 }
 
 export function computeFlightPlan(options: ComputeOptions): ComputeResult {
-  const { procedure, entryTime, cruiseLevelFt, performance } = options;
+  const { procedure, entryTime, cruiseLevelFt, performance, speedCapKt } = options;
   const legs = procedure.legs;
 
   if (legs.length === 0) {
@@ -282,7 +291,11 @@ export function computeFlightPlan(options: ComputeOptions): ComputeResult {
     let levelFt = clamp(startFt, bounds[0]!);
     for (let i = 0; i < legs.length; i++) {
       if (i > 0) {
-        const gsKt = legs[i]!.sourceGsKt ?? groundSpeedAt(performance, levelFt);
+        // Con el tope aplicado: un avion lento tarda mas en el tramo y sube mas en el.
+        const gsKt = capGroundSpeed(
+          legs[i]!.sourceGsKt ?? groundSpeedAt(performance, levelFt),
+          speedCapKt
+        );
         const minutes = minutesFor(legs[i]!.legDistNm ?? 0, gsKt);
         levelFt = Math.min(cruiseLevelFt, levelFt + verticalRateAt(performance, levelFt) * minutes);
       }
@@ -304,7 +317,8 @@ export function computeFlightPlan(options: ComputeOptions): ComputeResult {
     // La GS de un tramo es la del nivel al que se empieza a volarlo, no la del nivel al que
     // se termina: es lo que hace la planilla y lo que reproducen los tests.
     const levelAtStartFt = i === 0 ? levels[0]! : levels[i - 1]!;
-    const gsKt = leg.sourceGsKt ?? groundSpeedAt(performance, levelAtStartFt);
+    const profileGsKt = leg.sourceGsKt ?? groundSpeedAt(performance, levelAtStartFt);
+    const gsKt = capGroundSpeed(profileGsKt, speedCapKt);
     const legMinutes = legDistNm > 0 ? minutesFor(legDistNm, gsKt) : 0;
     time += legMinutes;
 
@@ -322,6 +336,7 @@ export function computeFlightPlan(options: ComputeOptions): ComputeResult {
       delayMin: 0,
       assignedSpeedKt: null,
       restriction: restrictionLabel(bounds[i]!),
+      speedCapped: gsKt < profileGsKt,
     });
   }
 

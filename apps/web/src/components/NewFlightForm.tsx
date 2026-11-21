@@ -56,7 +56,9 @@ export function NewFlightForm({ onAdd, onClose }: NewFlightFormProps) {
   const pickType = (icao: string) => {
     setIcaoType(icao);
     const type = aircraftTypes.find((t) => t.icao === icao);
-    if (type) setTasKt(String(type.maxSpeedKt ?? type.minSpeedKt));
+    // Un tipo a medio cargar (sin velocidades) no propone TAS: se deja la que habia.
+    const speed = type?.maxSpeedKt ?? type?.minSpeedKt ?? null;
+    if (speed !== null) setTasKt(String(speed));
   };
 
   const handleSubmit = async (e: FormEvent) => {

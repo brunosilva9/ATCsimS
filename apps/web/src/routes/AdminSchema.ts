@@ -56,9 +56,13 @@ export interface CollectionSchema {
   readonly label: string;
   readonly docId: DocIdSpec;
   readonly fields: readonly FieldSchema[];
-  /** Si guarda `updatedAt` (epoch ms) solo en cada edicion, para mostrarlo y poder ordenar por el. */
-  readonly trackModified?: boolean;
 }
+
+/*
+ * Toda coleccion guarda `updatedAt` (epoch ms) en cada guardado desde /admin, y la lista lo
+ * muestra y permite ordenar por el. No es opcional por coleccion: es la unica forma de saber
+ * que revisó alguien (por ejemplo, el ATC al validar velocidades) sin preguntarle.
+ */
 
 /** Igual que tools/upload-firestore.js: para radars, que no trae una clave corta propia. */
 export function slugify(text: string): string {
@@ -70,7 +74,7 @@ export function slugify(text: string): string {
     .replace(/(^-+|-+$)/g, '');
 }
 
-/** Epoch ms (guardado por trackModified) a texto legible, en hora de Chile. */
+/** Epoch ms (`updatedAt`, sellado en cada guardado) a texto legible, en hora de Chile. */
 export function formatUpdatedAt(value: unknown): string {
   if (typeof value !== 'number') return '—';
   return new Date(value).toLocaleString('es-CL', {
@@ -294,8 +298,8 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
     fields: [
       tx('icao', 'OACI'),
       tx('name', 'Nombre'),
-      nm('minSpeedKt', 'Vel. mín (kt)'),
-      nm('maxSpeedKt', 'Vel. máx (kt)'),
+      nm('minSpeedKt', 'Vel. mín (kt)', { nullable: true }),
+      nm('maxSpeedKt', 'Vel. máx (kt)', { nullable: true }),
       tx('wake', 'Estela', { nullable: true }),
       nm('vappKt', 'Vapp (kt)', { nullable: true }),
     ],
@@ -316,7 +320,6 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
     collection: 'sampleFlights',
     label: 'Vuelos de ejemplo',
     docId: { kind: 'field', field: 'callsign' },
-    trackModified: true,
     fields: [
       tx('callsign', 'Indicativo'),
       tx('operator', 'Operador'),

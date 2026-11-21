@@ -119,8 +119,12 @@ export interface SeparationMinimum {
 export interface AircraftType {
   readonly icao: string;
   readonly name: string;
-  readonly minSpeedKt: number;
-  readonly maxSpeedKt: number;
+  /**
+   * null = el tipo existe pero sus velocidades aun no se cargaron. Un tipo sin las dos no se usa
+   * en el calculo (ver `speedRangeOf`): se comporta como un tipo desconocido.
+   */
+  readonly minSpeedKt: number | null;
+  readonly maxSpeedKt: number | null;
   readonly wake: string | null;
   readonly vappKt: number | null;
 }
@@ -188,6 +192,20 @@ export interface FlightLeg {
   readonly delayMin: number;
   readonly assignedSpeedKt: number | null;
   readonly restriction: string | null;
+  /**
+   * La GS del perfil superaba el tope de la aeronave y se uso el tope (ver `Flight.speedCap`).
+   * Ausente en los ejercicios calculados antes de que existiera el tope.
+   */
+  readonly speedCapped?: boolean;
+}
+
+/**
+ * Velocidad maxima a la que puede volar un vuelo: la menor entre la TAS de su plan de vuelo y
+ * la velocidad maxima de su tipo. `source` dice cual de las dos fue.
+ */
+export interface SpeedCap {
+  readonly kt: number;
+  readonly source: 'tas' | 'type';
 }
 
 export interface Flight {
@@ -208,6 +226,11 @@ export interface Flight {
   readonly entryTime: UtcMinutes;
   readonly transferFix: string | null;
   readonly legs: readonly FlightLeg[];
+  /**
+   * Tope de GS de este vuelo. Ausente = no hay TAS ni velocidad maxima del tipo, o el ejercicio
+   * se calculo antes de que existiera el tope: en los dos casos la GS es la del perfil.
+   */
+  readonly speedCap?: SpeedCap;
 }
 
 export interface Scenario {

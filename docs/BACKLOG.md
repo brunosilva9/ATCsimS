@@ -23,6 +23,132 @@ Cada ítem está en uno de dos niveles:
 
 ## Next
 
+### N-06 · Tope de velocidad sobre el suelo según la aeronave
+
+**Contexto.** La GS de cada tramo sale de la GS de la planilla del procedimiento o de la tabla de
+performance por nivel, y ninguna de las dos depende de la aeronave (RN-4.2). Un DHC6 con TAS de
+180 kt en VENTANAS1D recorre VTN→TENUT (16,2 NM) a 360 kt, en 2,7 min en lugar de 5,4. La
+colección `aircraftTypes` ya tiene velocidad mínima y máxima para los 33 tipos cargados en
+Firestore, y cada vuelo del ejercicio tiene su TAS de plan de vuelo; ninguno de los dos datos
+interviene hoy en el cálculo.
+
+**Alcance.**
+
+1. Motor (`eto.ts`, `instructions.ts` y `generator.ts`): la GS de cada tramo pasa a ser la menor
+   entre la GS del perfil (planilla o tabla) y el tope de la aeronave. Si no hay ningún dato para
+   el tope, no se aplica y se declara el supuesto. La velocidad asignada por instrucción conserva
+   la precedencia actual.
+2. Una instrucción de velocidad fuera del rango mínimo–máximo del tipo se rechaza con un mensaje
+   que indique el rango.
+3. La strip indica cuándo se aplicó el tope (por ejemplo, «÷ 180 kt (tope: TAS del plan)»).
+4. El editor de ejercicios advierte cuando la TAS de un vuelo queda fuera del rango de su tipo o
+   cuando el tipo no tiene fila en `aircraftTypes`.
+5. Resolver los 17 códigos de tipo usados en Vuelos de ejemplo que no tienen fila en
+   `aircraftTypes` (algunos parecen errores de escritura: `A20n`, `B39M`, `DHC8`).
+6. Actualizar RN-4.2 en `docs/REQUISITOS.md`.
+7. Pruebas: el DHC6 en VENTANAS1D y la invariancia de los vuelos de jet.
+
+**Criterios de aceptación.**
+
+- Ningún tramo de un vuelo supera su tope; el DHC6 del ejemplo vuela VTN→TENUT a 180 kt.
+- Las horas de paso de los vuelos de jet no cambian: las pruebas actuales del motor pasan sin
+  modificar sus valores esperados.
+- La instrucción de velocidad fuera de rango se rechaza.
+- El ATC revisó en `/admin` › Tipos de aeronave las velocidades de los 33 tipos existentes y
+  completó las de los 13 creados vacíos. Se verifica con la fecha de modificación de cada fila.
+
+**Decisiones tomadas.**
+
+- El tope es la menor entre la TAS del plan y la velocidad máxima del tipo: ninguna de las dos se
+  puede superar, y el editor advierte cuando no coinciden.
+- Un tipo sin sus dos velocidades, o con un rango incoherente, no se usa en el cálculo hasta que
+  se complete: se trata como desconocido.
+- De los 17 códigos sin fila, los 13 que son designadores OACI válidos se crearon en
+  `aircraftTypes` con nombre y sin velocidades, para que el ATC los complete: B39M, B763, B772,
+  B77L, B77W, B748, C340, C525, F900, GLEX, L410, LJ60 y RJ85.
+- Toda escritura en `/admin` sella `updatedAt`, en todas las colecciones.
+
+**Decisiones pendientes.**
+
+- Código correcto de los 4 que no son designadores OACI, para corregirlos en Vuelos de ejemplo:
+  `A20n` (JAT151, probablemente A20N), `B777` (UAE606, UAL990: B772 o B77W), `DHC8` (DAP560,
+  DAP561: DH8A, DH8B, DH8C o DH8D) y `B707` (ROCA: B701 o B703).
+
+**Avance.** Implementados los puntos 1, 2, 3, 4, 6 y 7, y el punto 5 salvo los 4 códigos de la
+decisión pendiente. Falta la revisión del ATC.
+
+### N-07 (M-04) · Performance por categoría de aeronave
+
+**Contexto.** Hay una sola tabla de performance (25 niveles en Firestore), que describe un jet.
+N-06 limita la GS de las aeronaves lentas, pero el perfil vertical sigue siendo el del jet: una
+SID asciende con el régimen de la tabla, sea un B738 o un C172.
+
+**Alcance.**
+
+1. Categoría por tipo de aeronave: jet, turbohélice o pistón.
+2. Tablas reducidas de GS y régimen vertical por categoría. La de jet es la tabla actual; las
+   nuevas usan pocos niveles, porque el motor toma el nivel tabulado más cercano por debajo:
+   - turbohélice: FL250, FL200, FL150, FL120, 10000, 8000 y 6000 ft;
+   - pistón: FL120, 10000, 8000 y 6000 ft.
+3. Los techos de descenso por fix (columna «Fixes donde se exige») siguen en la tabla común: son
+   del procedimiento, no de la aeronave.
+4. Motor: GS y régimen vertical según la categoría del vuelo. Sin categoría, se usa la tabla de jet
+   y se declara el supuesto.
+5. Edición desde `/admin`, siguiendo la skill `nueva-coleccion`.
+6. Pruebas por categoría.
+
+**Validación del ATC.** 55 valores: la categoría de los 33 tipos, 14 de turbohélice (7 niveles ×
+GS y régimen) y 8 de pistón (4 niveles × GS y régimen). En la misma revisión:
+
+- Si la columna ft/min de la tabla actual es de ascenso o de descenso. El motor la usa para el
+  ascenso de las SID; si es de descenso, falta el ascenso del jet (7 valores en los niveles de
+  referencia).
+- Las diferencias entre GS y NM/min de un mismo nivel (FL110: 250 kt frente a 4,5 NM/min, que
+  equivalen a 270 kt), para conservar un solo dato.
+
+**Criterios de aceptación.**
+
+- Una SID de un turbohélice o un pistón asciende con el régimen de su categoría.
+- Los vuelos de jet no cambian.
+- Los 55 valores validados por el ATC están cargados.
+
+**Decisiones pendientes.**
+
+- Modelo de datos: colección nueva de performance por categoría o campo de categoría en la
+  colección `performance`.
+- Niveles de referencia definitivos de cada categoría.
+
+**Depende de.** N-06.
+
+### N-08 · Definición de cada colección en /admin
+
+**Contexto.** `/admin` muestra 18 pestañas identificadas solo por su nombre. No explica qué contiene
+cada colección, qué cálculo la usa ni cómo se relaciona con las demás; por ejemplo, la diferencia
+entre Vuelos de ejemplo y Rutas de vuelo no es evidente desde la pantalla. Los ítems N-02 y N-05
+agregarán colecciones nuevas, y N-07 puede agregar una.
+
+**Alcance.**
+
+1. Agregar a cada esquema de `AdminSchema.ts` una definición con: qué contiene, para qué se usa (qué
+   cálculo afecta, o si solo identifica al vuelo), su relación con otras colecciones y el efecto de
+   editarla.
+2. Mostrar la definición en `/admin`, sobre el listado de la pestaña seleccionada.
+3. Redactar las definiciones de todas las colecciones existentes al momento de implementarlo,
+   incluida la de N-07 si ya existe.
+4. Una prueba que falla si algún esquema no tiene definición, para que toda colección futura la
+   incluya.
+5. Agregar el paso a la skill `nueva-coleccion`.
+
+**Criterios de aceptación.**
+
+- Todas las pestañas muestran su definición.
+- La prueba impide agregar una colección sin definición.
+- La skill `nueva-coleccion` incluye el paso.
+
+**Decisiones pendientes.**
+
+- Si se extiende a una ayuda por campo dentro del formulario de edición.
+
 ### N-01 · Firestore como única fuente de la base de navegación
 
 **Contexto.** La base se construyó importando las planillas Excel de la dependencia
@@ -181,11 +307,6 @@ tiene procedimientos con detalle, y la mayoría de los escenarios previstos son 
 
 Hoy la GS es la velocidad de la tabla de performance. Modelar viento por nivel permitiría
 ejercicios más realistas, a costa de más datos por ejercicio.
-
-### M-04 · Performance por tipo de aeronave
-
-La velocidad depende solo del nivel; el tipo y la TAS del vuelo no cambian ninguna hora. Una tabla
-por categoría de aeronave diferenciaría, por ejemplo, un turbohélice de un reactor.
 
 ### M-05 · Velocidad máxima publicada por fix
 

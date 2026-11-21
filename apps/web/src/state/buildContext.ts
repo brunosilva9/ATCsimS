@@ -14,5 +14,14 @@ export function useBuildContext(): BuildContext {
   const holdings = useNavdataStore((s) => s.holdings);
   const performance = useNavdataStore((s) => s.performance);
   const findProcedure = useNavdataStore((s) => s.findProcedure);
-  return useMemo(() => ({ findProcedure, holdings, performance }), [findProcedure, holdings, performance]);
+  const aircraftTypes = useNavdataStore((s) => s.aircraftTypes);
+  return useMemo(() => {
+    const byIcao = new Map(aircraftTypes.map((t) => [t.icao, t]));
+    return {
+      findProcedure,
+      holdings,
+      performance,
+      findAircraftType: (icao: string) => byIcao.get(icao),
+    };
+  }, [findProcedure, holdings, performance, aircraftTypes]);
 }

@@ -7,8 +7,9 @@
  * ejercicios guardados se recalculan solos en vez de quedarse con los numeros viejos.
  */
 
-import { computeFlightPlan, toFeet } from '@atcsims/core';
+import { aircraftSpeedCap, computeFlightPlan, toFeet } from '@atcsims/core';
 import type {
+  AircraftType,
   Configuration,
   Flight,
   FlightKind,
@@ -30,6 +31,11 @@ export interface BuildContext {
   readonly findProcedure: (ident: string) => Procedure | undefined;
   readonly holdings: readonly HoldingPattern[];
   readonly performance: PerformanceTable;
+  /**
+   * Para el tope de velocidad de cada vuelo (N-06). Sin esto, el tope sale solo de la TAS del
+   * vuelo.
+   */
+  readonly findAircraftType?: (icao: string) => AircraftType | undefined;
 }
 
 export interface FlightDraft {
@@ -124,12 +130,14 @@ export function buildFlight(draft: FlightDraft, ctx: BuildContext): BuiltFlight 
   }
 
   const cruiseLevelFt = toFeet(draft.levelFl);
+  const speedCap = aircraftSpeedCap(draft.tasKt, ctx.findAircraftType?.(draft.icaoType));
   const result = computeFlightPlan({
     procedure,
     entryTime: draft.entryTime,
     cruiseLevelFt,
     performance: ctx.performance,
     holdings: ctx.holdings,
+    ...(speedCap !== undefined ? { speedCapKt: speedCap.kt } : {}),
   });
 
   if (!result.ok) {
@@ -159,8 +167,18 @@ export function buildFlight(draft: FlightDraft, ctx: BuildContext): BuiltFlight 
       entryTime: draft.entryTime,
       transferFix: legs[legs.length - 1]?.fix ?? null,
       legs,
+      ...(speedCap !== undefined ? { speedCap } : {}),
     },
-    assumptions: result.assumptions,
+    // Sin TAS ni tipo conocido el vuelo usa el perfil de jet. No se calla: es justo el caso en
+    // que un avion lento quedaria volando mas rapido de lo que puede.
+    assumptions:
+      speedCap === undefined
+        ? [
+            ...result.assumptions,
+            `${draft.callsign} no tiene TAS ni velocidad máxima de su tipo (${draft.icaoType}): ` +
+              `la velocidad no se limita por la aeronave.`,
+          ]
+        : result.assumptions,
   };
 }
 

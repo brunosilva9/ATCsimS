@@ -130,6 +130,11 @@ Los seis del documento original, con su alcance concretado:
   (`PERFORMANCES`), tramo a tramo, según el nivel al que la aeronave recorre ese tramo.
   Ejemplo real (ANDES1, de la planilla): tramo de 33 NM a 6 NM/min = 5.5 min; el siguiente,
   8 NM a 4.67 NM/min = 1.71 min; y así hasta un total de 12.29 min.
+  Esa velocidad describe un jet, y por eso **se limita al tope de la aeronave**: la menor entre
+  la TAS del plan de vuelo y la velocidad máxima de su tipo. El tope solo reduce la velocidad,
+  nunca la aumenta: un jet sigue volando el perfil publicado. Ejemplo: un DHC6 con TAS de
+  180 kt recorre en VENTANAS1D el tramo VTN→TENUT (16 NM) a 180 kt, no a los 360 kt de la
+  planilla. (N-06)
 - **RN-4.3** Si no hay dato de viento, GS = valor de la tabla. Con viento (RF-1.5),
   `GS = tabla ± componente`.
 - **RF-4.6 [D]** Debe redondear las horas al minuto, que es la resolución de las fichas.

@@ -12,7 +12,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { detectConflicts, formatHhmm, parseHhmm, transitionLevelFor } from '@atcsims/core';
+import {
+  detectConflicts,
+  formatHhmm,
+  parseHhmm,
+  speedRangeOf,
+  transitionLevelFor,
+} from '@atcsims/core';
 import type { GeneratorRequest } from '@atcsims/core';
 
 import { ConflictList } from '../components/ConflictList.js';
@@ -379,6 +385,64 @@ export function ScenarioEditor() {
     const seen = new Set<string>();
     return draft.flights.filter((f) => (seen.has(f.ssr) ? true : (seen.add(f.ssr), false)));
   }, [draft.flights]);
+
+  /**
+   * Vuelos cuya TAS no cuadra con su tipo (N-06). El motor vuela cada avion como maximo a la
+   * menor de las dos, asi que el calculo no se rompe; pero la strip y la base dicen cosas
+   * distintas, y el instructor tiene que saber cual se uso.
+   */
+  const speedIssues = useMemo(() => {
+    const byIcao = new Map(aircraftTypes.map((t) => [t.icao, t]));
+    return draft.flights.flatMap((f) => {
+      const type = byIcao.get(f.icaoType);
+      const hasTas = typeof f.tasKt === 'number' && f.tasKt > 0;
+      if (!type) {
+        return [
+          {
+            id: f.id,
+            callsign: f.callsign,
+            text: hasTas
+              ? `el tipo ${f.icaoType} no está en Tipos de aeronave: la velocidad solo se limita por su TAS.`
+              : `el tipo ${f.icaoType} no está en Tipos de aeronave y no tiene TAS: vuela el perfil de un jet.`,
+          },
+        ];
+      }
+      const range = speedRangeOf(type);
+      if (!range) {
+        return [
+          {
+            id: f.id,
+            callsign: f.callsign,
+            text: hasTas
+              ? `el tipo ${type.icao} no tiene sus velocidades completas en Tipos de aeronave: la velocidad solo se limita por su TAS.`
+              : `el tipo ${type.icao} no tiene sus velocidades completas en Tipos de aeronave y el vuelo no tiene TAS: vuela el perfil de un jet.`,
+          },
+        ];
+      }
+      if (!hasTas) {
+        return [
+          {
+            id: f.id,
+            callsign: f.callsign,
+            text: `sin TAS: se limita a la máxima del ${type.icao} (${range.maxKt} kt).`,
+          },
+        ];
+      }
+      if (f.tasKt < range.minKt || f.tasKt > range.maxKt) {
+        return [
+          {
+            id: f.id,
+            callsign: f.callsign,
+            text:
+              `TAS de ${f.tasKt} kt fuera del rango del ${type.icao} ` +
+              `(${range.minKt}–${range.maxKt} kt).` +
+              (f.tasKt > range.maxKt ? ` Se limita a ${range.maxKt} kt.` : ''),
+          },
+        ];
+      }
+      return [];
+    });
+  }, [draft.flights, aircraftTypes]);
 
   if (loading || loadError !== null) {
     return (
@@ -932,6 +996,20 @@ export function ScenarioEditor() {
             <strong>Códigos SSR repetidos.</strong> {duplicateSsr.map((f) => f.callsign).join(', ')}{' '}
             comparten código con otro vuelo. En el aire, dos aeronaves con el mismo código no
             se distinguen en pantalla.
+          </div>
+        ) : null}
+
+        {speedIssues.length > 0 ? (
+          <div className={shared.notice} role="status">
+            <strong>Velocidades a revisar.</strong> Cada vuelo vuela como máximo a la menor entre
+            su TAS y la velocidad máxima de su tipo.
+            <ul>
+              {speedIssues.map((issue) => (
+                <li key={issue.id}>
+                  <code>{issue.callsign}</code>: {issue.text}
+                </li>
+              ))}
+            </ul>
           </div>
         ) : null}
 

@@ -28,6 +28,7 @@ import shared from './shared.module.css';
 import styles from './Runs.module.css';
 
 export function Runs() {
+  const aircraftTypes = useNavdataStore((s) => s.aircraftTypes);
   const approachFixes = useNavdataStore((s) => s.approachFixes);
   const coordinates = useNavdataStore((s) => s.coordinates);
   const performance = useNavdataStore((s) => s.performance);
@@ -74,6 +75,7 @@ export function Runs() {
     const applied = applyInstructions(payload.scenario, payload.instructions, {
       performance,
       coordinates,
+      aircraftTypes,
     });
 
     if (!applied.ok) {
@@ -88,7 +90,7 @@ export function Runs() {
     );
 
     return { before, after, solved, introduced, scenario: applied.scenario } as const;
-  }, [payload, separation, approachFixes, tmaFixes, performance, coordinates]);
+  }, [payload, separation, approachFixes, tmaFixes, performance, coordinates, aircraftTypes]);
 
   const openFile = async (file: File) => {
     const parsed = parsePayload(await file.text());

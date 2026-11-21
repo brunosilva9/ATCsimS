@@ -42,6 +42,7 @@
  */
 
 import type {
+  AircraftType,
   ConflictKind,
   ConflictReport,
   Flight,
@@ -55,7 +56,7 @@ import type {
 import { computeFlightPlan } from './eto.js';
 import { detectConflicts, encounters } from './conflicts.js';
 import type { DetectOptions, Encounter } from './conflicts.js';
-import { toFeet } from './performance.js';
+import { aircraftSpeedCap, toFeet } from './performance.js';
 import { transitionLevelFor } from './transitionLevel.js';
 import { regionForIcao, starRegions } from './originRegions.js';
 
@@ -96,6 +97,12 @@ export interface GeneratorCatalogue {
   readonly ssrCodes: readonly string[];
   readonly performance: PerformanceTable;
   readonly holdings: readonly HoldingPattern[];
+  /**
+   * Para el tope de velocidad de cada vuelo (N-06). Sin ellos, el tope sale solo de la TAS del
+   * catalogo. Tiene que ser el mismo criterio que usa el editor al calcular el ejercicio: si no,
+   * los encuentros que el generador cuenta no son los que el instructor ve.
+   */
+  readonly aircraftTypes?: readonly AircraftType[];
 }
 
 // ------------------------------------------------------------------ salidas
@@ -332,12 +339,17 @@ function computeCandidate(
     if (!procedure) return null;
 
     const cruiseLevelFt = toFeet(g.levelFl);
+    const speedCap = aircraftSpeedCap(
+      g.tasKt,
+      catalogue.aircraftTypes?.find((t) => t.icao === g.icaoType)
+    );
     const plan = computeFlightPlan({
       procedure,
       entryTime: g.entryTime,
       cruiseLevelFt,
       performance: catalogue.performance,
       holdings: catalogue.holdings,
+      ...(speedCap !== undefined ? { speedCapKt: speedCap.kt } : {}),
     });
     // Un candidato con un vuelo incalculable se descarta entero: no se entrega un ejercicio al
     // que le falta un avion sin decirlo.
@@ -363,6 +375,7 @@ function computeCandidate(
       entryTime: g.entryTime,
       transferFix: legs[legs.length - 1]?.fix ?? null,
       legs,
+      ...(speedCap !== undefined ? { speedCap } : {}),
     });
   }
 

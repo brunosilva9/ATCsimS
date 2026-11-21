@@ -37,6 +37,7 @@ function evaluate(base: Scenario, instructions: readonly Instruction[]) {
   const applied = applyInstructions(base, instructions, {
     performance: navdata.performance,
     coordinates: navdata.coordinates,
+    aircraftTypes: navdata.aircraftTypes,
   });
   if (!applied.ok) return { error: applied.message };
 

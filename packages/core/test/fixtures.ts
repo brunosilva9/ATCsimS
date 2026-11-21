@@ -27,7 +27,7 @@ export const performance = performanceDoc.performance as unknown as PerformanceT
 export const holdings = holdingsDoc.holdings as unknown as HoldingPattern[];
 export const separation = separationDoc.separation as unknown as SeparationMinimum[];
 
-const procedures = proceduresDoc.procedures as unknown as Procedure[];
+export const procedures = proceduresDoc.procedures as unknown as Procedure[];
 
 export const coordinates: ReadonlyMap<string, Coordinates> = new Map(
   (fixesDoc.fixes as unknown as { ident: string; lat: number | null; lon: number | null }[]).map(

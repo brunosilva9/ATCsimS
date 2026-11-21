@@ -18,7 +18,9 @@ y, al terminar, informar al usuario qué se hizo en cada punto.
 3. **Subida.** Bloque `if (wants('<colección>'))` en `tools/upload-firestore.js` con la función que
    calcula el ID de documento, y actualizar el conteo de colecciones en su comentario y en la ayuda.
 4. **Esquema de /admin.** Entrada en `ADMIN_SCHEMAS` de `apps/web/src/routes/AdminSchema.ts`:
-   `docId` igual al del punto 3, y cada campo con `nullable` u `optional` según el punto 1.
+   `docId` igual al del punto 3, y cada campo con `nullable` u `optional` según el punto 1. El
+   sello `updatedAt` es automático en todas las colecciones: no se declara, pero el código que lee
+   los registros debe tolerar ese campo extra.
 5. **Lectura.** En `apps/web/src/state/navdata.ts`: campo en `NavdataState`, valor vacío en `EMPTY`,
    `fetchCollection` en `loadAll` y el `set` correspondiente.
 6. **Integridad.** Si la colección referencia a otras (fixes, procedimientos), agregar la regla en

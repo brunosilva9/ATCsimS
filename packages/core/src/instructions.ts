@@ -15,6 +15,7 @@
  */
 
 import type {
+  AircraftType,
   Flight,
   FlightLeg,
   Instruction,
@@ -24,13 +25,18 @@ import type {
 } from './types.js';
 import type { Coordinates } from './geo.js';
 import { distanceNm } from './geo.js';
-import { groundSpeedAt } from './performance.js';
+import { capGroundSpeed, groundSpeedAt, speedRangeOf } from './performance.js';
 import { minutesFor, normalize } from './time.js';
 
 export interface ApplyContext {
   readonly performance: PerformanceTable;
   /** Coordenadas por fix. Solo hace falta para el directo. */
   readonly coordinates?: ReadonlyMap<string, Coordinates>;
+  /**
+   * Tipos de aeronave. Solo hace falta para validar una velocidad asignada contra el rango del
+   * tipo; sin ellos, o con un tipo que no esta, la velocidad se acepta sin comprobar.
+   */
+  readonly aircraftTypes?: readonly AircraftType[];
 }
 
 export type ApplyResult =
@@ -82,9 +88,11 @@ function recomputeFrom(
     // ruta larga, que es justo al reves de lo que pasa en el aire.
     const levelAtStartFt = (i === 0 ? leg.levelFt : out[i - 1]!.levelFt) ?? 0;
     // Mismo orden de precedencia que eto.ts: lo que mando el controlador, luego el perfil de
-    // la planilla, y solo si no hay ninguno de los dos, la tabla de performance.
-    const gsKt =
-      leg.assignedSpeedKt ?? leg.sourceGsKt ?? groundSpeedAt(performance, levelAtStartFt);
+    // la planilla, y solo si no hay ninguno de los dos, la tabla de performance. El perfil se
+    // recorta al tope de la aeronave; la velocidad asignada no, porque ya se valido contra el
+    // rango del tipo al darla.
+    const profileGsKt = leg.sourceGsKt ?? groundSpeedAt(performance, levelAtStartFt);
+    const gsKt = leg.assignedSpeedKt ?? capGroundSpeed(profileGsKt, flight.speedCap?.kt);
     const legTimeMin =
       i < fromIndex ? leg.legTimeMin : leg.legDistNm > 0 ? minutesFor(leg.legDistNm, gsKt) : 0;
 
@@ -96,6 +104,7 @@ function recomputeFrom(
       gsKt,
       legTimeMin: Math.round(legTimeMin * 1000) / 1000,
       revisedEto: normalize(time),
+      speedCapped: leg.assignedSpeedKt === null && gsKt < profileGsKt,
     };
   }
 
@@ -157,6 +166,18 @@ export function applyInstruction(
     case 'SPEED_RESTRICTION': {
       if (instruction.speedKt === undefined) {
         return { ok: false, reason: 'NOT_APPLICABLE', message: 'Falta la velocidad asignada.' };
+      }
+      // Una velocidad que el avion no puede volar no se aplica: el recalculo daria horas que
+      // ese avion nunca cumpliria.
+      const range = speedRangeOf(context.aircraftTypes?.find((t) => t.icao === flight.icaoType));
+      if (range && (instruction.speedKt < range.minKt || instruction.speedKt > range.maxKt)) {
+        return {
+          ok: false,
+          reason: 'NOT_APPLICABLE',
+          message:
+            `${flight.callsign} (${flight.icaoType}) vuela entre ${range.minKt} y ` +
+            `${range.maxKt} kt: no puede mantener ${instruction.speedKt} kt.`,
+        };
       }
       const assigned = legs.map((leg, i) =>
         i >= at ? { ...leg, assignedSpeedKt: instruction.speedKt! } : leg

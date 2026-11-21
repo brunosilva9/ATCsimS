@@ -28,8 +28,15 @@ import { Hhmm, LevelBadge } from './StripPrimitives.js';
 import styles from './FlightProgressStrip.module.css';
 
 /** De donde salio la GS de un tramo, en el mismo orden de precedencia que el motor. */
-function gsProvenance(leg: FlightLeg): string {
+function gsProvenance(leg: FlightLeg, flight: Flight): string {
   if (leg.assignedSpeedKt !== null) return 'velocidad asignada';
+  // El tope va antes que el perfil: si se aplico, la GS ya no es la de la planilla ni la de la
+  // tabla, y decirlo asi seria explicar un numero que no es el que se uso.
+  if (leg.speedCapped === true) {
+    return flight.speedCap?.source === 'type'
+      ? `tope: máxima del ${flight.icaoType}`
+      : 'tope: TAS del plan';
+  }
   if (leg.sourceGsKt !== null) return 'GS de planilla';
   return 'GS de la tabla de performance';
 }
@@ -40,10 +47,16 @@ function gsProvenance(leg: FlightLeg): string {
  * quedan pisados con los del recalculo (ver instructions.ts, recomputeFrom), asi que este
  * detalle solo se pide para la hora VIGENTE, nunca para la tachada.
  */
-function fixDetail(leg: FlightLeg, prevFix: string, prevEto: number, eto: number): string {
+function fixDetail(
+  leg: FlightLeg,
+  flight: Flight,
+  prevFix: string,
+  prevEto: number,
+  eto: number
+): string {
   const distPart =
     leg.legDistNm > 0
-      ? `${leg.legDistNm.toFixed(1)} NM ÷ ${leg.gsKt} kt (${gsProvenance(leg)}) = ` +
+      ? `${leg.legDistNm.toFixed(1)} NM ÷ ${leg.gsKt} kt (${gsProvenance(leg, flight)}) = ` +
         `${leg.legTimeMin.toFixed(1)} min`
       : 'sin tramo que recorrer';
   const delayPart = leg.delayMin > 0 ? ` + ${leg.delayMin} min de espera en ${leg.fix}` : '';
@@ -84,11 +97,13 @@ export interface FlightProgressStripProps {
  */
 function FixCell({
   leg,
+  flight,
   prevFix,
   prevEto,
   className,
 }: {
   leg: FlightLeg;
+  flight: Flight;
   prevFix: string;
   prevEto: number;
   className?: string | undefined;
@@ -101,10 +116,16 @@ function FixCell({
         <Hhmm
           time={leg.eto}
           tone={leg.revisedEto === null ? 'pen' : 'struck'}
-          detail={leg.revisedEto === null ? fixDetail(leg, prevFix, prevEto, activeEto) : undefined}
+          detail={
+            leg.revisedEto === null ? fixDetail(leg, flight, prevFix, prevEto, activeEto) : undefined
+          }
         />
         {leg.revisedEto !== null ? (
-          <Hhmm time={leg.revisedEto} tone="pen" detail={fixDetail(leg, prevFix, prevEto, activeEto)} />
+          <Hhmm
+            time={leg.revisedEto}
+            tone="pen"
+            detail={fixDetail(leg, flight, prevFix, prevEto, activeEto)}
+          />
         ) : null}
       </div>
     </div>
@@ -192,6 +213,7 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
       {next ? (
         <FixCell
           leg={next.leg}
+          flight={flight}
           prevFix={next.prev.fix}
           prevEto={next.prev.revisedEto ?? next.prev.eto}
           className={styles.nextTime}
@@ -205,6 +227,7 @@ export function FlightProgressStrip(props: FlightProgressStripProps) {
           <FixCell
             key={leg.seq}
             leg={leg}
+            flight={flight}
             prevFix={prev.fix}
             prevEto={prev.revisedEto ?? prev.eto}
             className={styles.onwardCell}

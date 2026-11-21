@@ -265,7 +265,7 @@ export function AdminRecordForm({ schema, initial, onClose }: AdminRecordFormPro
 
     // Se sella al guardar, no al abrir el formulario: si se cancela la edicion no cuenta como
     // modificacion.
-    const toSave = schema.trackModified ? { ...clean, updatedAt: Date.now() } : clean;
+    const toSave = { ...clean, updatedAt: Date.now() };
 
     setSaving(true);
     try {
@@ -305,7 +305,7 @@ export function AdminRecordForm({ schema, initial, onClose }: AdminRecordFormPro
 
   return (
     <form className={styles.form} onSubmit={(e) => void handleSubmit(e)}>
-      {schema.trackModified && initial !== null ? (
+      {initial !== null ? (
         <p className={shared.note}>Última modificación: {formatUpdatedAt(initial.updatedAt)}</p>
       ) : null}
 

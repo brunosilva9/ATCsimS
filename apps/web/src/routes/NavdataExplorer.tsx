@@ -322,8 +322,8 @@ export function NavdataExplorer() {
                 <tr key={t.icao}>
                   <td className={styles.ident}>{t.icao}</td>
                   <td>{dash(t.name)}</td>
-                  <td className={styles.num}>{t.minSpeedKt} kt</td>
-                  <td className={styles.num}>{t.maxSpeedKt} kt</td>
+                  <td className={styles.num}>{t.minSpeedKt === null ? '—' : `${t.minSpeedKt} kt`}</td>
+                  <td className={styles.num}>{t.maxSpeedKt === null ? '—' : `${t.maxSpeedKt} kt`}</td>
                   <td>{dash(t.wake)}</td>
                 </tr>
               ))}

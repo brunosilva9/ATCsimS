@@ -8,7 +8,7 @@
  * la tabla entra siempre como parametro y nunca se importa aqui dentro.
  */
 
-import type { PerformanceTable, PerformanceLevel } from './types.js';
+import type { AircraftType, PerformanceTable, PerformanceLevel, SpeedCap } from './types.js';
 
 /**
  * El nivel de la tabla que aplica a una altitud dada.
@@ -43,6 +43,51 @@ export function groundSpeedAt(table: PerformanceTable, altitudeFt: number): numb
   if (level.gsKt !== null) return level.gsKt;
   if (level.nmPerMin !== null) return Math.round(level.nmPerMin * 60);
   throw new Error(`El nivel ${level.level} no trae ni gsKt ni nmPerMin.`);
+}
+
+/**
+ * Rango de velocidad de un tipo, solo si esta completo: las dos velocidades cargadas, positivas
+ * y en orden. Un tipo a medio cargar (creado para que el ATC lo complete) devuelve undefined y
+ * el calculo lo trata como desconocido: una velocidad a medias limitaria con un dato que nadie
+ * reviso.
+ */
+export function speedRangeOf(
+  type: AircraftType | undefined
+): { readonly minKt: number; readonly maxKt: number } | undefined {
+  if (type === undefined) return undefined;
+  const { minSpeedKt: min, maxSpeedKt: max } = type;
+  if (typeof min !== 'number' || typeof max !== 'number') return undefined;
+  if (min <= 0 || max <= 0 || min > max) return undefined;
+  return { minKt: min, maxKt: max };
+}
+
+/**
+ * El tope de velocidad de un vuelo (N-06).
+ *
+ * La tabla de performance y la GS de planilla describen un jet: sin tope, un DHC6 con TAS de
+ * 180 kt volaria una STAR a 360 kt. El tope es la menor entre la TAS del plan de vuelo y la
+ * velocidad maxima del tipo, con las que existan: ninguna de las dos se puede superar, y si no
+ * coinciden la strip y la base estan en desacuerdo (el editor lo avisa).
+ *
+ * El tope solo baja la GS, nunca la sube: un jet rapido sigue volando el perfil publicado del
+ * procedimiento, que es lo que se espera de el en una llegada o una salida.
+ *
+ * undefined = no hay ningun dato. Quien llama decide si lo declara como supuesto.
+ */
+export function aircraftSpeedCap(
+  tasKt: number | null | undefined,
+  type: AircraftType | undefined
+): SpeedCap | undefined {
+  const tas = typeof tasKt === 'number' && tasKt > 0 ? tasKt : undefined;
+  const max = speedRangeOf(type)?.maxKt;
+  if (tas === undefined && max === undefined) return undefined;
+  if (max === undefined || (tas !== undefined && tas <= max)) return { kt: tas!, source: 'tas' };
+  return { kt: max, source: 'type' };
+}
+
+/** La GS del perfil, recortada al tope si lo supera. */
+export function capGroundSpeed(profileGsKt: number, capKt: number | undefined): number {
+  return capKt !== undefined && profileGsKt > capKt ? capKt : profileGsKt;
 }
 
 /** Regimen de descenso o ascenso en pies por minuto a una altitud dada. */

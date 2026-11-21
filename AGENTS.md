@@ -60,6 +60,8 @@ pasos que ejecuta el workflow de CI (`.github/workflows/deploy.yml`).
   no se copia y no se muestra su contenido.
 - Leer Firestore para diagnosticar está permitido. **Escribir en Firestore de producción requiere
   confirmación previa**, también para corregir datos.
+- Toda escritura en la base sella `updatedAt` (epoch ms): `/admin` lo hace en cada guardado, en
+  todas las colecciones, y un script que escriba en Firestore debe hacer lo mismo.
 - Un cambio en `firestore.rules` no se aplica solo: hay que indicarle al usuario que lo pegue en
   Consola Firebase › Firestore › Reglas.
 - Una colección nueva toca varios archivos a la vez: tipo de dominio, `AdminSchema.ts`,
