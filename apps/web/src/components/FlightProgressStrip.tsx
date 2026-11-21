@@ -22,7 +22,7 @@
  */
 
 import type { Flight, FlightLeg } from '@atcsims/core';
-import { formatHhmm } from '@atcsims/core';
+import { CATEGORY_LABEL, formatHhmm } from '@atcsims/core';
 
 import { Hhmm, LevelBadge } from './StripPrimitives.js';
 import styles from './FlightProgressStrip.module.css';
@@ -38,6 +38,7 @@ function gsProvenance(leg: FlightLeg, flight: Flight): string {
       : 'tope: TAS del plan';
   }
   if (leg.sourceGsKt !== null) return 'GS de planilla';
+  if (flight.profile !== undefined) return `GS de la tabla de ${CATEGORY_LABEL[flight.profile.category]}`;
   return 'GS de la tabla de performance';
 }
 

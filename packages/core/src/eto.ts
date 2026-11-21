@@ -13,9 +13,14 @@
  *      Reproduce la planilla exactamente, que es el criterio de aceptacion del proyecto.
  *   2. Si no, se lee la GS del nivel al que empieza el tramo.
  *
- * Las dos describen un jet. Si la aeronave tiene tope (`speedCapKt`: la menor entre su TAS de
- * plan y la maxima de su tipo, ver performance.ts) y la GS del perfil lo supera, se usa el tope.
- * Solo recorta: un jet sigue reproduciendo la planilla exacta.
+ * Las dos describen un jet. Un turbohelice o un piston con su tabla completa (`profile`, N-07)
+ * no usa ninguna de las dos: la GS y el regimen de ascenso salen de la tabla de su categoria.
+ * Las restricciones de descenso por fix siguen saliendo de la tabla comun: son del procedimiento,
+ * no de la aeronave.
+ *
+ * Si la aeronave tiene tope (`speedCapKt`: la menor entre su TAS de plan y la maxima de su tipo,
+ * ver performance.ts) y la GS del perfil lo supera, se usa el tope. Solo recorta: un jet sigue
+ * reproduciendo la planilla exacta.
  *
  * -------------------------------------------------------------------------------------------
  * El perfil vertical
@@ -49,6 +54,7 @@
  */
 
 import type {
+  CategoryProfile,
   FlightLeg,
   HoldingPattern,
   PerformanceTable,
@@ -56,7 +62,7 @@ import type {
   ProcedureLeg,
   UtcMinutes,
 } from './types.js';
-import { capGroundSpeed, groundSpeedAt, verticalRateAt } from './performance.js';
+import { capGroundSpeed, groundSpeedAt, profileTable, verticalRateAt } from './performance.js';
 import { minutesFor, normalize } from './time.js';
 
 export interface ComputeOptions {
@@ -76,6 +82,11 @@ export interface ComputeOptions {
    * recortada a este valor si lo supera. Sin tope, la GS es la del perfil.
    */
   readonly speedCapKt?: number;
+  /**
+   * Tabla de la categoria de la aeronave (ver `profileFor`). Con ella, la GS y el ascenso salen
+   * de ahi y no de la planilla ni de `performance`. Sin ella, perfil de jet.
+   */
+  readonly profile?: CategoryProfile;
 }
 
 export interface FlightPlan {
@@ -238,8 +249,14 @@ function arrivalProfile(
 }
 
 export function computeFlightPlan(options: ComputeOptions): ComputeResult {
-  const { procedure, entryTime, cruiseLevelFt, performance, speedCapKt } = options;
+  const { procedure, entryTime, cruiseLevelFt, performance, speedCapKt, profile } = options;
   const legs = procedure.legs;
+
+  // De donde salen la GS y el ascenso. La GS de planilla describe el perfil de un jet en ese
+  // procedimiento: un avion con tabla propia no la usa.
+  const speeds = profile !== undefined ? profileTable(profile) : performance;
+  const sheetGsKt = (leg: ProcedureLeg): number | undefined =>
+    profile !== undefined ? undefined : leg.sourceGsKt;
 
   if (legs.length === 0) {
     return { ok: false, reason: 'INCOMPLETE_DATA', message: `${procedure.ident} no tiene tramos.` };
@@ -293,11 +310,11 @@ export function computeFlightPlan(options: ComputeOptions): ComputeResult {
       if (i > 0) {
         // Con el tope aplicado: un avion lento tarda mas en el tramo y sube mas en el.
         const gsKt = capGroundSpeed(
-          legs[i]!.sourceGsKt ?? groundSpeedAt(performance, levelFt),
+          sheetGsKt(legs[i]!) ?? groundSpeedAt(speeds, levelFt),
           speedCapKt
         );
         const minutes = minutesFor(legs[i]!.legDistNm ?? 0, gsKt);
-        levelFt = Math.min(cruiseLevelFt, levelFt + verticalRateAt(performance, levelFt) * minutes);
+        levelFt = Math.min(cruiseLevelFt, levelFt + verticalRateAt(speeds, levelFt) * minutes);
       }
       levelFt = clamp(levelFt, bounds[i]!);
       levels.push(levelFt);
@@ -317,7 +334,8 @@ export function computeFlightPlan(options: ComputeOptions): ComputeResult {
     // La GS de un tramo es la del nivel al que se empieza a volarlo, no la del nivel al que
     // se termina: es lo que hace la planilla y lo que reproducen los tests.
     const levelAtStartFt = i === 0 ? levels[0]! : levels[i - 1]!;
-    const profileGsKt = leg.sourceGsKt ?? groundSpeedAt(performance, levelAtStartFt);
+    const sourceGsKt = sheetGsKt(leg);
+    const profileGsKt = sourceGsKt ?? groundSpeedAt(speeds, levelAtStartFt);
     const gsKt = capGroundSpeed(profileGsKt, speedCapKt);
     const legMinutes = legDistNm > 0 ? minutesFor(legDistNm, gsKt) : 0;
     time += legMinutes;
@@ -330,7 +348,7 @@ export function computeFlightPlan(options: ComputeOptions): ComputeResult {
       revisedEto: null,
       ato: null,
       gsKt,
-      sourceGsKt: leg.sourceGsKt ?? null,
+      sourceGsKt: sourceGsKt ?? null,
       legDistNm,
       legTimeMin: Math.round(legMinutes * 1000) / 1000,
       delayMin: 0,

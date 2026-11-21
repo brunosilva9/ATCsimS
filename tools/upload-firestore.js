@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
- * upload-firestore.js — espeja data/*.json en 18 colecciones de Firestore, una por archivo.
+ * upload-firestore.js — espeja data/*.json en 19 colecciones de Firestore, una por archivo.
  *
- *   node tools/upload-firestore.js                  # las 18
+ *   node tools/upload-firestore.js                  # las 19
  *   node tools/upload-firestore.js aerodromes        # solo esa
  *   node tools/upload-firestore.js aerodromes fixes  # varias, separadas por espacio
  *
- * Sin argumentos sube las 18. Con uno o mas nombres de coleccion, sube SOLO esas y deja las demas
+ * Sin argumentos sube las 19. Con uno o mas nombres de coleccion, sube SOLO esas y deja las demas
  * intactas — para cuando ya se edito algo desde /admin en otras colecciones y correr el mirror
  * completo pisaria esas ediciones (el mirror completo sigue borrando y reescribiendo TODO).
  *
@@ -109,6 +109,7 @@ async function commitInChunks(ops) {
  */
 async function mirror(collectionName, records, idFn, meta) {
   const docs = new Map();
+  const updatedAt = Date.now();
   for (const record of records) {
     let id = String(idFn(record));
     if (docs.has(id)) {
@@ -117,7 +118,9 @@ async function mirror(collectionName, records, idFn, meta) {
       console.warn(`  aviso: id duplicado "${id}" en ${collectionName}, se usa "${id}-${n}"`);
       id = `${id}-${n}`;
     }
-    docs.set(id, sanitizeForFirestore({ ...record, _meta: meta }));
+    // Mismo sello que pone /admin al guardar (ver AGENTS.md): sin el, un documento subido por
+    // este script no aparece en el orden por fecha de modificacion.
+    docs.set(id, sanitizeForFirestore({ ...record, _meta: meta, updatedAt }));
   }
 
   const colRef = db.collection(collectionName);
@@ -134,7 +137,7 @@ const wants = (collectionName) => only.size === 0 || only.has(collectionName);
 async function main() {
   console.log(
     only.size === 0
-      ? `Subiendo data/*.json a Firestore (las 18 colecciones)...\n`
+      ? `Subiendo data/*.json a Firestore (las 19 colecciones)...\n`
       : `Subiendo solo: ${[...only].join(', ')}...\n`
   );
 
@@ -171,6 +174,16 @@ async function main() {
   if (wants('performance')) {
     const performance = read('performance.json');
     await mirror('performance', performance.performance, (r) => r.level, performance._meta);
+  }
+
+  if (wants('categoryPerformance')) {
+    const categoryPerformance = read('category-performance.json');
+    await mirror(
+      'categoryPerformance',
+      categoryPerformance.categoryPerformance,
+      (r) => `${r.category}-${r.level}`,
+      categoryPerformance._meta
+    );
   }
 
   if (wants('aircraftTypes')) {

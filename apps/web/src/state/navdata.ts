@@ -17,6 +17,7 @@ import { create } from 'zustand';
 import type {
   AircraftType,
   Airway,
+  CategoryPerformanceLevel,
   Coordinates,
   Fix,
   HoldingPattern,
@@ -156,6 +157,8 @@ export interface NavdataState {
   readonly approaches: readonly Approach[];
   readonly holdings: readonly HoldingPattern[];
   readonly performance: PerformanceTable;
+  /** Tablas de turbohelice y piston (N-07). La de jet es `performance`. */
+  readonly categoryPerformance: readonly CategoryPerformanceLevel[];
   readonly separation: readonly SeparationMinimum[];
   readonly aircraftTypes: readonly AircraftType[];
   readonly fleet: readonly FleetEntry[];
@@ -192,6 +195,7 @@ const EMPTY: Pick<
   | 'approaches'
   | 'holdings'
   | 'performance'
+  | 'categoryPerformance'
   | 'separation'
   | 'aircraftTypes'
   | 'fleet'
@@ -215,6 +219,7 @@ const EMPTY: Pick<
   approaches: [],
   holdings: [],
   performance: [],
+  categoryPerformance: [],
   separation: [],
   aircraftTypes: [],
   fleet: [],
@@ -248,6 +253,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
         approaches,
         holdings,
         performance,
+        categoryPerformance,
         separation,
         aircraftTypes,
         fleet,
@@ -267,6 +273,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
         fetchCollection<Approach>('approaches'),
         fetchCollection<HoldingPattern>('holdings'),
         fetchCollection<PerformanceTable[number]>('performance'),
+        fetchCollection<CategoryPerformanceLevel>('categoryPerformance'),
         fetchCollection<SeparationMinimum>('separation'),
         fetchCollection<AircraftType>('aircraftTypes'),
         fetchCollection<FleetEntry>('fleet'),
@@ -308,6 +315,7 @@ export const useNavdataStore = create<NavdataState>((set, get) => ({
         approaches,
         holdings,
         performance,
+        categoryPerformance,
         separation,
         aircraftTypes,
         fleet,

@@ -7,9 +7,10 @@
  * ejercicios guardados se recalculan solos en vez de quedarse con los numeros viejos.
  */
 
-import { aircraftSpeedCap, computeFlightPlan, toFeet } from '@atcsims/core';
+import { aircraftSpeedCap, computeFlightPlan, profileFor, toFeet } from '@atcsims/core';
 import type {
   AircraftType,
+  CategoryPerformanceLevel,
   Configuration,
   Flight,
   FlightKind,
@@ -36,6 +37,8 @@ export interface BuildContext {
    * vuelo.
    */
   readonly findAircraftType?: (icao: string) => AircraftType | undefined;
+  /** Tablas de turbohelice y piston (N-07). Sin ellas, todos los vuelos usan la de jet. */
+  readonly categoryPerformance?: readonly CategoryPerformanceLevel[];
 }
 
 export interface FlightDraft {
@@ -130,7 +133,9 @@ export function buildFlight(draft: FlightDraft, ctx: BuildContext): BuiltFlight 
   }
 
   const cruiseLevelFt = toFeet(draft.levelFl);
-  const speedCap = aircraftSpeedCap(draft.tasKt, ctx.findAircraftType?.(draft.icaoType));
+  const type = ctx.findAircraftType?.(draft.icaoType);
+  const speedCap = aircraftSpeedCap(draft.tasKt, type);
+  const { profile, assumption: profileAssumption } = profileFor(type, ctx.categoryPerformance ?? []);
   const result = computeFlightPlan({
     procedure,
     entryTime: draft.entryTime,
@@ -138,6 +143,7 @@ export function buildFlight(draft: FlightDraft, ctx: BuildContext): BuiltFlight 
     performance: ctx.performance,
     holdings: ctx.holdings,
     ...(speedCap !== undefined ? { speedCapKt: speedCap.kt } : {}),
+    ...(profile !== undefined ? { profile } : {}),
   });
 
   if (!result.ok) {
@@ -168,17 +174,20 @@ export function buildFlight(draft: FlightDraft, ctx: BuildContext): BuiltFlight 
       transferFix: legs[legs.length - 1]?.fix ?? null,
       legs,
       ...(speedCap !== undefined ? { speedCap } : {}),
+      ...(profile !== undefined ? { profile } : {}),
     },
-    // Sin TAS ni tipo conocido el vuelo usa el perfil de jet. No se calla: es justo el caso en
-    // que un avion lento quedaria volando mas rapido de lo que puede.
-    assumptions:
-      speedCap === undefined
+    assumptions: [
+      ...result.assumptions,
+      // Sin TAS ni tipo conocido el vuelo usa el perfil de jet. No se calla: es justo el caso en
+      // que un avion lento quedaria volando mas rapido de lo que puede.
+      ...(speedCap === undefined
         ? [
-            ...result.assumptions,
             `${draft.callsign} no tiene TAS ni velocidad máxima de su tipo (${draft.icaoType}): ` +
               `la velocidad no se limita por la aeronave.`,
           ]
-        : result.assumptions,
+        : []),
+      ...(profileAssumption !== undefined ? [profileAssumption] : []),
+    ],
   };
 }
 

@@ -53,7 +53,7 @@ pasos que ejecuta el workflow de CI (`.github/workflows/deploy.yml`).
 
 - **Firestore es la fuente de verdad en ejecución.** La base se edita desde `/admin`, no en
   `data/*.json`.
-- **`npm run data:firestore` sin argumentos borra y reescribe las 18 colecciones** y pisa todo lo
+- **`npm run data:firestore` sin argumentos borra y reescribe las 19 colecciones** y pisa todo lo
   editado desde `/admin`. No ejecutarlo nunca sin confirmación explícita. Para una sola colección:
   `node tools/upload-firestore.js <colección>`.
 - `tools/serviceAccountKey.json` es una credencial con permisos de administrador. No se versiona,

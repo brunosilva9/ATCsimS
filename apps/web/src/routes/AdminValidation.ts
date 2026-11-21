@@ -1,6 +1,6 @@
 /**
  * Antes de guardar un cambio del panel, se comprueba si INTRODUCE un problema nuevo (no si la
- * base ya tenia uno) — ver packages/core/src/integrity.ts. Solo 6 de las 16 colecciones
+ * base ya tenia uno) — ver packages/core/src/integrity.ts. Solo 6 de las colecciones
  * participan de esos chequeos (las que usa el motor de calculo); las otras 10 se guardan sin
  * pasar por aca, porque ningun chequeo existente les aplica.
  */

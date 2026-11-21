@@ -25,7 +25,7 @@ import type {
 } from './types.js';
 import type { Coordinates } from './geo.js';
 import { distanceNm } from './geo.js';
-import { capGroundSpeed, groundSpeedAt, speedRangeOf } from './performance.js';
+import { capGroundSpeed, groundSpeedAt, profileTable, speedRangeOf } from './performance.js';
 import { minutesFor, normalize } from './time.js';
 
 export interface ApplyContext {
@@ -79,6 +79,9 @@ function recomputeFrom(
 ): FlightLeg[] {
   const out = legs.slice();
   let time: number = flight.entryTime;
+  // La misma tabla con la que se calculo el vuelo: la de su categoria, copiada en el vuelo, o la
+  // comun si es jet.
+  const table = flight.profile !== undefined ? profileTable(flight.profile) : performance;
 
   for (let i = 0; i < out.length; i++) {
     const leg = out[i]!;
@@ -91,7 +94,7 @@ function recomputeFrom(
     // la planilla, y solo si no hay ninguno de los dos, la tabla de performance. El perfil se
     // recorta al tope de la aeronave; la velocidad asignada no, porque ya se valido contra el
     // rango del tipo al darla.
-    const profileGsKt = leg.sourceGsKt ?? groundSpeedAt(performance, levelAtStartFt);
+    const profileGsKt = leg.sourceGsKt ?? groundSpeedAt(table, levelAtStartFt);
     const gsKt = leg.assignedSpeedKt ?? capGroundSpeed(profileGsKt, flight.speedCap?.kt);
     const legTimeMin =
       i < fromIndex ? leg.legTimeMin : leg.legDistNm > 0 ? minutesFor(leg.legDistNm, gsKt) : 0;

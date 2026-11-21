@@ -28,6 +28,7 @@ service cloud.firestore {
     match /approaches/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /holdings/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /performance/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
+    match /categoryPerformance/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /separation/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /aircraftTypes/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }
     match /fleet/{doc} { allow read: if request.auth != null; allow write: if isAdmin(); }

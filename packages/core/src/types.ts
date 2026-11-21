@@ -99,6 +99,42 @@ export interface PerformanceLevel {
 /** La tabla completa, ordenada de mayor a menor altitud. El motor la recibe como parametro. */
 export type PerformanceTable = readonly PerformanceLevel[];
 
+/**
+ * Categoria de performance de un tipo de aeronave (N-07). Decide con que tabla vuela: la de jet
+ * es la tabla comun (`performance`); las otras dos tienen tabla propia (`categoryPerformance`).
+ */
+export type AircraftCategory = 'jet' | 'turbohelice' | 'piston';
+
+/** Las categorias con tabla propia. */
+export type ProfileCategory = Exclude<AircraftCategory, 'jet'>;
+
+/**
+ * Un nivel de la tabla de una categoria con tabla propia. Pocos niveles: el motor toma el nivel
+ * tabulado mas cercano por debajo, igual que con la tabla de jet.
+ */
+export interface CategoryPerformanceLevel {
+  readonly category: ProfileCategory;
+  readonly level: string;
+  readonly altFt: number;
+  /**
+   * null = el nivel existe pero el dato aun no se cargo. Una tabla con un solo hueco no se usa
+   * (ver `categoryProfile`): los vuelos de esa categoria siguen con la de jet y se declara.
+   */
+  readonly gsKt: number | null;
+  readonly climbFtPerMin: number | null;
+}
+
+/** La tabla completa de una categoria, tal como se uso para calcular un vuelo. */
+export interface CategoryProfile {
+  readonly category: ProfileCategory;
+  readonly levels: readonly {
+    readonly level: string;
+    readonly altFt: number;
+    readonly gsKt: number;
+    readonly climbFtPerMin: number;
+  }[];
+}
+
 export interface HoldingPattern {
   readonly fix: string;
   readonly lowerLevelFt: number | null;
@@ -127,6 +163,8 @@ export interface AircraftType {
   readonly maxSpeedKt: number | null;
   readonly wake: string | null;
   readonly vappKt: number | null;
+  /** Ausente = sin clasificar: se calcula con la performance de jet (ver `profileFor`). */
+  readonly category?: AircraftCategory;
 }
 
 export interface Airway {
@@ -231,6 +269,11 @@ export interface Flight {
    * se calculo antes de que existiera el tope: en los dos casos la GS es la del perfil.
    */
   readonly speedCap?: SpeedCap;
+  /**
+   * Tabla de GS y ascenso de la categoria del vuelo, copiada al calcularlo para que un recalculo
+   * posterior use la misma. Ausente = performance de jet.
+   */
+  readonly profile?: CategoryProfile;
 }
 
 export interface Scenario {

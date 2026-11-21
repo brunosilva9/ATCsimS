@@ -135,6 +135,10 @@ Los seis del documento original, con su alcance concretado:
   nunca la aumenta: un jet sigue volando el perfil publicado. Ejemplo: un DHC6 con TAS de
   180 kt recorre en VENTANAS1D el tramo VTN→TENUT (16 NM) a 180 kt, no a los 360 kt de la
   planilla. (N-06)
+  La tabla de performance y la GS de planilla son las de un jet. Un turbohélice o un pistón usa
+  la **tabla de su categoría**: GS y régimen de ascenso por nivel, sobre la que también se aplica
+  el tope. Si esa tabla está incompleta, el vuelo usa la de jet y se declara el supuesto. Los
+  niveles exigidos por fix en una llegada no cambian: son del procedimiento. (N-07)
 - **RN-4.3** Si no hay dato de viento, GS = valor de la tabla. Con viento (RF-1.5),
   `GS = tabla ± componente`.
 - **RF-4.6 [D]** Debe redondear las horas al minuto, que es la resolución de las fichas.

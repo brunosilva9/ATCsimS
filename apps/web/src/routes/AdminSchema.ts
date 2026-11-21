@@ -1,10 +1,10 @@
 /**
- * Que campos tiene cada una de las 16 colecciones y como se arma su ID de documento.
+ * Que campos tiene cada coleccion de la base y como se arma su ID de documento.
  *
  * Un formulario a mano por coleccion habria sido enorme e inconsistente. En vez de eso, esto
  * describe la FORMA de cada una y AdminRecordForm.tsx la renderiza generica — mismo espiritu que
  * el mapa colección→doc-ID de tools/upload-firestore.js, que es justo lo que este archivo refleja
- * del lado del navegador (las 3 colecciones con ID calculado usan la MISMA fórmula que ese script,
+ * del lado del navegador (las colecciones con ID calculado usan la MISMA fórmula que ese script,
  * a propósito, para que un documento creado desde /admin conviva con uno subido desde ahí).
  */
 
@@ -176,11 +176,17 @@ const sa = (key: string, label: string, opts: Partial<FieldSchemaBase> = {}): Fi
   type: 'stringArray',
   ...opts,
 });
-const sel = (key: string, label: string, options: readonly string[]): FieldSchema => ({
+const sel = (
+  key: string,
+  label: string,
+  options: readonly string[],
+  opts: Partial<FieldSchemaBase> = {}
+): FieldSchema => ({
   key,
   label,
   type: 'select',
   options,
+  ...opts,
 });
 
 export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
@@ -380,15 +386,16 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
     definition: {
       impact: 'calculo',
       contains:
-        'Tabla de performance por nivel: IAS, GS, NM/min, régimen vertical y los fixes donde ese nivel debe estar alcanzado.',
+        'Tabla de performance de jet por nivel: IAS, GS, NM/min, régimen vertical y los fixes donde ese nivel debe estar alcanzado.',
       usedFor:
-        'Da la GS de cada tramo cuando el procedimiento no trae GS de planilla, el régimen de ascenso de las SID y los techos de descenso de las STAR. Una salida arranca en el nivel más bajo de la tabla. Describe un jet: la GS se recorta después al tope de cada aeronave.',
+        'Da la GS de cada tramo cuando el procedimiento no trae GS de planilla, el régimen de ascenso de las SID y los techos de descenso de las STAR. Una salida arranca en el nivel más bajo de la tabla. La usan los jets, los tipos sin categoría y los turbohélice o pistón cuya tabla está incompleta. La GS se recorta después al tope de cada aeronave.',
       onEdit:
         'Cambia horas y niveles de todos los vuelos. El motor toma el nivel tabulado más cercano por debajo, así que un nivel sin GS se salta.',
       relations: [
         { collection: 'procedures', how: 'Los tramos sin GS de planilla.' },
         { collection: 'fixes', how: 'Los fixes donde se exige cada nivel.' },
         { collection: 'aircraftTypes', how: 'La velocidad máxima de cada tipo limita la GS de esta tabla.' },
+        { collection: 'categoryPerformance', how: 'La tabla de turbohélice y pistón. Los techos de descenso por fix siguen aquí.' },
       ],
     },
     docId: { kind: 'field', field: 'level' },
@@ -401,6 +408,33 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
       nm('ftPerMin', 'ft/min', { nullable: true }),
       tx('note', 'Nota', { nullable: true }),
       sa('fixes', 'Fixes donde se exige'),
+    ],
+  },
+  {
+    collection: 'categoryPerformance',
+    label: 'Performance por categoría',
+    definition: {
+      impact: 'calculo',
+      contains:
+        'GS y régimen de ascenso por nivel de turbohélice (7 niveles) y pistón (4 niveles). Se crearon sin valores para que los complete el ATC.',
+      usedFor:
+        'Un vuelo cuyo tipo es turbohélice o pistón toma de aquí la GS de cada tramo y el ascenso de las SID, en lugar de la tabla de jet y de la GS de planilla. El motor toma el nivel tabulado más cercano por debajo.',
+      onEdit:
+        'Una categoría con algún valor vacío no se usa: sus vuelos siguen con la tabla de jet y el motor lo declara. Completa, cambia las horas y los niveles de los vuelos de esa categoría.',
+      relations: [
+        { collection: 'aircraftTypes', how: 'La categoría de cada tipo decide qué tabla usa.' },
+        { collection: 'performance', how: 'La tabla de jet, que conserva los techos de descenso por fix.' },
+      ],
+    },
+    // Un nivel por documento, como `performance`, pero el nivel solo no basta: FL120 existe en
+    // las dos categorias.
+    docId: { kind: 'computed', compute: (r) => `${r.category}-${r.level}` },
+    fields: [
+      sel('category', 'Categoría', ['turbohelice', 'piston']),
+      tx('level', 'Nivel'),
+      nm('altFt', 'Altitud (ft)'),
+      nm('gsKt', 'GS (kt)', { nullable: true }),
+      nm('climbFtPerMin', 'Ascenso (ft/min)', { nullable: true }),
     ],
   },
   {
@@ -438,15 +472,16 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
     definition: {
       impact: 'calculo',
       contains:
-        'Tipos de aeronave por designador OACI: nombre, velocidad mínima y máxima, estela y Vapp.',
+        'Tipos de aeronave por designador OACI: nombre, velocidad mínima y máxima, estela, Vapp y categoría (jet, turbohélice o pistón).',
       usedFor:
-        'La velocidad máxima, junto con la TAS del vuelo, es el tope de su GS. El rango mínimo–máximo valida las instrucciones de velocidad. Al crear un vuelo nuevo, la TAS se propone con la máxima del tipo. Estela y Vapp solo se consultan.',
+        'La velocidad máxima, junto con la TAS del vuelo, es el tope de su GS. El rango mínimo–máximo valida las instrucciones de velocidad. Al crear un vuelo nuevo, la TAS se propone con la máxima del tipo. La categoría decide con qué tabla de performance vuela. Estela y Vapp solo se consultan.',
       onEdit:
-        'Cambia las horas de los vuelos de ese tipo que el perfil de jet haría ir más rápido que su máxima. Un tipo sin sus dos velocidades no se usa en el cálculo.',
+        'Cambia las horas de los vuelos de ese tipo que el perfil de jet haría ir más rápido que su máxima. Un tipo sin sus dos velocidades no se usa en el cálculo, y uno sin categoría se calcula como jet.',
       relations: [
         { collection: 'sampleFlights', how: 'Cada vuelo de ejemplo nombra su tipo.' },
         { collection: 'fleet', how: 'Cada matrícula tiene su tipo.' },
         { collection: 'performance', how: 'Recorta la GS de la tabla.' },
+        { collection: 'categoryPerformance', how: 'La tabla de su categoría, si es turbohélice o pistón.' },
       ],
     },
     docId: { kind: 'field', field: 'icao' },
@@ -457,6 +492,10 @@ export const ADMIN_SCHEMAS: readonly CollectionSchema[] = [
       nm('maxSpeedKt', 'Vel. máx (kt)', { nullable: true }),
       tx('wake', 'Estela', { nullable: true }),
       nm('vappKt', 'Vapp (kt)', { nullable: true }),
+      sel('category', 'Categoría', ['', 'jet', 'turbohelice', 'piston'], {
+        nullable: true,
+        optional: true,
+      }),
     ],
   },
   {

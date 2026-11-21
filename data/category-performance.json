@@ -1,0 +1,87 @@
+{
+  "_meta": {
+    "source": "docs/BACKLOG.md (N-07)",
+    "method": "pending",
+    "note": "GS y régimen de ASCENSO por nivel para turbohélice y pistón. La tabla de jet es performance.json. El motor toma el nivel tabulado más cercano por debajo. Los techos de descenso por fix siguen en performance.json.",
+    "limitation": "Niveles creados sin valores: los completa el ATC desde /admin. Una categoría con algún valor vacío no se usa en el cálculo."
+  },
+  "categoryPerformance": [
+    {
+      "category": "turbohelice",
+      "level": "FL250",
+      "altFt": 25000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "turbohelice",
+      "level": "FL200",
+      "altFt": 20000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "turbohelice",
+      "level": "FL150",
+      "altFt": 15000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "turbohelice",
+      "level": "FL120",
+      "altFt": 12000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "turbohelice",
+      "level": "10000",
+      "altFt": 10000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "turbohelice",
+      "level": "8000",
+      "altFt": 8000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "turbohelice",
+      "level": "6000",
+      "altFt": 6000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "piston",
+      "level": "FL120",
+      "altFt": 12000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "piston",
+      "level": "10000",
+      "altFt": 10000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "piston",
+      "level": "8000",
+      "altFt": 8000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    },
+    {
+      "category": "piston",
+      "level": "6000",
+      "altFt": 6000,
+      "gsKt": null,
+      "climbFtPerMin": null
+    }
+  ]
+}

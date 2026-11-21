@@ -43,6 +43,7 @@
 
 import type {
   AircraftType,
+  CategoryPerformanceLevel,
   ConflictKind,
   ConflictReport,
   Flight,
@@ -56,7 +57,7 @@ import type {
 import { computeFlightPlan } from './eto.js';
 import { detectConflicts, encounters } from './conflicts.js';
 import type { DetectOptions, Encounter } from './conflicts.js';
-import { aircraftSpeedCap, toFeet } from './performance.js';
+import { aircraftSpeedCap, profileFor, toFeet } from './performance.js';
 import { transitionLevelFor } from './transitionLevel.js';
 import { regionForIcao, starRegions } from './originRegions.js';
 
@@ -103,6 +104,8 @@ export interface GeneratorCatalogue {
    * los encuentros que el generador cuenta no son los que el instructor ve.
    */
   readonly aircraftTypes?: readonly AircraftType[];
+  /** Tablas de turbohelice y piston (N-07), con el mismo criterio que el editor. */
+  readonly categoryPerformance?: readonly CategoryPerformanceLevel[];
 }
 
 // ------------------------------------------------------------------ salidas
@@ -339,10 +342,9 @@ function computeCandidate(
     if (!procedure) return null;
 
     const cruiseLevelFt = toFeet(g.levelFl);
-    const speedCap = aircraftSpeedCap(
-      g.tasKt,
-      catalogue.aircraftTypes?.find((t) => t.icao === g.icaoType)
-    );
+    const type = catalogue.aircraftTypes?.find((t) => t.icao === g.icaoType);
+    const speedCap = aircraftSpeedCap(g.tasKt, type);
+    const { profile } = profileFor(type, catalogue.categoryPerformance ?? []);
     const plan = computeFlightPlan({
       procedure,
       entryTime: g.entryTime,
@@ -350,6 +352,7 @@ function computeCandidate(
       performance: catalogue.performance,
       holdings: catalogue.holdings,
       ...(speedCap !== undefined ? { speedCapKt: speedCap.kt } : {}),
+      ...(profile !== undefined ? { profile } : {}),
     });
     // Un candidato con un vuelo incalculable se descarta entero: no se entrega un ejercicio al
     // que le falta un avion sin decirlo.
@@ -376,6 +379,7 @@ function computeCandidate(
       transferFix: legs[legs.length - 1]?.fix ?? null,
       legs,
       ...(speedCap !== undefined ? { speedCap } : {}),
+      ...(profile !== undefined ? { profile } : {}),
     });
   }
 

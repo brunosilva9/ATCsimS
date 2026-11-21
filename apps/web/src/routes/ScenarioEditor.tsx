@@ -444,6 +444,20 @@ export function ScenarioEditor() {
     });
   }, [draft.flights, aircraftTypes]);
 
+  /**
+   * Tipos del ejercicio que estan en la base pero sin categoria (N-07). Se calculan como jet. No
+   * es un supuesto del motor por vuelo: mientras no se clasifiquen los tipos lo serian todos, y
+   * la correccion de la prueba marcaria el ejercicio entero (ver Runs.tsx).
+   */
+  const uncategorized = useMemo(() => {
+    const byIcao = new Map(aircraftTypes.map((t) => [t.icao, t]));
+    const icaos = draft.flights
+      .map((f) => byIcao.get(f.icaoType))
+      .filter((t) => t !== undefined && t.category === undefined)
+      .map((t) => t!.icao);
+    return [...new Set(icaos)].sort();
+  }, [draft.flights, aircraftTypes]);
+
   if (loading || loadError !== null) {
     return (
       <div className={shared.page}>
@@ -1010,6 +1024,20 @@ export function ScenarioEditor() {
                 </li>
               ))}
             </ul>
+          </div>
+        ) : null}
+
+        {uncategorized.length > 0 ? (
+          <div className={shared.notice} role="status">
+            <strong>Tipos sin categoría.</strong>{' '}
+            {uncategorized.map((icao, i) => (
+              <span key={icao}>
+                {i > 0 ? ', ' : null}
+                <code>{icao}</code>
+              </span>
+            ))}{' '}
+            se calculan con la performance de jet hasta que se les asigne jet, turbohélice o
+            pistón en Administración › Tipos de aeronave.
           </div>
         ) : null}
 

@@ -65,6 +65,7 @@ export function TrafficGenerator({
   const performance = useNavdataStore((s) => s.performance);
   const holdings = useNavdataStore((s) => s.holdings);
   const aircraftTypes = useNavdataStore((s) => s.aircraftTypes);
+  const categoryPerformance = useNavdataStore((s) => s.categoryPerformance);
   const separation = useNavdataStore((s) => s.separation);
   const approachFixes = useNavdataStore((s) => s.approachFixes);
   const tmaFixes = useNavdataStore((s) => s.tmaFixes);
@@ -91,8 +92,9 @@ export function TrafficGenerator({
       performance,
       holdings,
       aircraftTypes,
+      categoryPerformance,
     }),
-    [usable, sampleFlights, ssrCodes, performance, holdings, aircraftTypes]
+    [usable, sampleFlights, ssrCodes, performance, holdings, aircraftTypes, categoryPerformance]
   );
 
   /** Solo se ofrecen puntos por los que pasa algo: pedir un encuentro en otro sitio es imposible. */

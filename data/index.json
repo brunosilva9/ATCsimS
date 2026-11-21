@@ -8,6 +8,7 @@
     "aircraft-types.json",
     "airways.json",
     "approaches.json",
+    "category-performance.json",
     "fixes.json",
     "fleet.json",
     "holdings.json",

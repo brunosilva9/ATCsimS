@@ -2,13 +2,24 @@
  * Consultas sobre la tabla de performance.
  *
  * La tabla dice, para cada nivel, a que velocidad vuela el avion y cuanto desciende por minuto.
- * Es el modelo de vuelo del sistema: la velocidad depende del NIVEL, no del tipo de aeronave.
+ * Es el modelo de vuelo del sistema: la velocidad depende del NIVEL. La tabla comun es la de un
+ * jet; turbohelice y piston tienen la suya (N-07, ver `profileFor`), y sobre cualquiera de ellas
+ * se aplica el tope de la aeronave (N-06, ver `aircraftSpeedCap`).
  *
  * OJO (P-01 del informe a ATC): el archivo fuente trae tres tablas que no coinciden. Por eso
  * la tabla entra siempre como parametro y nunca se importa aqui dentro.
  */
 
-import type { AircraftType, PerformanceTable, PerformanceLevel, SpeedCap } from './types.js';
+import type {
+  AircraftCategory,
+  AircraftType,
+  CategoryPerformanceLevel,
+  CategoryProfile,
+  PerformanceTable,
+  PerformanceLevel,
+  ProfileCategory,
+  SpeedCap,
+} from './types.js';
 
 /**
  * El nivel de la tabla que aplica a una altitud dada.
@@ -88,6 +99,72 @@ export function aircraftSpeedCap(
 /** La GS del perfil, recortada al tope si lo supera. */
 export function capGroundSpeed(profileGsKt: number, capKt: number | undefined): number {
   return capKt !== undefined && profileGsKt > capKt ? capKt : profileGsKt;
+}
+
+export const CATEGORY_LABEL: Readonly<Record<AircraftCategory, string>> = {
+  jet: 'jet',
+  turbohelice: 'turbohélice',
+  piston: 'pistón',
+};
+
+/**
+ * La tabla de una categoria, solo si esta completa: al menos un nivel, y todos con GS y regimen
+ * de ascenso. Una tabla a medio cargar devuelve undefined, por el mismo motivo que
+ * `speedRangeOf`: mezclar niveles revisados con huecos daria un perfil que nadie valido.
+ */
+export function categoryProfile(
+  category: ProfileCategory,
+  levels: readonly CategoryPerformanceLevel[]
+): CategoryProfile | undefined {
+  const rows = levels.filter((l) => l.category === category);
+  if (rows.length === 0) return undefined;
+  const complete: CategoryProfile['levels'][number][] = [];
+  for (const r of rows) {
+    if (typeof r.gsKt !== 'number' || r.gsKt <= 0) return undefined;
+    if (typeof r.climbFtPerMin !== 'number' || r.climbFtPerMin <= 0) return undefined;
+    complete.push({ level: r.level, altFt: r.altFt, gsKt: r.gsKt, climbFtPerMin: r.climbFtPerMin });
+  }
+  complete.sort((a, b) => b.altFt - a.altFt);
+  return { category, levels: complete };
+}
+
+/**
+ * Con que tabla vuela un tipo (N-07).
+ *
+ * - Sin tipo, sin categoria o jet: la tabla comun, sin supuesto. Un tipo sin clasificar no se
+ *   declara aqui porque hoy lo serian todos, y un supuesto en cada vuelo marca el ejercicio entero
+ *   en la correccion (ver Runs.tsx); el editor lo avisa aparte.
+ * - Turbohelice o piston con su tabla completa: esa tabla.
+ * - Turbohelice o piston con la tabla incompleta: la de jet, y se declara, porque ahi si se sabe
+ *   que el vuelo queda con un perfil que no es el suyo.
+ */
+export function profileFor(
+  type: AircraftType | undefined,
+  levels: readonly CategoryPerformanceLevel[]
+): { readonly profile?: CategoryProfile; readonly assumption?: string } {
+  const category = type?.category;
+  if (type === undefined || category === undefined || category === 'jet') return {};
+  const profile = categoryProfile(category, levels);
+  if (profile !== undefined) return { profile };
+  return {
+    assumption:
+      `La tabla de performance de ${CATEGORY_LABEL[category]} está incompleta en la base: ` +
+      `el ${type.icao} se calcula con la de jet.`,
+  };
+}
+
+/** La tabla de un perfil en la forma que leen `groundSpeedAt` y `verticalRateAt`. */
+export function profileTable(profile: CategoryProfile): PerformanceTable {
+  return profile.levels.map((l) => ({
+    level: l.level,
+    altFt: l.altFt,
+    iasKt: null,
+    gsKt: l.gsKt,
+    nmPerMin: null,
+    ftPerMin: l.climbFtPerMin,
+    note: null,
+    fixes: [],
+  }));
 }
 
 /** Regimen de descenso o ascenso en pies por minuto a una altitud dada. */

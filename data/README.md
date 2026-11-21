@@ -44,7 +44,7 @@ cachea localmente (IndexedDB), así que puede seguir sirviendo datos sin conexi�
 primera sincronización.
 
 **Desde que existe `/admin`, Firestore dejó de ser solo un espejo de consulta: es la base que la
-app corriendo realmente lee** (`apps/web/src/state/navdata.ts` trae las 18 colecciones una vez al
+app corriendo realmente lee** (`apps/web/src/state/navdata.ts` trae las 19 colecciones una vez al
 iniciar sesión). `data/*.json` y el Excel siguen siendo el import original — y lo que siguen
 usando los tests y las herramientas, que no dependen de un proyecto de Firebase real — pero ya
 **no se mantienen sincronizados automáticamente** con lo que ve el alumno.
@@ -61,7 +61,7 @@ Firestore al estado que dice el Excel (por ejemplo, tras corregir algo ahí y re
 `tools/build-db.js`).
 
 ```bash
-npm run data:firestore                    # sube las 18 colecciones (ver tools/upload-firestore.js)
+npm run data:firestore                    # sube las 19 colecciones (ver tools/upload-firestore.js)
 npm run data:firestore -- aerodromes      # sube SOLO esa, deja las demas (ya editadas) intactas
 npm run data:firestore -- aerodromes fixes  # varias a la vez, separadas por espacio
 ```
@@ -91,7 +91,7 @@ sube cada tramo envuelto como `{ values: [...] }` en vez de `string[][]` — ver
 | `holdings` | `fix` | `separation` | `runway`+`withDepartures`+`sivigats`+`lvp` |
 | `performance` | `level` | `tma` | doc único `scel` (es un objeto, no un array) |
 | `aircraftTypes` | `icao` | `aerodromes` | `icao` |
-| `flightRoutes` | `callsign` | | |
+| `flightRoutes` | `callsign` | `categoryPerformance` | `category`-`level` (ej. `turbohelice-FL120`) |
 
 **`aerodromes` no sale de ninguna planilla** (única excepción junto con los datos que agregue el
 instructor desde `/admin`, ver `README.md` § "La regla que gobierna el proyecto"): es la lista de
@@ -112,6 +112,17 @@ aviación general/militar), esos campos siguen editables. `sampleFlights` y `fli
 mantienen sincronizadas automáticamente entre sí**: si alguien edita el origen/destino de un vuelo
 directo en `sampleFlights` desde `/admin` sin tocar también su fila en `flightRoutes`, quedan
 desalineadas — el editor de ejercicios sigue confiando en `flightRoutes` como la autoridad.
+
+**`categoryPerformance` es la performance de turbohélice y pistón** (N-07), un documento por nivel:
+`{ category: 'turbohelice'|'piston', level, altFt, gsKt, climbFtPerMin }`. La tabla de jet sigue
+siendo `performance`, y los techos de descenso por fix («Fixes donde se exige») siguen ahí: son del
+procedimiento, no de la aeronave. Un vuelo usa la tabla de su categoría según el campo `category`
+de su tipo en `aircraftTypes` (`jet`, `turbohelice` o `piston`; ausente = sin clasificar, se
+calcula como jet). Con tabla propia, la GS sale de esa tabla y no de la GS de planilla del
+procedimiento, que describe un jet; `climbFtPerMin` es el régimen de ascenso de las SID. Los
+niveles se crearon sin valores (`data/category-performance.json`, no sale de ninguna planilla) y
+los completa el ATC: **una categoría con algún valor vacío no se usa**, y sus vuelos siguen con la
+tabla de jet declarando el supuesto.
 
 ## Quién puede editar: la colección `users`
 
@@ -168,7 +179,8 @@ Unidades: NM, pies, nudos, minutos, grados decimales (negativo S/W).
 | `radars.json` | 3 | transcrito | Vigilancia ATS (AIP Chile ENR 1.6-7) |
 | `units.json` | 10 | transcrito | Posiciones de control y frecuencias |
 | `tma.json` | — | transcrito | Altitud/nivel de transición, configuraciones |
-| `aircraft-types.json` | 18 | extraído | Rango de velocidad por tipo OACI |
+| `aircraft-types.json` | 18 | extraído | Rango de velocidad por tipo OACI. En Firestore, además, `category` (N-07) |
+| `category-performance.json` | 11 | pendiente | GS y ascenso por nivel de turbohélice (7) y pistón (4), sin valores (ver § Firestore) |
 | `fleet.json` | 91 | extraído | Matrículas CC-XXX e indicativos especiales |
 | `operators.json` | 25 | extraído | Prefijos de indicativo |
 | `sample-flights.json` | 90 | extraído | Catálogo de vuelos comerciales para armar ejercicios |

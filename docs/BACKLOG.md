@@ -93,12 +93,12 @@ SID asciende con el régimen de la tabla, sea un B738 o un C172.
 3. Los techos de descenso por fix (columna «Fixes donde se exige») siguen en la tabla común: son
    del procedimiento, no de la aeronave.
 4. Motor: GS y régimen vertical según la categoría del vuelo. Sin categoría, se usa la tabla de jet
-   y se declara el supuesto.
+   y el editor de ejercicios lo advierte.
 5. Edición desde `/admin`, siguiendo la skill `nueva-coleccion`.
 6. Pruebas por categoría.
 
-**Validación del ATC.** 55 valores: la categoría de los 33 tipos, 14 de turbohélice (7 niveles ×
-GS y régimen) y 8 de pistón (4 niveles × GS y régimen). En la misma revisión:
+**Validación del ATC.** 68 valores: la categoría de los 46 tipos, 14 de turbohélice (7 niveles ×
+GS y ascenso) y 8 de pistón (4 niveles × GS y ascenso). En la misma revisión:
 
 - Si la columna ft/min de la tabla actual es de ascenso o de descenso. El motor la usa para el
   ascenso de las SID; si es de descenso, falta el ascenso del jet (7 valores en los niveles de
@@ -110,13 +110,28 @@ GS y régimen) y 8 de pistón (4 niveles × GS y régimen). En la misma revisió
 
 - Una SID de un turbohélice o un pistón asciende con el régimen de su categoría.
 - Los vuelos de jet no cambian.
-- Los 55 valores validados por el ATC están cargados.
+- Los 68 valores validados por el ATC están cargados.
 
-**Decisiones pendientes.**
+**Decisiones tomadas.**
 
-- Modelo de datos: colección nueva de performance por categoría o campo de categoría en la
-  colección `performance`.
-- Niveles de referencia definitivos de cada categoría.
+- Modelo de datos: colección nueva `categoryPerformance`, con un documento por categoría y nivel,
+  y campo `category` en `aircraftTypes` (`jet`, `turbohelice` o `piston`). La colección
+  `performance` queda como tabla de jet y conserva los techos de descenso por fix.
+- Niveles: los del alcance, creados sin valores. El ATC puede agregar o quitar niveles desde
+  `/admin`.
+- Con tabla propia, la GS sale de la tabla de la categoría y no de la GS de planilla del
+  procedimiento, que describe un jet. El tope de N-06 se aplica igual.
+- Las tablas nuevas registran el régimen de ascenso (campo «Ascenso (ft/min)»), que es el que usa
+  el motor en las SID.
+- Una categoría con algún valor vacío no se usa: sus vuelos siguen con la tabla de jet y el motor
+  lo declara como supuesto.
+- Un tipo sin categoría se calcula como jet y lo advierte el editor, no el motor: mientras los 46
+  tipos sigan sin clasificar, un supuesto en cada vuelo marcaría el ejercicio completo en la
+  corrección de la prueba.
+
+**Avance.** Implementados los puntos 1 a 6. Pendiente: aplicar `firestore.rules` en la consola,
+crear los 11 niveles vacíos en Firestore (`node tools/upload-firestore.js categoryPerformance`) y
+la validación del ATC.
 
 **Depende de.** N-06.
 
