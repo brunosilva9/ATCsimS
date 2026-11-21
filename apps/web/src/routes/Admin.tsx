@@ -12,6 +12,7 @@
 import { useState } from 'react';
 
 import { AdminCollectionList } from './AdminCollectionList.js';
+import { AdminDefinition } from './AdminDefinition.js';
 import { ADMIN_SCHEMAS } from './AdminSchema.js';
 import shared from './shared.module.css';
 import styles from './Admin.module.css';
@@ -30,8 +31,7 @@ export function Admin() {
             Esto escribe directo en Firestore, la base que usa toda la app. Un cambio acá lo ve
             cualquiera que entre después de vos. Antes de guardar en fixes, procedimientos,
             aerovías, esperas, performance o espaciamiento, se comprueba que no rompa el motor de
-            cálculo — el resto de las colecciones se guarda sin esa comprobación porque el motor
-            no las usa.
+            cálculo. Cada pestaña explica qué contiene su colección y qué cambia al editarla.
           </p>
         </div>
       </header>
@@ -50,6 +50,8 @@ export function Admin() {
           </button>
         ))}
       </div>
+
+      <AdminDefinition schema={schema} onOpen={setTab} />
 
       {/* key fuerza a reiniciar la busqueda y cerrar cualquier edicion abierta al cambiar de tab */}
       <AdminCollectionList key={schema.collection} schema={schema} />

@@ -21,6 +21,11 @@ y, al terminar, informar al usuario qué se hizo en cada punto.
    `docId` igual al del punto 3, y cada campo con `nullable` u `optional` según el punto 1. El
    sello `updatedAt` es automático en todas las colecciones: no se declara, pero el código que lee
    los registros debe tolerar ese campo extra.
+   La `definition` es obligatoria y se muestra sobre el listado de la pestaña: impacto (si afecta
+   el cálculo, arma el ejercicio o es solo consulta), qué contiene, para qué se usa, qué pasa al
+   editarla y con qué colecciones se relaciona. Verificar en el código qué pantalla o cálculo la
+   lee antes de redactarla; si otra colección se relaciona con la nueva, agregar la relación
+   también en la definición de esa otra.
 5. **Lectura.** En `apps/web/src/state/navdata.ts`: campo en `NavdataState`, valor vacío en `EMPTY`,
    `fetchCollection` en `loadAll` y el `set` correspondiente.
 6. **Integridad.** Si la colección referencia a otras (fixes, procedimientos), agregar la regla en
@@ -40,5 +45,6 @@ y, al terminar, informar al usuario qué se hizo en cada punto.
 
 ## Campo nuevo en una colección existente
 
-Puntos 1, 4 y 8 como mínimo; el 6 si el campo referencia a otra colección. Los documentos ya
+Puntos 1, 4 y 8 como mínimo; el 6 si el campo referencia a otra colección. Si el campo cambia
+para qué se usa la colección, actualizar su `definition`. Los documentos ya
 existentes en Firestore no tienen el campo: el código que lo lee debe tolerar su ausencia.

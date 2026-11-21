@@ -120,35 +120,6 @@ GS y régimen) y 8 de pistón (4 niveles × GS y régimen). En la misma revisió
 
 **Depende de.** N-06.
 
-### N-08 · Definición de cada colección en /admin
-
-**Contexto.** `/admin` muestra 18 pestañas identificadas solo por su nombre. No explica qué contiene
-cada colección, qué cálculo la usa ni cómo se relaciona con las demás; por ejemplo, la diferencia
-entre Vuelos de ejemplo y Rutas de vuelo no es evidente desde la pantalla. Los ítems N-02 y N-05
-agregarán colecciones nuevas, y N-07 puede agregar una.
-
-**Alcance.**
-
-1. Agregar a cada esquema de `AdminSchema.ts` una definición con: qué contiene, para qué se usa (qué
-   cálculo afecta, o si solo identifica al vuelo), su relación con otras colecciones y el efecto de
-   editarla.
-2. Mostrar la definición en `/admin`, sobre el listado de la pestaña seleccionada.
-3. Redactar las definiciones de todas las colecciones existentes al momento de implementarlo,
-   incluida la de N-07 si ya existe.
-4. Una prueba que falla si algún esquema no tiene definición, para que toda colección futura la
-   incluya.
-5. Agregar el paso a la skill `nueva-coleccion`.
-
-**Criterios de aceptación.**
-
-- Todas las pestañas muestran su definición.
-- La prueba impide agregar una colección sin definición.
-- La skill `nueva-coleccion` incluye el paso.
-
-**Decisiones pendientes.**
-
-- Si se extiende a una ayuda por campo dentro del formulario de edición.
-
 ### N-01 · Firestore como única fuente de la base de navegación
 
 **Contexto.** La base se construyó importando las planillas Excel de la dependencia
@@ -330,3 +301,9 @@ final.
 
 El generador acierta el número de encuentros pedido, pero no distingue si el ejercicio resultante
 tiene valor didáctico. Un catálogo de conflictos tipo permitiría pedir situaciones concretas.
+
+### M-10 · Ayuda por campo en los formularios de /admin
+
+La definición de cada colección (N-08) explica la colección completa, pero no cada campo: «MCL»,
+«Alcance» o «Fixes donde se exige» siguen sin explicación en el formulario de edición. Una ayuda
+breve junto a cada campo reduciría los errores de carga del ATC.

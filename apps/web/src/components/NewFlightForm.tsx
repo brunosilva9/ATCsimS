@@ -96,6 +96,7 @@ export function NewFlightForm({ onAdd, onClose }: NewFlightFormProps) {
           ades,
           ssr: '',
           registration: identity.registration,
+          updatedAt: Date.now(),
         });
         // La identidad FIJA (operador+ruta) va aparte, en flightRoutes: es lo que despues
         // bloquea origen/destino cuando se vuelve a usar este indicativo.
@@ -105,6 +106,7 @@ export function NewFlightForm({ onAdd, onClose }: NewFlightFormProps) {
           adep,
           ades,
           category: operatorPrefix === '' ? 'privado' : 'comercial',
+          updatedAt: Date.now(),
         });
         await useNavdataStore.getState().loadAll();
       } catch (err) {
