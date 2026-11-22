@@ -97,8 +97,8 @@ SID asciende con el régimen de la tabla, sea un B738 o un C172.
 5. Edición desde `/admin`, siguiendo la skill `nueva-coleccion`.
 6. Pruebas por categoría.
 
-**Validación del ATC.** 68 valores: la categoría de los 46 tipos, 14 de turbohélice (7 niveles ×
-GS y ascenso) y 8 de pistón (4 niveles × GS y ascenso). En la misma revisión:
+**Validación del ATC.** 22 valores: 14 de turbohélice (7 niveles × GS y ascenso) y 8 de pistón
+(4 niveles × GS y ascenso). En la misma revisión:
 
 - Si la columna ft/min de la tabla actual es de ascenso o de descenso. El motor la usa para el
   ascenso de las SID; si es de descenso, falta el ascenso del jet (7 valores en los niveles de
@@ -110,7 +110,7 @@ GS y ascenso) y 8 de pistón (4 niveles × GS y ascenso). En la misma revisión:
 
 - Una SID de un turbohélice o un pistón asciende con el régimen de su categoría.
 - Los vuelos de jet no cambian.
-- Los 68 valores validados por el ATC están cargados.
+- Los 22 valores validados por el ATC están cargados.
 
 **Decisiones tomadas.**
 
@@ -125,13 +125,14 @@ GS y ascenso) y 8 de pistón (4 niveles × GS y ascenso). En la misma revisión:
   el motor en las SID.
 - Una categoría con algún valor vacío no se usa: sus vuelos siguen con la tabla de jet y el motor
   lo declara como supuesto.
-- Un tipo sin categoría se calcula como jet y lo advierte el editor, no el motor: mientras los 46
-  tipos sigan sin clasificar, un supuesto en cada vuelo marcaría el ejercicio completo en la
-  corrección de la prueba.
+- Un tipo sin categoría se calcula como jet y lo advierte el editor, no el motor: un supuesto en
+  cada vuelo marcaría el ejercicio completo en la corrección de la prueba.
+- La categoría de cada tipo es el tipo de motor de su designador en el Doc 8643 de OACI (J, T o P).
 
-**Avance.** Implementados los puntos 1 a 6. Pendiente: aplicar `firestore.rules` en la consola,
-crear los 11 niveles vacíos en Firestore (`node tools/upload-firestore.js categoryPerformance`) y
-la validación del ATC.
+**Avance.** Implementados los puntos 1 a 6. En Firestore: reglas aplicadas, 11 niveles creados sin
+valores y categoría asignada a los 46 tipos (28 jet, 13 turbohélice y 5 pistón). Mientras falten
+los 22 valores, los turbohélice y los pistón se calculan con la tabla de jet y el motor lo declara
+como supuesto. Pendiente: la validación del ATC.
 
 **Depende de.** N-06.
 
@@ -237,6 +238,8 @@ o la integridad de la base.
 | Fix DEP | Elevación 1,551 ft; probable error de unidades | Dato de elevación inválido |
 | Fixes DEP, TEGEB2 y D43AMB | Sin tipo ni alcance | El fix no cuenta como parte del TMA |
 | Fix VANIL | Sin tipo | Clasificación incompleta |
+| Tipo C295 | Nombre «FL250»; corresponde a «Airbus C295» | Nombre erróneo en Navegación y en /admin |
+| Tipo B789 | Estela «J» (súper), reservada al A388; el B787-9 es «H» | Estela errónea en Navegación; hoy no entra en el cálculo |
 | DONTI5B, fix DONTI, y EROLO6E, fix TEGEB | Sin número de secuencia | Orden del tramo indefinido |
 
 **Criterios de aceptación.** Todos los registros de la tabla corregidos y verificados en Navegación,
