@@ -33,31 +33,11 @@ import { encodePayload, exerciseLink } from '../lib/share.js';
 import { buildScenario } from '../scenarios/build.js';
 import type { FlightDraft, FlightSource, ScenarioDraft } from '../scenarios/build.js';
 import { SOURCE_LABEL, draftOrigin, flightSource } from '../scenarios/origin.js';
-import { SAMPLE_DRAFT } from '../scenarios/sample.js';
+import { emptyDraft, sampleCopy } from '../scenarios/drafts.js';
 import { useBuildContext } from '../state/buildContext.js';
 import { useNavdataStore } from '../state/navdata.js';
 import shared from './shared.module.css';
 import styles from './ScenarioEditor.module.css';
-
-function emptyDraft(): ScenarioDraft {
-  return {
-    id: newDraftId(),
-    name: 'Ejercicio sin título',
-    configuration: 'SUR',
-    runwayInUse: '17L',
-    sivigats: true,
-    objective: '',
-    weather: {
-      qnhHpa: 1013,
-      transitionLevel: 'FL110', // 1013+ hPa -> FL110, ver transitionLevelFor()
-      vmc: true,
-      visibilityM: 9999,
-      ceilingFt: null,
-      lvp: false,
-    },
-    flights: [],
-  };
-}
 
 /** El primer codigo del pool que no esté ya en uso en este ejercicio. */
 function freeSsr(used: readonly string[], ssrCodes: readonly string[]): string {
@@ -180,7 +160,7 @@ export function ScenarioEditor() {
   const icaoTypeOptions = useMemo(() => aircraftTypes.map((t) => t.icao), [aircraftTypes]);
   const aerodromeOptions = useMemo(() => aerodromes.map((a) => a.icao), [aerodromes]);
 
-  const [draft, setDraft] = useState<ScenarioDraft>(emptyDraft);
+  const [draft, setDraft] = useState<ScenarioDraft>(() => emptyDraft(newDraftId()));
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -192,16 +172,11 @@ export function ScenarioEditor() {
   useEffect(() => {
     if (id === undefined) return;
     if (id === 'nuevo') {
-      setDraft(emptyDraft());
+      setDraft(emptyDraft(newDraftId()));
       return;
     }
     if (id === 'ejemplo') {
-      setDraft({
-        ...SAMPLE_DRAFT,
-        id: newDraftId(),
-        name: `${SAMPLE_DRAFT.name} (copia)`,
-        flights: SAMPLE_DRAFT.flights.map((f) => ({ ...f, source: 'sample' as const })),
-      });
+      setDraft(sampleCopy(newDraftId()));
       return;
     }
     let cancelled = false;
@@ -550,19 +525,8 @@ export function ScenarioEditor() {
         <div className={styles.left}>
           <section className={shared.section}>
             <h3 className={shared.sectionTitle}>Cómo se trabaja</h3>
+            {/* Prueba va primero porque es el modo con que nace un ejercicio (N-10). */}
             <div className={styles.modes} role="group" aria-label="Modo del ejercicio">
-              <button
-                type="button"
-                aria-pressed={mode === 'practice'}
-                className={mode === 'practice' ? styles.modeOn : styles.mode}
-                onClick={() => set('mode', 'practice')}
-              >
-                <span className={styles.modeName}>Práctica</span>
-                <span className={styles.modeHint}>
-                  El sistema calcula las horas y las va corrigiendo. El alumno separa el tráfico y
-                  ve los conflictos aparecer y desaparecer.
-                </span>
-              </button>
               <button
                 type="button"
                 aria-pressed={mode === 'exam'}
@@ -573,6 +537,18 @@ export function ScenarioEditor() {
                 <span className={styles.modeHint}>
                   El alumno calcula a mano la hora, el nivel y la velocidad de cada punto. El
                   sistema no le dice nada. Corriges tú al abrir la entrega.
+                </span>
+              </button>
+              <button
+                type="button"
+                aria-pressed={mode === 'practice'}
+                className={mode === 'practice' ? styles.modeOn : styles.mode}
+                onClick={() => set('mode', 'practice')}
+              >
+                <span className={styles.modeName}>Práctica</span>
+                <span className={styles.modeHint}>
+                  El sistema calcula las horas y las va corrigiendo. El alumno separa el tráfico y
+                  ve los conflictos aparecer y desaparecer.
                 </span>
               </button>
             </div>

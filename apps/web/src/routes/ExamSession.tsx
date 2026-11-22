@@ -67,6 +67,7 @@ export function ExamSession({ scenario, allowInstructions, assumptions }: ExamSe
 
   const answered = examAnswers.entries.filter((e) => e.eto !== null).length;
   const total = scenario.flights.reduce((n, f) => n + Math.max(0, f.legs.length - 1), 0);
+  const percent = total === 0 ? 0 : Math.min(100, Math.round((answered / total) * 100));
 
   const entriesFor = (flightId: string): ReadonlyMap<string, ExamEntry> => {
     const map = new Map<string, ExamEntry>();
@@ -93,13 +94,25 @@ export function ExamSession({ scenario, allowInstructions, assumptions }: ExamSe
 
   return (
     <div className={shared.page}>
-      <header className={shared.pageHead}>
-        <div>
-          <p className={styles.eyebrow}>Prueba</p>
-          <h2 className={shared.pageTitle}>{scenario.name}</h2>
-          <p className={shared.lead}>{scenario.objective}</p>
+      {/*
+       * La barra de prueba (N-10). Queda fija al desplazarse por las fichas: el rotulo de arriba
+       * del titulo dejaba de verse en cuanto el alumno bajaba, y con el desaparecia la entrega.
+       */}
+      <div className={styles.hud} role="region" aria-label="Modo prueba">
+        <div className={styles.hudMode}>
+          <span className={styles.hudTag}>Modo prueba</span>
+          <span className={styles.hudRule}>Sin ayudas del sistema · corrige el profesor</span>
         </div>
-        <div className={styles.actions}>
+        <div className={styles.hudProgress}>
+          <span className={styles.hudCount}>
+            {answered} de {total}
+          </span>{' '}
+          puntos con hora
+          <span className={styles.hudBar} aria-hidden="true">
+            <span className={styles.hudBarFill} style={{ width: `${percent}%` }} />
+          </span>
+        </div>
+        <div className={styles.hudActions}>
           <label className={styles.student}>
             <span className={styles.label}>Alumno</span>
             <input
@@ -109,9 +122,16 @@ export function ExamSession({ scenario, allowInstructions, assumptions }: ExamSe
               onChange={(e) => setStudent(e.target.value)}
             />
           </label>
-          <button type="button" className={styles.primary} onClick={submit}>
+          <button type="button" className={styles.submit} onClick={submit}>
             Entregar
           </button>
+        </div>
+      </div>
+
+      <header className={shared.pageHead}>
+        <div>
+          <h2 className={shared.pageTitle}>{scenario.name}</h2>
+          <p className={shared.lead}>{scenario.objective}</p>
         </div>
       </header>
 
@@ -119,9 +139,6 @@ export function ExamSession({ scenario, allowInstructions, assumptions }: ExamSe
         <strong>Calcula tú las horas de paso, el nivel y la velocidad de cada punto.</strong> El
         sistema no te va a decir si vas bien: no hay conflictos marcados ni casillas que cambien
         de color. Corrige el profesor, cuando abra tu entrega.
-        <span className={styles.progress}>
-          {answered} de {total} puntos con hora
-        </span>
       </div>
 
       <dl className={styles.facts}>

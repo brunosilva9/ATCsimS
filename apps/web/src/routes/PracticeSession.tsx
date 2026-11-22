@@ -64,7 +64,7 @@ export function PracticeSession({ scenario, initialInstructions }: PracticeSessi
     <div className={shared.page}>
       <header className={shared.pageHead}>
         <div>
-          <p className={shared.eyebrow}>Sesión de control</p>
+          <p className={shared.eyebrow}>Práctica · sesión de control</p>
           <h2 className={shared.pageTitle}>{base.name}</h2>
           <p className={shared.lead}>{base.objective}</p>
         </div>

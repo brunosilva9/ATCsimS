@@ -62,7 +62,8 @@ Firestore, en [`firestore.rules`](firestore.rules).
 
 ### Dos modos, y son lo contrario el uno del otro
 
-Lo elige el instructor al armar el ejercicio, y viaja dentro del enlace.
+Lo elige el instructor al armar el ejercicio, y viaja dentro del enlace. Un ejercicio nuevo nace
+en prueba; los que se guardaron sin modo siguen siendo práctica.
 
 **Práctica.** El sistema calcula las horas y las va corrigiendo solo. El alumno separa el
 tráfico y ve los conflictos aparecer y desaparecer con cada instrucción. Se practica el criterio.

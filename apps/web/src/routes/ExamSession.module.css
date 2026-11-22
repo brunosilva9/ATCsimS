@@ -1,48 +1,93 @@
-/* El rotulo de prueba es lo unico que distingue esta pantalla a primera vista. Va en ambar. */
-.eyebrow {
-  display: inline-block;
-  margin: 0 0 6px;
-  padding: 2px 9px;
-  font-size: 11px;
+/*
+ * La barra de prueba: invertida respecto del chrome y fija arriba, para que el modo no se pierda
+ * al bajar por las fichas. Lleva lo que el alumno necesita a mano en todo momento: cuanto lleva y
+ * la entrega.
+ */
+.hud {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  padding: 10px 14px;
+  color: var(--exam-band-ink);
+  background: var(--exam-band);
+  border-radius: var(--radius);
+  box-shadow: 0 6px 16px -10px rgb(0 0 0 / 0.55);
+}
+
+.hud :focus-visible {
+  outline-color: var(--exam-mark);
+}
+
+.hudMode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+}
+
+.hudTag {
+  padding: 3px 10px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--warn);
-  background: var(--warn-soft);
+  white-space: nowrap;
+  color: var(--exam-mark-ink);
+  background: var(--exam-mark);
   border-radius: 999px;
 }
 
-.rules {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 12px;
-  padding: 12px 15px;
+.hudRule {
   font-size: 13px;
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
-  border-left: 3px solid var(--warn);
-  border-radius: 0 var(--radius) var(--radius) 0;
+  color: var(--exam-band-muted);
 }
 
-.progress {
+.hudProgress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-left: auto;
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--exam-band-muted);
+}
+
+.hudCount {
   font-family: var(--font-data);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  color: var(--text-muted);
+  font-weight: 600;
+  color: var(--exam-band-ink);
 }
 
-.actions {
+.hudBar {
+  width: 90px;
+  height: 5px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--exam-band-muted) 35%, transparent);
+  border-radius: 999px;
+}
+
+.hudBarFill {
+  display: block;
+  height: 100%;
+  background: var(--exam-mark);
+  transition: width 160ms ease-out;
+}
+
+.hudActions {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 10px;
 }
 
 .student {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 8px;
 }
 
 .label {
@@ -50,27 +95,69 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-muted);
+  color: var(--exam-band-muted);
 }
 
 .student input {
   font: inherit;
-  padding: 7px 10px;
-  color: var(--text);
-  background: var(--surface);
-  border: 1px solid var(--border-strong);
+  width: 14em;
+  padding: 6px 10px;
+  color: var(--exam-band-ink);
+  background: transparent;
+  border: 1px solid var(--exam-band-muted);
   border-radius: var(--radius);
 }
 
-.primary {
+.student input::placeholder {
+  color: var(--exam-band-muted);
+}
+
+.submit {
   font: inherit;
   font-weight: 600;
-  padding: 8px 20px;
-  color: var(--surface);
-  background: var(--accent);
-  border: 0;
+  padding: 6px 20px;
+  color: var(--exam-band);
+  background: var(--exam-band-ink);
+  border: 1px solid var(--exam-band-ink);
   border-radius: var(--radius);
   cursor: pointer;
+}
+
+.submit:hover {
+  color: var(--exam-mark-ink);
+  background: var(--exam-mark);
+  border-color: var(--exam-mark);
+}
+
+/* En pantalla angosta la barra fija se come la vista: queda lo indispensable. */
+@media (max-width: 700px) {
+  .hudRule,
+  .hudBar {
+    display: none;
+  }
+
+  .hudProgress {
+    margin-left: 0;
+  }
+
+  .student input {
+    width: 10em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hudBarFill {
+    transition: none;
+  }
+}
+
+.rules {
+  padding: 12px 15px;
+  font-size: 13px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--exam-band);
+  border-radius: 0 var(--radius) var(--radius) 0;
 }
 
 .facts {
