@@ -25,7 +25,9 @@ Firebase (Auth y Firestore) y sin servidor propio.
 [docs/BACKLOG.md](docs/BACKLOG.md) es la única referencia de lo planificado.
 
 1. **Antes de empezar**, identificar el ítem del backlog al que corresponde la tarea. Si no existe,
-   proponer agregarlo (en Next o Maybe) antes de implementar.
+   proponer agregarlo (en Next o Maybe) antes de implementar. Si existe, leer sus comentarios
+   (`node tools/backlog-comments.js N-xx`): ahí deja el ATC, desde `/backlog`, las fuentes y los
+   valores del ítem.
 2. **Al implementar**, respetar el alcance y los criterios de aceptación del ítem. Si aparece
    trabajo fuera del alcance, se registra como ítem nuevo en lugar de hacerlo en silencio.
 3. **Al hacer commit**, citar el identificador del ítem en el mensaje (por ejemplo, `N-03`).

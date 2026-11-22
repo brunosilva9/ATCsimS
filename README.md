@@ -59,6 +59,7 @@ Firestore, en [`firestore.rules`](firestore.rules).
 | `/navdata` | Ambos | Qué se importó de las planillas |
 | `/print` | Ambos | Las strips en A4 apaisado para escribir encima |
 | `/admin` | Admin | Editar toda la base de navegación, directo en Firestore |
+| `/backlog` | Admin | El backlog del proyecto y los comentarios del ATC en cada ítem |
 
 ### Dos modos, y son lo contrario el uno del otro
 

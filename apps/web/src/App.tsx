@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect } from 'react';
+import { type ReactElement, Suspense, lazy, useEffect } from 'react';
 import { NavLink, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import { SiteFooter } from './components/SiteFooter.js';
@@ -16,14 +16,21 @@ import { useNavdataStore } from './state/navdata.js';
 import { canUseBank, useRoleStore } from './state/role.js';
 import styles from './App.module.css';
 
-/** Las dos columnas del menu son los dos roles del documento funcional. */
+// Solo la abre admin y trae el markdown del backlog con su conversor: no va en la carga inicial.
+const Backlog = lazy(() => import('./routes/Backlog.js').then((m) => ({ default: m.Backlog })));
+
+/**
+ * Las dos columnas del menu son los dos roles del documento funcional. `access` dice quien ve el
+ * enlace; la ruta lo vuelve a exigir abajo, y firestore.rules es lo que de verdad lo impide.
+ */
 const LINKS = [
-  { to: '/exercise', label: 'Ejercicio', role: 'Alumno', hint: 'Controlar: instruir y separar' },
-  { to: '/scenarios', label: 'Ejercicios', role: 'Instructor', hint: 'Armar, guardar y compartir' },
-  { to: '/runs', label: 'Corrección', role: 'Instructor', hint: 'Revisar una entrega' },
-  { to: '/navdata', label: 'Navegación', role: null, hint: 'Fixes, procedimientos, performance' },
-  { to: '/strips', label: 'Strips', role: null, hint: 'La ficha aislada' },
-  { to: '/admin', label: 'Administración', role: 'Admin', hint: 'Editar toda la base de navegación' },
+  { to: '/exercise', label: 'Ejercicio', role: 'Alumno', hint: 'Controlar: instruir y separar', access: 'all' },
+  { to: '/scenarios', label: 'Ejercicios', role: 'Instructor', hint: 'Armar, guardar y compartir', access: 'bank' },
+  { to: '/runs', label: 'Corrección', role: 'Instructor', hint: 'Revisar una entrega', access: 'all' },
+  { to: '/navdata', label: 'Navegación', role: null, hint: 'Fixes, procedimientos, performance', access: 'all' },
+  { to: '/strips', label: 'Strips', role: null, hint: 'La ficha aislada', access: 'all' },
+  { to: '/admin', label: 'Administración', role: 'Admin', hint: 'Editar toda la base de navegación', access: 'admin' },
+  { to: '/backlog', label: 'Backlog', role: 'Admin', hint: 'Lo planificado y los comentarios del ATC', access: 'admin' },
 ] as const;
 
 export function App() {
@@ -44,6 +51,10 @@ export function App() {
   // El banco de ejercicios es compartido entre instructores: sin el rol, ni el link ni la ruta.
   const bank = (element: ReactElement) =>
     roleLoading ? null : canUseBank(role) ? element : <Navigate to="/exercise" replace />;
+  const adminOnly = (element: ReactElement) =>
+    roleLoading ? null : role === 'admin' ? element : <Navigate to="/exercise" replace />;
+  const canSee = (access: (typeof LINKS)[number]['access']) =>
+    access === 'all' || (access === 'bank' ? canUseBank(role) : role === 'admin');
 
   // La vista de impresion es papel: no lleva ni cabecera ni pie.
   const bare = pathname.startsWith('/print');
@@ -94,11 +105,7 @@ export function App() {
           </div>
         </div>
         <nav className={styles.nav}>
-          {LINKS.filter(
-            (link) =>
-              (link.to !== '/admin' || role === 'admin') &&
-              (link.to !== '/scenarios' || canUseBank(role))
-          ).map((link) => (
+          {LINKS.filter((link) => canSee(link.access)).map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
@@ -127,11 +134,14 @@ export function App() {
           <Route path="/runs" element={<Runs />} />
           <Route path="/navdata" element={<NavdataExplorer />} />
           <Route path="/strips" element={<StripGallery />} />
+          <Route path="/admin" element={adminOnly(<Admin />)} />
           <Route
-            path="/admin"
-            element={
-              roleLoading ? null : role === 'admin' ? <Admin /> : <Navigate to="/exercise" replace />
-            }
+            path="/backlog"
+            element={adminOnly(
+              <Suspense fallback={null}>
+                <Backlog />
+              </Suspense>
+            )}
           />
           <Route path="*" element={<Navigate to="/exercise" replace />} />
         </Routes>

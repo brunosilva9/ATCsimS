@@ -54,8 +54,11 @@ Maybe.
 ## Trabajar un ítem
 
 1. Releer su alcance y sus criterios de aceptación.
-2. Si aparece trabajo fuera del alcance, proponer un ítem nuevo en lugar de hacerlo.
-3. Si una decisión pendiente se resuelve en la conversación, registrarla en el ítem.
+2. Leer sus comentarios: `node tools/backlog-comments.js N-xx` (solo lectura). El ATC los deja
+   desde `/backlog` con las fuentes, los valores y las dudas del ítem. Si un comentario cambia el
+   alcance o resuelve una decisión pendiente, registrarlo en el ítem.
+3. Si aparece trabajo fuera del alcance, proponer un ítem nuevo en lugar de hacerlo.
+4. Si una decisión pendiente se resuelve en la conversación, registrarla en el ítem.
 
 ## Cerrar un ítem
 

@@ -44,6 +44,25 @@ service cloud.firestore {
     // El banco de ejercicios: compartido entre instructores, invisible para el alumno.
     match /scenarios/{doc} { allow read, write: if isInstructor(); }
 
+    // Comentarios del backlog (/backlog): solo admin. Cada autor crea a su nombre y modifica o
+    // borra solo lo suyo; al editar cambian solo el texto y la fecha.
+    match /backlogComments/{doc} {
+      function validText(data) {
+        return data.text is string && data.text.size() > 0 && data.text.size() <= 4000;
+      }
+      allow read: if isAdmin();
+      allow create: if isAdmin()
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['itemId', 'text', 'authorUid', 'authorEmail', 'createdAt', 'updatedAt'])
+        && request.resource.data.itemId is string
+        && validText(request.resource.data);
+      allow update: if isAdmin()
+        && resource.data.authorUid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['text', 'updatedAt'])
+        && validText(request.resource.data);
+      allow delete: if isAdmin() && resource.data.authorUid == request.auth.uid;
+    }
+
     match /users/{uid} {
       allow read: if request.auth.uid == uid;
       allow write: if false; // el rol se asigna a mano en consola, por ahora

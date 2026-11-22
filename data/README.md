@@ -132,6 +132,11 @@ quién tiene permiso de editar. Hay una colección más, `users`, doc ID = uid d
 `instructor` y `admin` leen y escriben el banco de ejercicios (colección `scenarios`);
 `student` (o no tener documento) deja el resto de la app (ver `README.md` § Acceso).
 
+`admin` también lee y escribe los comentarios del backlog (colección `backlogComments`, vista
+`/backlog`): `{ itemId, text, authorUid, authorEmail, createdAt, updatedAt }`, con fechas en
+epoch ms. Cada autor modifica o borra solo los suyos. No son parte de la base de navegación ni se
+cargan con ella; desde el repositorio se leen con `node tools/backlog-comments.js [N-xx]`.
+
 **No hay pantalla para asignar el rol todavía.** El primer admin se crea a mano: Consola Firebase
 › Authentication › Users para encontrar el uid, y Firestore Database › colección `users` ›
 documento nuevo con ese ID y `{ "role": "admin" }`.
